@@ -72,66 +72,24 @@
                         <StackPanel Margin="10,5">
                             <Label>Pixel Colour Options</Label>
                             <StackPanel Margin="20,5">
-                                <RadioButton GroupName="pixelColourOptions">
+                                <RadioButton GroupName="pixelColourOptions" Tag="singleColour" Checked="RadioButton_Checked">
                                     <WrapPanel>
                                         <TextBlock Text="{StaticResource strSingleColour}"/>
                                     </WrapPanel>
                                 </RadioButton>
-                                <RadioButton Margin="0,5" GroupName="pixelColourOptions">
+                                <RadioButton GroupName="pixelColourOptions" Tag="textureColour" Checked="RadioButton_Checked">
                                     <WrapPanel>
-                                        <TextBlock Text="{StaticResource strGradient}"/>
+                                        <TextBlock Text="{StaticResource strTexture}"/>
                                     </WrapPanel>
                                 </RadioButton>
-                                <RadioButton GroupName="pixelColourOptions">
+                                <RadioButton GroupName="pixelColourOptions" Tag="templateColour" Checked="RadioButton_Checked">
                                     <WrapPanel>
                                         <TextBlock Text="{StaticResource strColourTemplate}"/>
                                     </WrapPanel>
                                 </RadioButton>
                             </StackPanel>
+                            <TextBlock x:Name="PixelColourOptionTitle"/>
                         </StackPanel>
-                        <!--Pixel Colour Options-->
-                        <StackPanel Margin="10,5">
-                            <Label>Pixel Colour Options</Label>
-                            <StackPanel Margin="20,5">
-                                <RadioButton GroupName="pixelColourOptions">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strSingleColour}"/>
-                                    </WrapPanel>
-                                </RadioButton>
-                                <RadioButton Margin="0,5" GroupName="pixelColourOptions">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strGradient}"/>
-                                    </WrapPanel>
-                                </RadioButton>
-                                <RadioButton GroupName="pixelColourOptions">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strColourTemplate}"/>
-                                    </WrapPanel>
-                                </RadioButton>
-                            </StackPanel>
-                        </StackPanel>
-                        <!--Pixel Colour Options-->
-                        <StackPanel Margin="10,5">
-                            <Label>Pixel Colour Options</Label>
-                            <StackPanel Margin="20,5">
-                                <RadioButton GroupName="pixelColourOptions">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strSingleColour}"/>
-                                    </WrapPanel>
-                                </RadioButton>
-                                <RadioButton Margin="0,5" GroupName="pixelColourOptions">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strGradient}"/>
-                                    </WrapPanel>
-                                </RadioButton>
-                                <RadioButton GroupName="pixelColourOptions">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strColourTemplate}"/>
-                                    </WrapPanel>
-                                </RadioButton>
-                            </StackPanel>
-                        </StackPanel>
-
                     </StackPanel>
                     <!--End of Pixel Shader Tab Item-->
                 </TabItem>

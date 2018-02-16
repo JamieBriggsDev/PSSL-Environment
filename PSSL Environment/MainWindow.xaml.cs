@@ -139,6 +139,33 @@ namespace PSSL_Environment
             }
             return device;
         }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton rb = sender as RadioButton;
+            
+
+            if(rb != null)
+            {
+                string colorName = rb.Tag.ToString();
+                switch(colorName)
+                {
+                    case "singleColour":
+                        PixelColourOptionTitle.Text = "Single Colour";
+                        break;
+                    case "textureColour":
+                        PixelColourOptionTitle.Text = "Texture";
+                        break;
+                    case "templateColour":
+                        PixelColourOptionTitle.Text = "Template";
+                        break;
+                }
+            }
+            else
+            {
+                PixelColourOptionTitle.Text = "Error";
+            }
+        }
     }
 
     
