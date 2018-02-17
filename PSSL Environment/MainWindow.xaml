@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:PSSL_Environment"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:helix="http://helix-toolkit.org/wpf"
+        xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
         Title="{StaticResource strAppName}" Height="720" Width="1280" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner">
@@ -125,29 +126,12 @@
             </TabControl>
 
 
-            <StackPanel Grid.Column="1" Margin=" 10,5">
-                <!--Placeholder for OpenGL preview-->
-                <!--<TextBlock Grid.Column="1" FontSize="35" FontWeight="Bold">
-                    PLACE HOLDER FOR<LineBreak/> 
-                    OPENGL PREVIEW.
-                </TextBlock>-->
-                <StackPanel Margin="10,5">
-                    <TextBlock>
-                        <Bold>Right Mouse Button:</Bold>
-                        Rotate
-                    </TextBlock>
-                    <TextBlock>
-                        <Bold>Scroll Wheel:</Bold>
-                        Zoom In/ Out
-                    </TextBlock>
-                </StackPanel>
-                <Grid Name="Helix3D_Viewport">
-                    <helix:HelixViewport3D x:Name="viewPort3d" ZoomExtentsWhenLoaded="True" Height="576">
-                        <!--Remmber to add light to the scene -->
-                        <helix:DefaultLights/>
-                        <helix:Teapot/>
-                        <helix:RotateManipulator/>
-                    </helix:HelixViewport3D>
+            <StackPanel Grid.Column="1" Margin="10,28,10,5">
+                <Grid Name="Viewport" Height="622">
+                    <sharpGL:OpenGLControl Margin="0,0,0,46" OpenGLDraw="OpenGLControl_OpenGLDraw"
+                                           FrameRate="60" DrawFPS="True"
+                                           OpenGLInitialized="OpenGLControl_OpenGLInitialized"
+                                           Resized="OpenGLControl_Resized"/>
                 </Grid>
             </StackPanel>
 
