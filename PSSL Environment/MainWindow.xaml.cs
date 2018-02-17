@@ -17,6 +17,7 @@ using System.Windows.Media.Media3D;
 using SharpGL;
 using Microsoft.Win32;
 
+//The main PSSL_Enironment namespace
 namespace PSSL_Environment
 {
     /// <summary>
