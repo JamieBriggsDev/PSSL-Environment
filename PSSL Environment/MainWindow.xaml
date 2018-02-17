@@ -7,9 +7,50 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:helix="http://helix-toolkit.org/wpf"
         mc:Ignorable="d"
-        Title="{StaticResource strAppName}" Height="720" Width="1280" ResizeMode="NoResize">
+        Title="{StaticResource strAppName}" Height="720" Width="1280" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+
     <Window.Resources>
-    
+        <BooleanToVisibilityConverter x:Key="convVisibility"/>
+        
+        <!--Single Colour options-->
+        <Color x:Key="CurrentColor">#00FF00</Color>
+        <LinearGradientBrush x:Key="HueBrush" StartPoint="0,0" EndPoint="0,1">
+            <LinearGradientBrush.GradientStops>
+                <GradientStop Color="#FF0000" Offset="0" />
+                <GradientStop Color="#FFFF00" Offset="0.167" />
+                <GradientStop Color="#00FF00" Offset="0.333" />
+                <GradientStop Color="#00FFFF" Offset="0.5" />
+                <GradientStop Color="#0000FF" Offset="0.667" />
+                <GradientStop Color="#FF00FF" Offset="0.833" />
+                <GradientStop Color="#FF0000" Offset="1" />
+            </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+        <VisualBrush x:Key="LevelSaturationBrush" TileMode="None">
+            <VisualBrush.Visual>
+                <Canvas Background="Black" Width="1" Height="1" SnapsToDevicePixels="True">
+                    <Rectangle Width="1" Height="1" SnapsToDevicePixels="True">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <LinearGradientBrush.GradientStops>
+                                    <GradientStop Color="White" Offset="0" />
+                                    <GradientStop Color="{DynamicResource CurrentColor}" Offset="1" />
+                                </LinearGradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                        <Rectangle.OpacityMask>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <LinearGradientBrush.GradientStops>
+                                    <GradientStop Color="#FFFFFFFF" Offset="0"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                </LinearGradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Canvas>
+            </VisualBrush.Visual>
+        </VisualBrush>
+
     </Window.Resources>
     
     <!--<Grid Name="pnlMainGrid" Background="LightBlue">
@@ -17,11 +58,11 @@
         <TextBox AcceptsReturn="True" TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="en-US" />
 
     </Grid>-->
-    
-    
+
+
 
     <StackPanel Margin="10">
-        
+
         <ToolBar DockPanel.Dock="Top">
             <Button ToolTipService.ShowDuration="5000">
                 <Button.Content>
@@ -55,7 +96,7 @@
             </Button>
         </ToolBar>
 
-        <Grid Height="{Binding ActualHeight, 
+        <Grid Name="LayoutRoot" Height="{Binding ActualHeight, 
               RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}">
             <!--Grid Column definitions to allow for 2 columns of data-->
             <Grid.ColumnDefinitions>
@@ -65,42 +106,49 @@
             <!--Making tabs for the left hand side of the
             program-->
             <TabControl>
-                <TabItem Header="Pixel Shader">
-                    <StackPanel Margin="10,5">
-                        <Label FontWeight="Bold">Pixel Shader Options</Label>
-                        <!--Pixel Colour Options-->
+                <TabItem Name="PixelShaderTab" Header="Pixel Shader">
+                    <Grid Name="PixelShaderGrid">
                         <StackPanel Margin="10,5">
-                            <Label>Pixel Colour Options</Label>
-                            <StackPanel Margin="20,5">
-                                <RadioButton GroupName="pixelColourOptions" Tag="singleColour" Checked="RadioButton_Checked">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strSingleColour}"/>
-                                    </WrapPanel>
-                                </RadioButton>
-                                <RadioButton GroupName="pixelColourOptions" Tag="textureColour" Checked="RadioButton_Checked">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strTexture}"/>
-                                    </WrapPanel>
-                                </RadioButton>
-                                <RadioButton GroupName="pixelColourOptions" Tag="templateColour" Checked="RadioButton_Checked">
-                                    <WrapPanel>
-                                        <TextBlock Text="{StaticResource strColourTemplate}"/>
-                                    </WrapPanel>
-                                </RadioButton>
+                            <Label FontWeight="Bold">Pixel Shader Options</Label>
+                            <!--Pixel Colour Options-->
+                            <StackPanel Margin="10,5">
+                                <Label>Pixel Colour Options</Label>
+                                <StackPanel Margin="20,5">
+                                    <RadioButton GroupName="pixelColourOptions" Name="singleColour" Tag="singleColour" Checked="RadioButton_Checked">
+                                        <WrapPanel>
+                                            <TextBlock Text="{StaticResource strSingleColour}"/>
+                                        </WrapPanel>
+                                    </RadioButton>
+                                    <RadioButton GroupName="pixelColourOptions" Name="textureColour" Tag="textureColour" Checked="RadioButton_Checked">
+                                        <WrapPanel>
+                                            <TextBlock Text="{StaticResource strTexture}"/>
+                                        </WrapPanel>
+                                    </RadioButton>
+                                    <RadioButton GroupName="pixelColourOptions" Name="templateColour" Tag="templateColour" Checked="RadioButton_Checked">
+                                        <WrapPanel>
+                                            <TextBlock Text="{StaticResource strColourTemplate}"/>
+                                        </WrapPanel>
+                                    </RadioButton>
+                                </StackPanel>
+                                <TextBlock x:Name="PixelColourOptionTitle"/>
+                                <!--Hue Selecter-->
+                                <StackPanel Visibility="{Binding IsChecked, ElementName=singleColour, Converter={StaticResource convVisibility}}" Orientation="Horizontal">
+                                    <Rectangle Fill="{StaticResource LevelSaturationBrush}" Width="200" Height="200" Margin="10" Stroke="Black" StrokeThickness="1" SnapsToDevicePixels="True" />
+                                    <Rectangle Fill="{StaticResource HueBrush}" Width="20" Height="200" Margin="10" Stroke="Black" StrokeThickness="1" SnapsToDevicePixels="True" />
+                                </StackPanel>
                             </StackPanel>
-                            <TextBlock x:Name="PixelColourOptionTitle"/>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                     <!--End of Pixel Shader Tab Item-->
                 </TabItem>
                 <TabItem Header="Vertex Shader">
                     <!--End of vertex Shader Tab Item-->
                 </TabItem>
             </TabControl>
-            
-            
+
+
             <StackPanel Grid.Column="1" Margin=" 10,5">
-                 <!--Placeholder for OpenGL preview-->
+                <!--Placeholder for OpenGL preview-->
                 <!--<TextBlock Grid.Column="1" FontSize="35" FontWeight="Bold">
                     PLACE HOLDER FOR<LineBreak/> 
                     OPENGL PREVIEW.
@@ -125,6 +173,5 @@
 
         </Grid>
     </StackPanel>
-    
 
 </Window>

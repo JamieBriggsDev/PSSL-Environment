@@ -42,7 +42,7 @@ namespace PSSL_Environment
 
 
             Model3DGroup model = null;
-            
+
             string ext = System.IO.Path.GetExtension(path).ToLower();
             switch (ext)
             {
@@ -143,18 +143,21 @@ namespace PSSL_Environment
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton rb = sender as RadioButton;
-            
 
-            if(rb != null)
+
+            if (rb != null)
             {
                 string colorName = rb.Tag.ToString();
-                switch(colorName)
+                switch (colorName)
                 {
                     case "singleColour":
+                        // Change Title under options
                         PixelColourOptionTitle.Text = "Single Colour";
+                        //lgb.
                         break;
                     case "textureColour":
                         PixelColourOptionTitle.Text = "Texture";
+
                         break;
                     case "templateColour":
                         PixelColourOptionTitle.Text = "Template";
@@ -166,9 +169,184 @@ namespace PSSL_Environment
                 PixelColourOptionTitle.Text = "Error";
             }
         }
+        //    private void RadioButton_Unchecked(object sender, RoutedEventArgs e)
+        //    {
+        //        RadioButton rb = sender as RadioButton;
+
+
+        //        if (rb != null)
+        //        {
+        //            string colorName = rb.Tag.ToString();
+        //            switch (colorName)
+        //            {
+        //                case "singleColour":
+        //                    PixelShaderGrid.Children.Remove(visualBoard);
+        //                    //lgb.
+        //                    break;
+        //                case "textureColour":
+        //                    PixelColourOptionTitle.Text = "Texture";
+
+        //                    break;
+        //                case "templateColour":
+        //                    PixelColourOptionTitle.Text = "Template";
+        //                    break;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            PixelColourOptionTitle.Text = "Error";
+        //        }
+        //    }
+
+        //    // Visual Board for colours
+        //    Rectangle visualBoard = new Rectangle();
+
+        //    public void CreateVisualBrush()
+        //    {
+        //        // Create a background recntangle
+
+
+
+        //        visualBoard.Width = 300;
+
+        //        visualBoard.Height = 300;
+
+
+
+        //        // Create a DrawingBrush
+
+        //        VisualBrush vBrush = new VisualBrush();
+
+
+
+        //        // Create a StackPanel and add a few controls to it
+
+        //        StackPanel stkPanel = new StackPanel();
+
+
+
+        //        // Create a Rectangle and add it to StackPanel
+
+        //        Rectangle Rectangle = new Rectangle();
+
+        //        Rectangle.Height = 100;
+
+        //        Rectangle.Width = 20;
+
+        //        // Linear Gradient Brush Settings!!!
+        //        //
+        //        //
+        //        LinearGradientBrush HueBrush = new LinearGradientBrush();
+
+        //        HueBrush.StartPoint = new Point(0, 0);
+
+        //        HueBrush.EndPoint = new Point(0, 1);
+
+
+        //        // RedStart Value
+        //        GradientStop RedStart = new GradientStop();
+
+        //        RedStart.Color = Color.FromRgb(255, 0, 0);
+
+        //        RedStart.Offset = 0.0;
+
+        //        HueBrush.GradientStops.Add(RedStart);
+
+
+        //        // Yellow Value
+        //        GradientStop Yellow = new GradientStop();
+
+        //        Yellow.Color = Color.FromRgb(255, 255, 0);
+
+        //        Yellow.Offset = 0.167;
+
+        //        HueBrush.GradientStops.Add(Yellow);
+
+
+        //        // Green Value
+        //        GradientStop Green = new GradientStop();
+
+        //        Green.Color = Color.FromRgb(0, 255, 0);
+
+        //        Green.Offset = 0.333;
+
+        //        HueBrush.GradientStops.Add(Green);
+
+
+        //        // LightBlue Value
+        //        GradientStop LightBlue = new GradientStop();
+
+        //        LightBlue.Color = Color.FromRgb(0, 255, 255);
+
+        //        LightBlue.Offset = 0.5;
+
+        //        HueBrush.GradientStops.Add(LightBlue);
+
+
+        //        // Blue Value
+        //        GradientStop Blue = new GradientStop();
+
+        //        Blue.Color = Color.FromRgb(0, 0, 255);
+
+        //        Blue.Offset = 0.667;
+
+        //        HueBrush.GradientStops.Add(Blue);
+
+
+        //        // Magenta Value
+        //        GradientStop Magenta = new GradientStop();
+
+        //        Magenta.Color = Color.FromRgb(255, 0, 255);
+
+        //        Magenta.Offset = 0.833;
+
+        //        HueBrush.GradientStops.Add(Magenta);
+
+        //        // RedFinish Value
+        //        GradientStop RedFinish = new GradientStop();
+
+        //        RedFinish.Color = Color.FromRgb(255, 0, 0);
+
+        //        RedFinish.Offset = 1.0;
+
+        //        HueBrush.GradientStops.Add(RedFinish);
+
+
+        //        Rectangle.Fill = HueBrush;
+
+
+
+        //        stkPanel.Children.Add(Rectangle);
+
+        //        ///////////////////////////////////////////////
+
+
+
+        //        // Set Viewport and TileMode
+        //        vBrush.Viewport = new Rect(0, 0, 0.25, 0.25);
+        //        vBrush.TileMode = TileMode.None;
+
+
+
+        //        // Set Visual of VisualBrush
+        //        vBrush.ca
+        //        vBrush.Visual = stkPanel;
+
+
+
+        //        // Fill rectangle with a DrawingBrush
+
+        //        visualBoard.Fill = vBrush;
+
+
+
+        //        PixelShaderGrid.Children.Add(visualBoard);
+        //    }
+
+        //}
+
+
     }
 
-    
+
 }
-
-
