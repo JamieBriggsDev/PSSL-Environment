@@ -13,47 +13,12 @@
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="convVisibility"/>
-        
+
         <!--Single Colour options-->
         <Color x:Key="CurrentColor">#00FF00</Color>
-        <LinearGradientBrush x:Key="HueBrush" StartPoint="0,0" EndPoint="0,1">
-            <LinearGradientBrush.GradientStops>
-                <GradientStop Color="#FF0000" Offset="0" />
-                <GradientStop Color="#FFFF00" Offset="0.167" />
-                <GradientStop Color="#00FF00" Offset="0.333" />
-                <GradientStop Color="#00FFFF" Offset="0.5" />
-                <GradientStop Color="#0000FF" Offset="0.667" />
-                <GradientStop Color="#FF00FF" Offset="0.833" />
-                <GradientStop Color="#FF0000" Offset="1" />
-            </LinearGradientBrush.GradientStops>
-        </LinearGradientBrush>
-        <VisualBrush x:Key="LevelSaturationBrush" TileMode="None">
-            <VisualBrush.Visual>
-                <Canvas Background="Black" Width="1" Height="1" SnapsToDevicePixels="True">
-                    <Rectangle Width="1" Height="1" SnapsToDevicePixels="True">
-                        <Rectangle.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                <LinearGradientBrush.GradientStops>
-                                    <GradientStop Color="White" Offset="0" />
-                                    <GradientStop Color="{DynamicResource CurrentColor}" Offset="1" />
-                                </LinearGradientBrush.GradientStops>
-                            </LinearGradientBrush>
-                        </Rectangle.Fill>
-                        <Rectangle.OpacityMask>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <LinearGradientBrush.GradientStops>
-                                    <GradientStop Color="#FFFFFFFF" Offset="0"/>
-                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
-                                </LinearGradientBrush.GradientStops>
-                            </LinearGradientBrush>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                </Canvas>
-            </VisualBrush.Visual>
-        </VisualBrush>
-
+        
     </Window.Resources>
-    
+
     <!--<Grid Name="pnlMainGrid" Background="LightBlue">
 
         <TextBox AcceptsReturn="True" TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="en-US" />
@@ -131,15 +96,19 @@
                                         </WrapPanel>
                                     </RadioButton>
                                 </StackPanel>
-                                <TextBlock x:Name="PixelColourOptionTitle"/>
                                 <!--Hue Selecter-->
+                                <TextBlock x:Name="PixelColourOptionTitle"/>
+                                <!--Single Colour Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=singleColour, Converter={StaticResource convVisibility}}" 
-                                            Orientation="Horizontal" Margin="10,5">
-                                    <!--<Rectangle Fill="{StaticResource LevelSaturationBrush}" Width="200" Height="200" Margin="10" Stroke="Black" StrokeThickness="1" SnapsToDevicePixels="True" />
-                                    <Rectangle Fill="{StaticResource HueBrush}" Width="20" Height="200" Margin="10" Stroke="Black" StrokeThickness="1" SnapsToDevicePixels="True" />-->
-                                    <TextBlock>Please select a colour from below:<LineBreak/>
-                                    </TextBlock>
-                                    <wpfTool:ColorPicker Name="ColorPicker" Height="30" DisplayColorAndName="True" Margin="26,20,369,261" />
+                                            Orientation="Vertical" Margin="10,5,271,5">
+                                    <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please select a colour from below:</TextBlock>
+                                    <wpfTool:ColorCanvas x:Name="singleColorCanvas" Height="274" Margin="26,20,26,261" SelectedColorChanged="ColorPicker_SelectedColorChanged" />
+                                </StackPanel>
+                                <!--Single Colour Stack Panel-->
+                                <StackPanel Visibility="{Binding IsChecked, ElementName=textureColour, Converter={StaticResource convVisibility}}" 
+                                            Orientation="Vertical" Margin="10,5,271,5">
+                                    <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please load an image from file:</TextBlock>
+                                    
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
@@ -168,12 +137,14 @@
                         Zoom In/ Out
                     </TextBlock>
                 </StackPanel>
-                <helix:HelixViewport3D x:Name="viewPort3d" ZoomExtentsWhenLoaded="True" Height="576">
-                    <!--Remmber to add light to the scene -->
-                    <helix:DefaultLights/>
-                    <helix:Teapot/>
-                    <helix:RotateManipulator/>
-                </helix:HelixViewport3D>
+                <Grid Name="Helix3D_Viewport">
+                    <helix:HelixViewport3D x:Name="viewPort3d" ZoomExtentsWhenLoaded="True" Height="576">
+                        <!--Remmber to add light to the scene -->
+                        <helix:DefaultLights/>
+                        <helix:Teapot/>
+                        <helix:RotateManipulator/>
+                    </helix:HelixViewport3D>
+                </Grid>
             </StackPanel>
 
         </Grid>

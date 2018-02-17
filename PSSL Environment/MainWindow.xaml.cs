@@ -169,6 +169,16 @@ namespace PSSL_Environment
                 PixelColourOptionTitle.Text = "Error";
             }
         }
+
+        private void ColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            // Get color canvas colours
+            byte r = singleColorCanvas.R;
+            byte g = singleColorCanvas.G;
+            byte b = singleColorCanvas.B;
+            byte a = singleColorCanvas.A;
+            Helix3D_Viewport.Background = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+        }
         //    private void RadioButton_Unchecked(object sender, RoutedEventArgs e)
         //    {
         //        RadioButton rb = sender as RadioButton;
