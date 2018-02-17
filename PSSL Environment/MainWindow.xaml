@@ -1,6 +1,7 @@
 ﻿<Window x:Class="PSSL_Environment.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSSL_Environment"
@@ -132,9 +133,13 @@
                                 </StackPanel>
                                 <TextBlock x:Name="PixelColourOptionTitle"/>
                                 <!--Hue Selecter-->
-                                <StackPanel Visibility="{Binding IsChecked, ElementName=singleColour, Converter={StaticResource convVisibility}}" Orientation="Horizontal">
-                                    <Rectangle Fill="{StaticResource LevelSaturationBrush}" Width="200" Height="200" Margin="10" Stroke="Black" StrokeThickness="1" SnapsToDevicePixels="True" />
-                                    <Rectangle Fill="{StaticResource HueBrush}" Width="20" Height="200" Margin="10" Stroke="Black" StrokeThickness="1" SnapsToDevicePixels="True" />
+                                <StackPanel Visibility="{Binding IsChecked, ElementName=singleColour, Converter={StaticResource convVisibility}}" 
+                                            Orientation="Horizontal" Margin="10,5">
+                                    <!--<Rectangle Fill="{StaticResource LevelSaturationBrush}" Width="200" Height="200" Margin="10" Stroke="Black" StrokeThickness="1" SnapsToDevicePixels="True" />
+                                    <Rectangle Fill="{StaticResource HueBrush}" Width="20" Height="200" Margin="10" Stroke="Black" StrokeThickness="1" SnapsToDevicePixels="True" />-->
+                                    <TextBlock>Please select a colour from below:<LineBreak/>
+                                    </TextBlock>
+                                    <wpfTool:ColorPicker Name="ColorPicker" Height="30" DisplayColorAndName="True" Margin="26,20,369,261" />
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
