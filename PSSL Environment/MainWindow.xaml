@@ -104,11 +104,15 @@
                                     <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please select a colour from below:</TextBlock>
                                     <wpfTool:ColorCanvas x:Name="singleColorCanvas" Height="274" Margin="26,20,26,261" SelectedColorChanged="ColorPicker_SelectedColorChanged" />
                                 </StackPanel>
-                                <!--Single Colour Stack Panel-->
+                                <!--Texture Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=textureColour, Converter={StaticResource convVisibility}}" 
                                             Orientation="Vertical" Margin="10,5,271,5">
                                     <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please load an image from file:</TextBlock>
-                                    
+                                    <Button Height="23" HorizontalAlignment="Left" 
+                                        Margin="12,0,0,34" Name="btnLoad" VerticalAlignment="Bottom" 
+                                        Width="75" Grid.Column="1" Click="btnLoad_Click">Load Image</Button>
+                                    <Image Margin="12,12,16,71" Name="imgPhoto" 
+                                        Stretch="Fill" Grid.Column="1" />
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>

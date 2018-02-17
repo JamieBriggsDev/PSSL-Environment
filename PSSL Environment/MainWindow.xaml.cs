@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Media3D;
+using Microsoft.Win32;
 
 namespace PSSL_Environment
 {
@@ -178,6 +179,23 @@ namespace PSSL_Environment
             byte b = singleColorCanvas.B;
             byte a = singleColorCanvas.A;
             Helix3D_Viewport.Background = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+        }
+
+        private void btnLoad_Click(object sender, RoutedEventArgs e)
+        {
+            // File dialog for opening an image file
+            OpenFileDialog op = new OpenFileDialog();
+            // Set title
+            op.Title = "Select a Picture:";
+            // Chose which kind of files are only allowed
+            op.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" +
+                "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
+                "Portable Network Graphic (*.png)|*.png";
+
+            if (op.ShowDialog() == true)
+            {
+                imgPhoto.Source = new BitmapImage(new Uri(op.FileName));
+            }
         }
         //    private void RadioButton_Unchecked(object sender, RoutedEventArgs e)
         //    {
