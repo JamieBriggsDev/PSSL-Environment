@@ -17,7 +17,7 @@
 
         <!--Single Colour options-->
         <Color x:Key="CurrentColor">#00FF00</Color>
-        
+
     </Window.Resources>
 
     <!--<Grid Name="pnlMainGrid" Background="LightBlue">
@@ -56,6 +56,22 @@
                         Search your computer or local network
                         <LineBreak />
                         for a file and open it for editing.
+                        </TextBlock>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                    </StackPanel>
+                </Button.ToolTip>
+            </Button>
+            <Button Name="OpenOBJ" Click="fileOpenItem_Click">
+                <Button.Content>
+                    <Image Source="Resources/cubeIcon.png" Width="16" Height="16" />
+                </Button.Content>
+                <Button.ToolTip>
+                    <StackPanel>
+                        <TextBlock FontWeight="Bold" FontSize="14" Margin="0,0,0,5">Open .OBJ</TextBlock>
+                        <TextBlock>
+                        Search your computer or local network
+                        <LineBreak />
+                        for an .obj file to load to viewport.
                         </TextBlock>
                         <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
                     </StackPanel>
@@ -128,10 +144,14 @@
 
             <StackPanel Grid.Column="1" Margin="10,28,10,5">
                 <Grid Name="Viewport" Height="622">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="39*"/>
+                        <ColumnDefinition Width="265*"/>
+                    </Grid.ColumnDefinitions>
                     <sharpGL:OpenGLControl Margin="0,0,0,46" OpenGLDraw="OpenGLControl_OpenGLDraw"
                                            FrameRate="60" DrawFPS="True"
                                            OpenGLInitialized="OpenGLControl_OpenGLInitialized"
-                                           Resized="OpenGLControl_Resized"/>
+                                           Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"/>
                 </Grid>
             </StackPanel>
 
