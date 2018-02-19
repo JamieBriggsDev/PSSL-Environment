@@ -340,7 +340,7 @@ namespace PSSL_Environment
 
             //  Set the scale factor accordingly.
             //  sf = max/c
-            scaleFactor = 8.0f / max;
+            scaleFactor = 2.0f / max;
             return scaleFactor;
         }
     }
