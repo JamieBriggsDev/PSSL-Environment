@@ -1,5 +1,4 @@
-﻿using HelixToolkit.Wpf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Media3D;
-using SharpGL;
 using Microsoft.Win32;
+using SharpGL;
+using SharpGL.Enumerations;
+using SharpGL.SceneGraph;
+using SharpGL.SceneGraph.Core;
+using SharpGL.SceneGraph.Primitives;
 
 //The main PSSL_Enironment namespace
 namespace PSSL_Environment
@@ -75,6 +78,7 @@ namespace PSSL_Environment
             byte b = singleColorCanvas.B;
             byte a = singleColorCanvas.A;
             Viewport.Background = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+            //scene.
         }
 
         private void btnLoad_Click(object sender, RoutedEventArgs e)
@@ -94,138 +98,65 @@ namespace PSSL_Environment
             }
         }
 
-        private void OpenGLControl_OpenGLDraw(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
+        private void OpenGLControl_OpenGLDraw(object sender, OpenGLEventArgs args)
         {
-            //  Get the OpenGL instance that's been passed to us.
-            OpenGL gl = args.OpenGL;
+            //  Get the OpenGL instance.
+            var gl = args.OpenGL;
 
-            //  Clear the color and depth buffers.
-            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
+            //  Add a bit to theta (how much we're rotating the scene) and create the modelview
+            //  and normal matrices.
+            theta += 0.01f;
+            scene.CreateModelviewAndNormalMatrix(theta);
 
-            //  Reset the modelview matrix.
-            gl.LoadIdentity();
+            //  Clear the color and depth buffer.
+            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT | OpenGL.GL_STENCIL_BUFFER_BIT);
 
-            //  Move the geometry into a fairly central position.
-            gl.Translate(-1.5f, 0.0f, -6.0f);
+            //  Draw the axies.
+            axies.Render(gl, RenderMode.Design);
 
-            //  Draw a pyramid. First, rotate the modelview matrix.
-            gl.Rotate(rotatePyramid, 0.0f, 1.0f, 0.0f);
 
-            //  Start drawing triangles.
-            gl.Begin(OpenGL.GL_TRIANGLES);
-
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(0.0f, 1.0f, 0.0f);
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(-1.0f, -1.0f, 1.0f);
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(1.0f, -1.0f, 1.0f);
-
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(0.0f, 1.0f, 0.0f);
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(1.0f, -1.0f, 1.0f);
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(1.0f, -1.0f, -1.0f);
-
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(0.0f, 1.0f, 0.0f);
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(1.0f, -1.0f, -1.0f);
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(-1.0f, -1.0f, -1.0f);
-
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(0.0f, 1.0f, 0.0f);
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(-1.0f, -1.0f, -1.0f);
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(-1.0f, -1.0f, 1.0f);
-
-            gl.End();
-
-            //  Reset the modelview.
-            gl.LoadIdentity();
-
-            //  Move into a more central position.
-            gl.Translate(1.5f, 0.0f, -7.0f);
-
-            //  Rotate the cube.
-            gl.Rotate(rquad, 1.0f, 1.0f, 1.0f);
-
-            //  Provide the cube colors and geometry.
-            gl.Begin(OpenGL.GL_QUADS);
-
-            gl.Color(0.0f, 1.0f, 0.0f);
-            gl.Vertex(1.0f, 1.0f, -1.0f);
-            gl.Vertex(-1.0f, 1.0f, -1.0f);
-            gl.Vertex(-1.0f, 1.0f, 1.0f);
-            gl.Vertex(1.0f, 1.0f, 1.0f);
-
-            gl.Color(1.0f, 0.5f, 0.0f);
-            gl.Vertex(1.0f, -1.0f, 1.0f);
-            gl.Vertex(-1.0f, -1.0f, 1.0f);
-            gl.Vertex(-1.0f, -1.0f, -1.0f);
-            gl.Vertex(1.0f, -1.0f, -1.0f);
-
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(1.0f, 1.0f, 1.0f);
-            gl.Vertex(-1.0f, 1.0f, 1.0f);
-            gl.Vertex(-1.0f, -1.0f, 1.0f);
-            gl.Vertex(1.0f, -1.0f, 1.0f);
-
-            gl.Color(1.0f, 1.0f, 0.0f);
-            gl.Vertex(1.0f, -1.0f, -1.0f);
-            gl.Vertex(-1.0f, -1.0f, -1.0f);
-            gl.Vertex(-1.0f, 1.0f, -1.0f);
-            gl.Vertex(1.0f, 1.0f, -1.0f);
-
-            gl.Color(0.0f, 0.0f, 1.0f);
-            gl.Vertex(-1.0f, 1.0f, 1.0f);
-            gl.Vertex(-1.0f, 1.0f, -1.0f);
-            gl.Vertex(-1.0f, -1.0f, -1.0f);
-            gl.Vertex(-1.0f, -1.0f, 1.0f);
-
-            gl.Color(1.0f, 0.0f, 1.0f);
-            gl.Vertex(1.0f, 1.0f, -1.0f);
-            gl.Vertex(1.0f, 1.0f, 1.0f);
-            gl.Vertex(1.0f, -1.0f, 1.0f);
-            gl.Vertex(1.0f, -1.0f, -1.0f);
-
-            gl.End();
-
-            //  Flush OpenGL.
-            gl.Flush();
-
-            //  Rotate the geometry a bit.
-            rotatePyramid += 3.0f;
-            rquad -= 3.0f;
+            //scene.RenderImmediateMode(gl);
+            scene.RenderRetainedMode(gl);
         }
 
-        float rotatePyramid = 0;
-        float rquad = 0;
 
         private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
+            OpenGL gl = args.OpenGL;
+
+            scene.Initialise(gl);
             //  Enable the OpenGL depth testing functionality.
             args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
         }
 
         private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
-            // Get the OpenGL instance.
-            OpenGL gl = args.OpenGL;
+            //// Get the OpenGL instance.
+            //OpenGL gl = args.OpenGL;
 
-            // Load and clear the projection matrix.
+            //// Load and clear the projection matrix.
+            //gl.MatrixMode(OpenGL.GL_PROJECTION);
+            //gl.LoadIdentity();
+
+            //// Perform a perspective transformation
+            //gl.Perspective(45.0f, (float)gl.RenderContextProvider.Width /
+            //    (float)gl.RenderContextProvider.Height,
+            //    0.1f, 100.0f);
+
+            //// Load the modelview.
+            //gl.MatrixMode(OpenGL.GL_MODELVIEW);
+
+            //  Get the OpenGL instance.
+            var gl = args.OpenGL;
+
+            //  Create a projection matrix for the scene with the screen size.
+            scene.CreateProjectionMatrix((float)ActualWidth, (float)ActualHeight);
+
+            //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
+            //  is, so set it now.
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             gl.LoadIdentity();
-
-            // Perform a perspective transformation
-            gl.Perspective(45.0f, (float)gl.RenderContextProvider.Width /
-                (float)gl.RenderContextProvider.Height,
-                0.1f, 100.0f);
-
-            // Load the modelview.
+            gl.MultMatrix(scene.ProjectionMatrix.to_array());
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
         }
 
@@ -239,13 +170,25 @@ namespace PSSL_Environment
                 //  Get the path.
                 var filePath = fileOpenDialog.FileName;
 
-                ////  Load the data into the scene.
-                //scene.Load(openGlCtrl.OpenGL, filePath);
+                //  Load the data into the scene.
+                scene.Load(openGlCtrl.OpenGL, filePath);
 
                 ////  Auto scale.
                 //textBoxScale.Text = scene.SetScaleFactorAuto().ToString();
             }
         }
+
+        /// <summary>
+        /// The axies, which may be drawn.
+        /// </summary>
+        private readonly Axies axies = new Axies();
+
+        private float theta = 0;
+
+        /// <summary>
+        /// The scene we're drawing.
+        /// </summary>
+        private readonly Scene scene = new Scene();
     }
 
 

@@ -148,9 +148,11 @@
                         <ColumnDefinition Width="39*"/>
                         <ColumnDefinition Width="265*"/>
                     </Grid.ColumnDefinitions>
-                    <sharpGL:OpenGLControl Margin="0,0,0,46" OpenGLDraw="OpenGLControl_OpenGLDraw"
-                                           FrameRate="60" DrawFPS="True"
+                    <sharpGL:OpenGLControl Name="openGlCtrl"
+                                           Margin="0,0,0,46" OpenGLDraw="OpenGLControl_OpenGLDraw"
                                            OpenGLInitialized="OpenGLControl_OpenGLInitialized"
+                                           RenderContextType="FBO"
+                                           FrameRate="60" DrawFPS="True"
                                            Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"/>
                 </Grid>
             </StackPanel>
