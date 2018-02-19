@@ -1,18 +1,4 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using System.Drawing;
-//using FileFormatWavefront.Model;
-//using GlmNet;
-//using SharpGL;
-//using SharpGL.Enumerations;
-//using SharpGL.Shaders;
-//using SharpGL.Textures;
-//using SharpGL.VertexBuffers;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -26,46 +12,69 @@ using SharpGL.VertexBuffers;
 
 namespace PSSL_Environment
 {
-    class Scene
+    public static class VertexAttributes
     {
- 
-
-        public static class VertexAttributes
-        {
-            public const uint Position = 0;
-            public const uint Normal = 1;
-            public const uint TexCoord = 2;
-        }
-
+        public const uint Position = 0;
+        public const uint Normal = 1;
+        public const uint TexCoord = 2;
+    }
+    /// <summary>
+    /// A class that represents the scene for this sample.
+    /// </summary>
+    public class Scene
+    {
+        /// <summary>
+        /// Initialises the Scene.
+        /// </summary>
+        /// <param name="gl">The OpenGL instance.</param>
         public void Initialise(OpenGL gl)
         {
+            //  We're going to specify the attribute locations for the position and normal, 
+            //  so that we can force both shaders to explicitly have the same locations.
+            const uint positionAttribute = 0;
+            const uint normalAttribute = 1;
+            var attributeLocations = new Dictionary<uint, string>
+            {
+                {positionAttribute, "Position"},
+                {normalAttribute, "Normal"},
+            };
 
             //  Create the per pixel shader.
             shaderPerPixel = new ShaderProgram();
             shaderPerPixel.Create(gl,
                 ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert"),
-                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag"), null);
-            shaderPerPixel.BindAttributeLocation(gl, VertexAttributes.Position, "Position");
-            shaderPerPixel.BindAttributeLocation(gl, VertexAttributes.Normal, "Normal");
-            gl.ClearColor(0f, 0f, 0f, 1f);
+                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag"), attributeLocations);
 
-            //  Immediate mode only features!
-            gl.Enable(OpenGL.GL_TEXTURE_2D);
+            //  Create the toon shader.
+            shaderToon = new ShaderProgram();
+            shaderToon.Create(gl,
+                ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert"),
+                ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag"), attributeLocations);
+
+            //  Generate the geometry and it's buffers.
+            trefoilKnot.GenerateGeometry(gl, positionAttribute, normalAttribute);
         }
 
-
-        /// Creates the projection matrix for the given screen size
-        /// 
-        /// screenWidth - Width of the screen
-        /// screenHeight- Height of the screen
-        public void CreateProjectionMatrix(float screenWidth, float screenHeight)
+        /// <summary>
+        /// Creates the projection matrix for the given screen size.
+        /// </summary>
+        /// <param name="gl">The OpenGL instance.</param>
+        /// <param name="screenWidth">Width of the screen.</param>
+        /// <param name="screenHeight">Height of the screen.</param>
+        public void CreateProjectionMatrix(OpenGL gl, float screenWidth, float screenHeight)
         {
             //  Create the projection matrix for our screen size.
             const float S = 0.46f;
             float H = S * screenHeight / screenWidth;
             projectionMatrix = glm.frustum(-S, S, -H, H, 1, 100);
-        }
 
+            //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
+            //  is, so set it now.
+            gl.MatrixMode(OpenGL.GL_PROJECTION);
+            gl.LoadIdentity();
+            gl.MultMatrix(projectionMatrix.to_array());
+            gl.MatrixMode(OpenGL.GL_MODELVIEW);
+        }
 
         /// <summary>
         /// Creates the modelview and normal matrix. Also rotates the sceen by a specified amount.
@@ -77,9 +86,8 @@ namespace PSSL_Environment
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
             mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
-            mat4 translation = glm.translate(mat4.identity(), new vec3(0, 0, -40));
-            mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
-            modelviewMatrix = scale * rotation * translation;
+            mat4 translation = glm.translate(mat4.identity(), new vec3(0, 0, -4));
+            modelviewMatrix = rotation * translation;
             normalMatrix = modelviewMatrix.to_mat3();
         }
 
@@ -94,118 +102,56 @@ namespace PSSL_Environment
             gl.LoadIdentity();
             gl.MultMatrix(modelviewMatrix.to_array());
 
-            //  Go through each group.
-            foreach (var mesh in meshes)
-            {
-                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
-                if (texture != null)
-                    texture.Bind(gl);
+            //  Push the polygon attributes and set line mode.
+            gl.PushAttrib(OpenGL.GL_POLYGON_BIT);
+            gl.PolygonMode(FaceMode.FrontAndBack, PolygonMode.Lines);
 
-                uint mode = OpenGL.GL_TRIANGLES;
-                if (mesh.indicesPerFace == 4)
-                    mode = OpenGL.GL_QUADS;
-                else if (mesh.indicesPerFace > 4)
-                    mode = OpenGL.GL_POLYGON;
+            //  Render the trefoil.
+            var vertices = trefoilKnot.Vertices;
+            gl.Begin(BeginMode.Triangles);
+            foreach (var index in trefoilKnot.Indices)
+                gl.Vertex(vertices[index].x, vertices[index].y, vertices[index].z);
+            gl.End();
 
-                //  Render the group faces.
-                gl.Begin(mode);
-                for (int i = 0; i < mesh.vertices.Length; i++)
-                {
-                    gl.Vertex(mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z);
-                    if (mesh.normals != null)
-                        gl.Normal(mesh.normals[i].x, mesh.normals[i].y, mesh.normals[i].z);
-                    if (mesh.uvs != null)
-                        gl.TexCoord(mesh.uvs[i].x, mesh.uvs[i].y);
-                }
-                gl.End();
-
-                if (texture != null)
-                    texture.Unbind(gl);
-            }
+            //  Pop the attributes, restoring all polygon state.
+            gl.PopAttrib();
         }
 
         /// <summary>
         /// Renders the scene in retained mode.
         /// </summary>
         /// <param name="gl">The OpenGL instance.</param>
-        public void RenderRetainedMode(OpenGL gl)
+        /// <param name="useToonShader">if set to <c>true</c> use the toon shader, otherwise use a per-pixel shader.</param>
+        public void RenderRetainedMode(OpenGL gl, bool useToonShader)
         {
+            //  Get a reference to the appropriate shader.
+            var shader = useToonShader ? shaderToon : shaderPerPixel;
+
             //  Use the shader program.
-            shaderPerPixel.Bind(gl);
+            shader.Bind(gl);
+
+            //  Set the variables for the shader program.
+            shader.SetUniform3(gl, "DiffuseMaterial", 0f, 0.75f, 0.75f);
+            shader.SetUniform3(gl, "AmbientMaterial", 0.04f, 0.04f, 0.04f);
+            shader.SetUniform3(gl, "SpecularMaterial", 0.5f, 0.5f, 0.5f);
+            shader.SetUniform1(gl, "Shininess", 50f);
 
             //  Set the light position.
-            shaderPerPixel.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
+            shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 1f);
 
             //  Set the matrices.
-            shaderPerPixel.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
-            shaderPerPixel.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
-            shaderPerPixel.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+            shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
+            shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+            shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
-            //  Go through each mesh and render the vertex buffer array.
-            foreach (var mesh in meshes)
-            {
-                //  If we have a material for the mesh, we'll use it. If we don't, we'll use the default material.
-                if (mesh.material != null)
-                {
-                    shaderPerPixel.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
-                    shaderPerPixel.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
-                    shaderPerPixel.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
-                    shaderPerPixel.SetUniform1(gl, "Shininess", mesh.material.Shininess);
-                }
-                else
-                {
-                    int i = 0;
-                    //  TODO: we should really set a default material here.
-                }
-                var vertexBufferArray = meshVertexBufferArrays[mesh];
-                vertexBufferArray.Bind(gl);
+            //  Bind the vertex buffer array.
+            trefoilKnot.VertexBufferArray.Bind(gl);
 
-                //  IMPORTANT: This is interesting. If you use OpenGL 2.1, you can use quads. If you move to 3.0 or onwards, 
-                //  you can only draw the triangle types - cause 3.0 onwards deprecates other types.
-                //  see: http://stackoverflow.com/questions/8041361/simple-opengl-clarification
-                //  this shows that the OpenGL mode selection works - if I choose 2.1 I can draw quads, otherwise I can't.
-                //  There's a good article on tesselating quads to triangles here:
-                //  http://prideout.net/blog/?p=49
-                //  This should be a sample!
-
-                uint mode = OpenGL.GL_TRIANGLES;
-                if (mesh.indicesPerFace == 4)
-                    mode = OpenGL.GL_QUADS;
-                else if (mesh.indicesPerFace > 4)
-                    mode = OpenGL.GL_POLYGON;
-
-                gl.DrawArrays(mode, 0, mesh.vertices.Length);
-            }
+            //  Draw the elements.
+            gl.DrawElements(OpenGL.GL_TRIANGLES, trefoilKnot.Indices.Length, OpenGL.GL_UNSIGNED_SHORT, IntPtr.Zero);
 
             //  Unbind the shader.
-            shaderPerPixel.Unbind(gl);
-        }
-
-        public void Load(OpenGL gl, string objectFilePath)
-        {
-            //  TODO: cleanup old files.
-
-            //  Destroy all of the vertex buffer arrays in the meshes.
-            foreach (var vertexBufferArray in meshVertexBufferArrays.Values)
-                vertexBufferArray.Delete(gl);
-            meshes.Clear();
-            meshVertexBufferArrays.Clear();
-
-            //  Load the object file.
-            var result = FileFormatWavefront.FileFormatObj.Load(objectFilePath, true);
-
-            meshes.AddRange(SceneDenormaliser.Denormalize(result.Model));
-
-            //  Create a vertex buffer array for each mesh.
-            meshes.ForEach(m => CreateVertexBufferArray(gl, m));
-
-            //  Create textures for each texture map.
-            CreateTextures(gl, meshes);
-
-            //  TODO: handle errors and warnings.
-
-            //  TODO: cleanup
-
+            shader.Unbind(gl);
         }
 
         private void CreateVertexBufferArray(OpenGL gl, Mesh mesh)
@@ -246,6 +192,33 @@ namespace PSSL_Environment
             meshVertexBufferArrays[mesh] = vertexBufferArray;
         }
 
+        public void Load(OpenGL gl, string objectFilePath)
+        {
+            //  TODO: cleanup old files.
+
+            //  Destroy all of the vertex buffer arrays in the meshes.
+            foreach (var vertexBufferArray in meshVertexBufferArrays.Values)
+                vertexBufferArray.Delete(gl);
+            meshes.Clear();
+            meshVertexBufferArrays.Clear();
+
+            //  Load the object file.
+            var result = FileFormatWavefront.FileFormatObj.Load(objectFilePath, true);
+
+            meshes.AddRange(SceneDenormaliser.Denormalize(result.Model));
+
+            //  Create a vertex buffer array for each mesh.
+            meshes.ForEach(m => CreateVertexBufferArray(gl, m));
+
+            //  Create textures for each texture map.
+            CreateTextures(gl, meshes);
+
+            //  TODO: handle errors and warnings.
+
+            //  TODO: cleanup
+
+        }
+
         private void CreateTextures(OpenGL gl, IEnumerable<Mesh> meshes)
         {
             foreach (var mesh in meshes.Where(m => m.material != null && m.material.TextureMapDiffuse != null))
@@ -264,67 +237,21 @@ namespace PSSL_Environment
             }
         }
 
-        /// <summary>
-        /// Sets the scale factor automatically based on the size of the geometry.
-        /// Returns the computed scale factor.
-        /// </summary>
-        /// <returns>The computed scale factor.</returns>
-        public float SetScaleFactorAuto()
-        {
-            //  0.02 good for inet models.
-
-            //  If we have no meshes, just use 1.0f.
-            if (!meshes.Any())
-            {
-                scaleFactor = 1.0f;
-                return scaleFactor;
-            }
-
-            //  Find the maximum vertex value.
-            var maxX = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.x));
-            var maxY = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.y));
-            var maxZ = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.z));
-            var max = (new[] { maxX, maxY, maxZ }).Max();
-
-            //  Set the scale factor accordingly.
-            //  sf = max/c
-            scaleFactor = 8.0f / max;
-            return scaleFactor;
-        }
-
-        /// <summary>
-        /// Gets or sets the scale factor.
-        /// </summary>
-        public float ScaleFactor
-        {
-            get { return scaleFactor; }
-            set { scaleFactor = value; }
-        }
-
-        /// <summary>
-        /// Gets the projection matrix.
-        /// </summary>
-        public mat4 ProjectionMatrix
-        {
-            get { return projectionMatrix; }
-        }
-
-
-        private readonly Material defaultMaterial;
-
         private readonly List<Mesh> meshes = new List<Mesh>();
         private readonly Dictionary<Mesh, VertexBufferArray> meshVertexBufferArrays = new Dictionary<Mesh, VertexBufferArray>();
         private readonly Dictionary<Mesh, Texture2D> meshTextures = new Dictionary<Mesh, Texture2D>();
 
         //  The shaders we use.
         private ShaderProgram shaderPerPixel;
+        private ShaderProgram shaderToon;
 
         //  The modelview, projection and normal matrices.
         private mat4 modelviewMatrix = mat4.identity();
         private mat4 projectionMatrix = mat4.identity();
         private mat3 normalMatrix = mat3.identity();
 
-        private float scaleFactor = 1.0f;
+        //  Scene geometry - a trefoil knot.
+        private readonly TrefoilKnot trefoilKnot = new TrefoilKnot();
     }
 
 }

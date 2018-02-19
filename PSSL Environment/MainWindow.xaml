@@ -6,7 +6,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSSL_Environment"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:helix="http://helix-toolkit.org/wpf"
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
         Title="{StaticResource strAppName}" Height="720" Width="1280" ResizeMode="NoResize"
@@ -143,6 +142,7 @@
 
 
             <StackPanel Grid.Column="1" Margin="10,28,10,5">
+                <CheckBox x:Name="checkBoxUseToonShader" Content="Use Toon Shader" />
                 <Grid Name="Viewport" Height="622">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="39*"/>

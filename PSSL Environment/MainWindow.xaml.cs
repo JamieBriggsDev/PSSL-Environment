@@ -36,7 +36,7 @@ namespace PSSL_Environment
         {
             InitializeComponent();
 
-            ModelVisual3D device3D = new ModelVisual3D();
+            //ModelVisual3D device3D = new ModelVisual3D();
             //device3D.Content = Display3d("C:\\Users\\jamie\\OneDrive\\Individual Project\\Project\\PSSL Environment\\PSSL Environment\\Resources\\Models\\cube.obj");
         }
 
@@ -106,17 +106,13 @@ namespace PSSL_Environment
             //  Add a bit to theta (how much we're rotating the scene) and create the modelview
             //  and normal matrices.
             theta += 0.01f;
-            scene.CreateModelviewAndNormalMatrix(theta);
+            myScene.CreateModelviewAndNormalMatrix(theta);
 
             //  Clear the color and depth buffer.
+            gl.ClearColor(0f, 0f, 0f, 1f);
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT | OpenGL.GL_STENCIL_BUFFER_BIT);
 
-            //  Draw the axies.
-            axies.Render(gl, RenderMode.Design);
-
-
-            //scene.RenderImmediateMode(gl);
-            scene.RenderRetainedMode(gl);
+            myScene.RenderRetainedMode(gl, checkBoxUseToonShader.IsChecked.Value);
         }
 
 
@@ -124,9 +120,7 @@ namespace PSSL_Environment
         {
             OpenGL gl = args.OpenGL;
 
-            scene.Initialise(gl);
-            //  Enable the OpenGL depth testing functionality.
-            args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
+            myScene.Initialise(gl);
         }
 
         private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -146,19 +140,27 @@ namespace PSSL_Environment
             //// Load the modelview.
             //gl.MatrixMode(OpenGL.GL_MODELVIEW);
 
+            ////  Get the OpenGL instance.
+            //var gl = args.OpenGL;
+
+            ////  Create a projection matrix for the scene with the screen size.
+            //scene.CreateProjectionMatrix((float)ActualWidth, (float)ActualHeight);
+
+            ////  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
+            ////  is, so set it now.
+            //gl.MatrixMode(OpenGL.GL_PROJECTION);
+            //gl.LoadIdentity();
+            //gl.MultMatrix(scene.ProjectionMatrix.to_array());
+            //gl.MatrixMode(OpenGL.GL_MODELVIEW);
+
+
             //  Get the OpenGL instance.
             var gl = args.OpenGL;
 
-            //  Create a projection matrix for the scene with the screen size.
-            scene.CreateProjectionMatrix((float)ActualWidth, (float)ActualHeight);
-
-            //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
-            //  is, so set it now.
-            gl.MatrixMode(OpenGL.GL_PROJECTION);
-            gl.LoadIdentity();
-            gl.MultMatrix(scene.ProjectionMatrix.to_array());
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            //  Create the projection matrix for the screen size.
+            myScene.CreateProjectionMatrix(gl, (float)ActualWidth, (float)ActualHeight);
         }
+
 
         private void fileOpenItem_Click(object sender, RoutedEventArgs e)
         {
@@ -171,7 +173,7 @@ namespace PSSL_Environment
                 var filePath = fileOpenDialog.FileName;
 
                 //  Load the data into the scene.
-                scene.Load(openGlCtrl.OpenGL, filePath);
+                myScene.Load(openGlCtrl.OpenGL, filePath);
 
                 ////  Auto scale.
                 //textBoxScale.Text = scene.SetScaleFactorAuto().ToString();
@@ -188,7 +190,7 @@ namespace PSSL_Environment
         /// <summary>
         /// The scene we're drawing.
         /// </summary>
-        private readonly Scene scene = new Scene();
+        private readonly Scene myScene = new Scene();
     }
 
 
