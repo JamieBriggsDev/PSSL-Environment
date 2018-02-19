@@ -97,7 +97,6 @@
     <Compile Include="ManifestResourceLoader.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneDenormaliser.cs" />
-    <Compile Include="TrefoilKnot.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -51,10 +51,10 @@ namespace PSSL_Environment
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag"), attributeLocations);
 
-            gl.ClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+            gl.ClearColor(1.0f, 1.0f, 0.0f, 1.0f);
 
-            //  Generate the geometry and it's buffers.
-            trefoilKnot.GenerateGeometry(gl, positionAttribute, normalAttribute);
+            //  Immediate mode only features!
+            gl.Enable(OpenGL.GL_TEXTURE_2D);
         }
 
         /// <summary>
@@ -104,19 +104,34 @@ namespace PSSL_Environment
             gl.LoadIdentity();
             gl.MultMatrix(modelviewMatrix.to_array());
 
-            //  Push the polygon attributes and set line mode.
-            gl.PushAttrib(OpenGL.GL_POLYGON_BIT);
-            gl.PolygonMode(FaceMode.FrontAndBack, PolygonMode.Lines);
+            //  Go through each group.
+            foreach (var mesh in meshes)
+            {
+                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
+                if (texture != null)
+                    texture.Bind(gl);
 
-            //  Render the trefoil.
-            var vertices = trefoilKnot.Vertices;
-            gl.Begin(BeginMode.Triangles);
-            foreach (var index in trefoilKnot.Indices)
-                gl.Vertex(vertices[index].x, vertices[index].y, vertices[index].z);
-            gl.End();
+                uint mode = OpenGL.GL_TRIANGLES;
+                if (mesh.indicesPerFace == 4)
+                    mode = OpenGL.GL_QUADS;
+                else if (mesh.indicesPerFace > 4)
+                    mode = OpenGL.GL_POLYGON;
 
-            //  Pop the attributes, restoring all polygon state.
-            gl.PopAttrib();
+                //  Render the group faces.
+                gl.Begin(mode);
+                for (int i = 0; i < mesh.vertices.Length; i++)
+                {
+                    gl.Vertex(mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z);
+                    if (mesh.normals != null)
+                        gl.Normal(mesh.normals[i].x, mesh.normals[i].y, mesh.normals[i].z);
+                    if (mesh.uvs != null)
+                        gl.TexCoord(mesh.uvs[i].x, mesh.uvs[i].y);
+                }
+                gl.End();
+
+                if (texture != null)
+                    texture.Unbind(gl);
+            }
         }
 
         /// <summary>
@@ -133,27 +148,52 @@ namespace PSSL_Environment
             //  Use the shader program.
             shader.Bind(gl);
 
-            //  Set the variables for the shader program.
-            shader.SetUniform3(gl, "DiffuseMaterial", 0f, 0.75f, 0.75f);
-            shader.SetUniform3(gl, "AmbientMaterial", 0.04f, 0.04f, 0.04f);
-            shader.SetUniform3(gl, "SpecularMaterial", 0.5f, 0.5f, 0.5f);
-            shader.SetUniform1(gl, "Shininess", 50f);
-
             //  Set the light position.
-            shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 1f);
+            shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
 
             //  Set the matrices.
             shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
             shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
             shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
-            //  Bind the vertex buffer array.
-            trefoilKnot.VertexBufferArray.Bind(gl);
+            //  Go through each mesh and render the vertex buffer array.
+            foreach (var mesh in meshes)
+            {
+                //  If we have a material for the mesh, we'll use it. If we don't, we'll use the default material.
+                if (mesh.material != null)
+                {
+                    shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
+                    shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
+                    shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                    shader.SetUniform1(gl, "Shininess", mesh.material.Shininess);
+                }
+                else
+                {
+                    int i = 0;
+                    //  TODO: we should really set a default material here.
+                }
+                var vertexBufferArray = meshVertexBufferArrays[mesh];
+                vertexBufferArray.Bind(gl);
 
-            //  Draw the elements.
-            gl.DrawElements(OpenGL.GL_TRIANGLES, trefoilKnot.Indices.Length, OpenGL.GL_UNSIGNED_SHORT, IntPtr.Zero);
 
-            //  Unbind the shader.
+                //  IMPORTANT: This is interesting. If you use OpenGL 2.1, you can use quads. If you move to 3.0 or onwards, 
+                //  you can only draw the triangle types - cause 3.0 onwards deprecates other types.
+                //  see: http://stackoverflow.com/questions/8041361/simple-opengl-clarification
+                //  this shows that the OpenGL mode selection works - if I choose 2.1 I can draw quads, otherwise I can't.
+                //  There's a good article on tesselating quads to triangles here:
+                //  http://prideout.net/blog/?p=49
+                //  This should be a sample!
+
+                uint mode = OpenGL.GL_TRIANGLES;
+                if (mesh.indicesPerFace == 4)
+                    mode = OpenGL.GL_QUADS;
+                else if (mesh.indicesPerFace > 4)
+                    mode = OpenGL.GL_POLYGON;
+
+                gl.DrawArrays(mode, 0, mesh.vertices.Length);
+
+            }
+
             shader.Unbind(gl);
         }
 
@@ -273,8 +313,34 @@ namespace PSSL_Environment
 
         private float scaleFactor = 1.0f;
 
-        //  Scene geometry - a trefoil knot.
-        private readonly TrefoilKnot trefoilKnot = new TrefoilKnot();
+        /// <summary>
+        /// Sets the scale factor automatically based on the size of the geometry.
+        /// Returns the computed scale factor.
+        /// </summary>
+        /// <returns>The computed scale factor.</returns>
+        public float SetScaleFactorAuto()
+        {
+            //  0.02 good for inet models.
+
+            //  If we have no meshes, just use 1.0f.
+            if (!meshes.Any())
+            {
+                scaleFactor = 1.0f;
+                return scaleFactor;
+            }
+
+            //  Find the maximum vertex value.
+            var maxX = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.x));
+            var maxY = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.y));
+            var maxZ = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.z));
+            var max = (new[] { maxX, maxY, maxZ }).Max();
+
+            //  Set the scale factor accordingly.
+            //  sf = max/c
+            scaleFactor = 8.0f / max;
+            return scaleFactor;
+        }
     }
+
 
 }

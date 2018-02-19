@@ -110,7 +110,7 @@ namespace PSSL_Environment
             myScene.CreateModelviewAndNormalMatrix(theta);
 
             //  Clear the color and depth buffer.
-            gl.ClearColor(0f, 0f, 0f, 1f);
+            gl.ClearColor(1f, 1f, 1f, 1f);
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT | OpenGL.GL_STENCIL_BUFFER_BIT);
 
             myScene.RenderRetainedMode(gl, checkBoxUseToonShader.IsChecked.Value);
@@ -166,8 +166,8 @@ namespace PSSL_Environment
                 //  Load the data into the scene.
                 myScene.Load(openGlCtrl.OpenGL, filePath);
 
-                ////  Auto scale.
-                //textBoxScale.Text = scene.SetScaleFactorAuto().ToString();
+                //  Auto scale.
+                textBoxScale.Text = myScene.SetScaleFactorAuto().ToString();
             }
         }
 

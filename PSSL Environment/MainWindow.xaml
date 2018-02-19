@@ -143,6 +143,7 @@
 
             <StackPanel Grid.Column="1" Margin="10,28,10,5">
                 <CheckBox x:Name="checkBoxUseToonShader" Content="Use Toon Shader" />
+                <TextBox x:Name="textBoxScale" />
                 <Grid Name="Viewport" Height="622">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="39*"/>
