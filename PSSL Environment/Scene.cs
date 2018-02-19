@@ -51,6 +51,8 @@ namespace PSSL_Environment
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag"), attributeLocations);
 
+            gl.ClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+
             //  Generate the geometry and it's buffers.
             trefoilKnot.GenerateGeometry(gl, positionAttribute, normalAttribute);
         }
@@ -124,6 +126,7 @@ namespace PSSL_Environment
         /// <param name="useToonShader">if set to <c>true</c> use the toon shader, otherwise use a per-pixel shader.</param>
         public void RenderRetainedMode(OpenGL gl, bool useToonShader)
         {
+
             //  Get a reference to the appropriate shader.
             var shader = useToonShader ? shaderToon : shaderPerPixel;
 
@@ -237,6 +240,24 @@ namespace PSSL_Environment
             }
         }
 
+        /// <summary>
+        /// Gets or sets the scale factor.
+        /// </summary>
+        public float ScaleFactor
+        {
+            get { return scaleFactor; }
+            set { scaleFactor = value; }
+        }
+
+        /// <summary>
+        /// Gets the projection matrix.
+        /// </summary>
+        public mat4 ProjectionMatrix
+        {
+            get { return projectionMatrix; }
+        }
+
+
         private readonly List<Mesh> meshes = new List<Mesh>();
         private readonly Dictionary<Mesh, VertexBufferArray> meshVertexBufferArrays = new Dictionary<Mesh, VertexBufferArray>();
         private readonly Dictionary<Mesh, Texture2D> meshTextures = new Dictionary<Mesh, Texture2D>();
@@ -249,6 +270,8 @@ namespace PSSL_Environment
         private mat4 modelviewMatrix = mat4.identity();
         private mat4 projectionMatrix = mat4.identity();
         private mat3 normalMatrix = mat3.identity();
+
+        private float scaleFactor = 1.0f;
 
         //  Scene geometry - a trefoil knot.
         private readonly TrefoilKnot trefoilKnot = new TrefoilKnot();

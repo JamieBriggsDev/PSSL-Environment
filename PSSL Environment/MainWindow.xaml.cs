@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Media3D;
+using GlmNet;
 using Microsoft.Win32;
 using SharpGL;
 using SharpGL.Enumerations;
@@ -113,6 +114,7 @@ namespace PSSL_Environment
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT | OpenGL.GL_STENCIL_BUFFER_BIT);
 
             myScene.RenderRetainedMode(gl, checkBoxUseToonShader.IsChecked.Value);
+            //myScene.RenderImmediateMode(gl);
         }
 
 
@@ -121,44 +123,33 @@ namespace PSSL_Environment
             OpenGL gl = args.OpenGL;
 
             myScene.Initialise(gl);
+
+            gl.Enable(OpenGL.GL_DEPTH_TEST);
         }
 
         private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
-            //// Get the OpenGL instance.
-            //OpenGL gl = args.OpenGL;
 
-            //// Load and clear the projection matrix.
-            //gl.MatrixMode(OpenGL.GL_PROJECTION);
-            //gl.LoadIdentity();
-
-            //// Perform a perspective transformation
-            //gl.Perspective(45.0f, (float)gl.RenderContextProvider.Width /
-            //    (float)gl.RenderContextProvider.Height,
-            //    0.1f, 100.0f);
-
-            //// Load the modelview.
-            //gl.MatrixMode(OpenGL.GL_MODELVIEW);
 
             ////  Get the OpenGL instance.
             //var gl = args.OpenGL;
 
-            ////  Create a projection matrix for the scene with the screen size.
-            //scene.CreateProjectionMatrix((float)ActualWidth, (float)ActualHeight);
-
-            ////  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
-            ////  is, so set it now.
-            //gl.MatrixMode(OpenGL.GL_PROJECTION);
-            //gl.LoadIdentity();
-            //gl.MultMatrix(scene.ProjectionMatrix.to_array());
-            //gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            ////  Create the projection matrix for the screen size.
+            //myScene.CreateProjectionMatrix(gl, (float)ActualWidth, (float)ActualHeight);
 
 
             //  Get the OpenGL instance.
             var gl = args.OpenGL;
 
-            //  Create the projection matrix for the screen size.
+            //  Create a projection matrix for the scene with the screen size.
             myScene.CreateProjectionMatrix(gl, (float)ActualWidth, (float)ActualHeight);
+
+            //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
+            //  is, so set it now.
+            gl.MatrixMode(OpenGL.GL_PROJECTION);
+            gl.LoadIdentity();
+            gl.MultMatrix(myScene.ProjectionMatrix.to_array());
+            gl.MatrixMode(OpenGL.GL_MODELVIEW);
         }
 
 
@@ -179,6 +170,8 @@ namespace PSSL_Environment
                 //textBoxScale.Text = scene.SetScaleFactorAuto().ToString();
             }
         }
+
+
 
         /// <summary>
         /// The axies, which may be drawn.
