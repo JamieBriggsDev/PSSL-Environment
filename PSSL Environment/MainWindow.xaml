@@ -83,7 +83,7 @@
             <!--Grid Column definitions to allow for 2 columns of data-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
             <!--Making tabs for the left hand side of the
             program-->
@@ -98,7 +98,16 @@
                                 <StackPanel Margin="20,5">
                                     <RadioButton GroupName="pixelColourOptions" Name="singleColour" Tag="singleColour" Checked="RadioButton_Checked">
                                         <WrapPanel>
-                                            <TextBlock Text="{StaticResource strSingleColour}"/>
+                                            <TextBlock Text="{StaticResource strSingleColour}" RenderTransformOrigin="0.5,0.5">
+                                                <TextBlock.RenderTransform>
+                                                    <TransformGroup>
+                                                        <ScaleTransform/>
+                                                        <SkewTransform/>
+                                                        <RotateTransform Angle="-0.075"/>
+                                                        <TranslateTransform/>
+                                                    </TransformGroup>
+                                                </TextBlock.RenderTransform>
+                                            </TextBlock>
                                         </WrapPanel>
                                     </RadioButton>
                                     <RadioButton GroupName="pixelColourOptions" Name="textureColour" Tag="textureColour" Checked="RadioButton_Checked">
@@ -116,13 +125,13 @@
                                 <TextBlock x:Name="PixelColourOptionTitle"/>
                                 <!--Single Colour Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=singleColour, Converter={StaticResource convVisibility}}" 
-                                            Orientation="Vertical" Margin="10,5,271,5">
+                                            Orientation="Vertical" Margin="10,5,20,5">
                                     <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please select a colour from below:</TextBlock>
                                     <wpfTool:ColorCanvas x:Name="singleColorCanvas" Height="274" Margin="26,20,26,261" SelectedColorChanged="ColorPicker_SelectedColorChanged" />
                                 </StackPanel>
                                 <!--Texture Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=textureColour, Converter={StaticResource convVisibility}}" 
-                                            Orientation="Vertical" Margin="10,5,271,5">
+                                            Orientation="Vertical" Margin="10,5,20,5">
                                     <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please load an image from file:</TextBlock>
                                     <Button Height="23" HorizontalAlignment="Left" 
                                         Margin="12,0,0,34" Name="btnLoad" VerticalAlignment="Bottom" 

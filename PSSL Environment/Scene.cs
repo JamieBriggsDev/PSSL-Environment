@@ -132,6 +132,8 @@ namespace PSSL_Environment
                 if (texture != null)
                     texture.Unbind(gl);
             }
+
+            
         }
 
         /// <summary>
@@ -184,14 +186,15 @@ namespace PSSL_Environment
                 //  http://prideout.net/blog/?p=49
                 //  This should be a sample!
 
+
                 uint mode = OpenGL.GL_TRIANGLES;
                 if (mesh.indicesPerFace == 4)
                     mode = OpenGL.GL_QUADS;
                 else if (mesh.indicesPerFace > 4)
                     mode = OpenGL.GL_POLYGON;
 
+                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
                 gl.DrawArrays(mode, 0, mesh.vertices.Length);
-
             }
 
             shader.Unbind(gl);
