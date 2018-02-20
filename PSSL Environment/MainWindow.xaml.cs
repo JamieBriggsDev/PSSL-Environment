@@ -123,7 +123,7 @@ namespace PSSL_Environment
             //  Draw the axies.
             axies.Render(gl, RenderMode.Design);
 
-            myScene.RenderRetainedMode(gl, checkBoxUseToonShader.IsChecked.Value);
+            myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
             //myScene.RenderImmediateMode(gl);
         }
 
@@ -185,6 +185,7 @@ namespace PSSL_Environment
                 //  Auto scale.
                 textBoxScale.Text = myScene.SetScaleFactorAuto().ToString();
             }
+
         }
 
 

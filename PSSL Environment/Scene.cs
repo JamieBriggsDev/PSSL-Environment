@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Media.Imaging;
 using FileFormatWavefront.Model;
 using GlmNet;
 using SharpGL;
@@ -140,7 +141,7 @@ namespace PSSL_Environment
                 if (texture != null)
                     texture.Unbind(gl);
             }
-
+            
             
         }
 
@@ -149,13 +150,20 @@ namespace PSSL_Environment
         public vec3 diffuseMaterialColor;
         public vec3 specularMaterialColor;
         public float alphaColor;
+        public Texture2D meshTexture;
+        //public SharpGL.GL
 
-        /// <summary>
-        /// Renders the scene in retained mode.
-        /// </summary>
-        /// <param name="gl">The OpenGL instance.</param>
-        /// <param name="useToonShader">if set to <c>true</c> use the toon shader, otherwise use a per-pixel shader.</param>
-        public void RenderRetainedMode(OpenGL gl, bool useToonShader)
+        public void LoadTexture(OpenGL gl, Bitmap newTexture)
+        {
+            foreach(var mesh in meshes)
+            {
+                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
+                texture.SetImage(gl, newTexture);
+            }
+        }
+
+        // Renders the scene with colour input for each of ADS
+        public void RenderColorMode(OpenGL gl, bool useToonShader)
         {
             vec3 defaultValues;
             defaultValues.x = 0.0f;
@@ -244,6 +252,98 @@ namespace PSSL_Environment
 
             shader.Unbind(gl);
         }
+        
+        // Renders the scene with a texture along with colours for ADS
+        public void RenderTextureMode(OpenGL gl, bool useToonShader)
+        {
+            vec3 defaultValues;
+            defaultValues.x = 0.0f;
+            defaultValues.y = 0.0f;
+            defaultValues.z = 0.0f;
+
+            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+            if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+            {
+                ambientMaterialColor = defaultValues;
+            }
+            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+            if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
+            {
+                diffuseMaterialColor = defaultValues;
+            }
+            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+            if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
+            {
+                specularMaterialColor = defaultValues;
+            }
+
+
+
+            //  Get a reference to the appropriate shader.
+            var shader = useToonShader ? shaderToon : shaderPerPixel;
+
+            //  Use the shader program.
+            shader.Bind(gl);
+
+            //  Set the light position.
+            shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
+
+            //  Set the matrices.
+            shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
+            shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+            shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+
+            // Set shader alpha
+            shader.SetUniform1(gl, "Alpha", alphaColor);
+
+            //  Go through each mesh and render the vertex buffer array.
+            foreach (var mesh in meshes)
+            {
+                //  If we have a material for the mesh, we'll use it. If we don't, we'll use the default material.
+                if (mesh.material != null)
+                {
+                    //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
+                    //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
+                    //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                    shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
+                        ambientMaterialColor.z);
+                    shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
+                        diffuseMaterialColor.z);
+                    shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
+                        specularMaterialColor.z);
+                    shader.SetUniform1(gl, "Shininess", mesh.material.Shininess);
+                }
+                else
+                {
+                    int i = 0;
+                    //  TODO: we should really set a default material here.
+                }
+                var vertexBufferArray = meshVertexBufferArrays[mesh];
+                vertexBufferArray.Bind(gl);
+
+
+                //  IMPORTANT: This is interesting. If you use OpenGL 2.1, you can use quads. If you move to 3.0 or onwards, 
+                //  you can only draw the triangle types - cause 3.0 onwards deprecates other types.
+                //  see: http://stackoverflow.com/questions/8041361/simple-opengl-clarification
+                //  this shows that the OpenGL mode selection works - if I choose 2.1 I can draw quads, otherwise I can't.
+                //  There's a good article on tesselating quads to triangles here:
+                //  http://prideout.net/blog/?p=49
+                //  This should be a sample!
+
+
+                uint mode = OpenGL.GL_TRIANGLES;
+                if (mesh.indicesPerFace == 4)
+                    mode = OpenGL.GL_QUADS;
+                else if (mesh.indicesPerFace > 4)
+                    mode = OpenGL.GL_POLYGON;
+
+                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
+                gl.DrawArrays(mode, 0, mesh.vertices.Length);
+            }
+
+            shader.Unbind(gl);
+        }
+
 
         private void CreateVertexBufferArray(OpenGL gl, Mesh mesh)
         {
