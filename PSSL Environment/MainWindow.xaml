@@ -8,7 +8,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
-        Title="{StaticResource strAppName}" Height="720" Width="1280" ResizeMode="NoResize"
+        Title="{StaticResource strAppName}" Height="720" Width="1280" ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
