@@ -174,19 +174,30 @@
             </TabControl>
 
 
-            <StackPanel Grid.Column="1" Margin="10,28,10,5">
+            <StackPanel Grid.Column="1" Margin="10,28,10,5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
                 <CheckBox x:Name="checkBoxUseToonShader" Content="Use Toon Shader" />
                 <TextBox x:Name="textBoxScale" />
-                <Grid Name="Viewport" Height="622">
+                <DockPanel VerticalAlignment="Center">
+                    <!--<TextBox Text="{Binding ActualHeight, 
+              RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}"/>
+                    <TextBox Text="{Binding ActualWidth, 
+              RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}"/>-->
+                </DockPanel>
+                <Grid Name="Viewport" Height="{Binding ActualHeight, 
+              RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="39*"/>
                         <ColumnDefinition Width="265*"/>
                     </Grid.ColumnDefinitions>
                     <sharpGL:OpenGLControl Name="openGlCtrl"
-                                           Margin="0,0,0,46" OpenGLDraw="OpenGLControl_OpenGLDraw"
+                                           Margin="0,0,0,126" OpenGLDraw="OpenGLControl_OpenGLDraw"
                                            OpenGLInitialized="OpenGLControl_OpenGLInitialized"
                                            RenderContextType="FBO"
-                                           FrameRate="60" DrawFPS="True"
+                                           DrawFPS="True"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch"
                                            Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"/>
                 </Grid>
             </StackPanel>

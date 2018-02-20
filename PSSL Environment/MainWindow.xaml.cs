@@ -156,7 +156,9 @@ namespace PSSL_Environment
             var gl = args.OpenGL;
 
             //  Create a projection matrix for the scene with the screen size.
+            myScene.ResizeViewport(gl, (int)ActualWidth, (int)ActualHeight);
             myScene.CreateProjectionMatrix(gl, (float)ActualWidth, (float)ActualHeight);
+
 
             //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
             //  is, so set it now.

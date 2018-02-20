@@ -88,10 +88,17 @@ namespace PSSL_Environment
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
             mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
-            mat4 translation = glm.translate(mat4.identity(), new vec3(0, -1, -4));
+            mat4 translation = glm.translate(mat4.identity(), new vec3(-1, -1, -5));
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotation * translation;
             normalMatrix = modelviewMatrix.to_mat3();
+        }
+
+        // Adjust the viewport to scale properly to avoid distorition
+        public void ResizeViewport(OpenGL gl, int screenWidth, int screenHeight)
+        {
+            gl.Viewport(0, 0, (int)screenWidth, (int)screenHeight);
+            //gl.Frustum()
         }
 
         /// <summary>
