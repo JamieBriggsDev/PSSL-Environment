@@ -135,6 +135,10 @@ namespace PSSL_Environment
             myScene.Initialise(gl);
 
             gl.Enable(OpenGL.GL_DEPTH_TEST);
+
+            // Enable transparency
+            gl.Enable(OpenGL.GL_BLEND);
+            gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
         }
 
         private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -206,7 +210,7 @@ namespace PSSL_Environment
             rgbValue.y = (float)ambientColor.G / 255;
             rgbValue.z = (float)ambientColor.B / 255;
 
-            myScene.ambientMaterialColour = rgbValue;
+            myScene.ambientMaterialColor = rgbValue;
         }
 
         private void diffuseColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
@@ -220,7 +224,7 @@ namespace PSSL_Environment
             rgbValue.y = (float)diffuseColor.G / 255;
             rgbValue.z = (float)diffuseColor.B / 255;
 
-            myScene.diffuseMaterialColour = rgbValue;
+            myScene.diffuseMaterialColor = rgbValue;
         }
 
         private void specularColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
@@ -234,7 +238,27 @@ namespace PSSL_Environment
             rgbValue.y = (float)specularColor.G / 255;
             rgbValue.z = (float)specularColor.B / 255;
 
-            myScene.specularMaterialColour = rgbValue;
+            myScene.specularMaterialColor = rgbValue;
+        }
+
+        private void colorAlphaValue_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // Get alpha value from the colorAlpha slider
+            float alpha;
+            alpha = (float)colorAlphaValue.Value;
+
+            // Safety, may not be needed but for sanity reasons it is
+            if(alpha > 1)
+            {
+                alpha = 1.0f;
+            }
+            if(alpha < 0)
+            {
+                alpha = 0.0f;
+            }
+
+            // Give the scene that alpha value
+            myScene.alphaColor = alpha;
         }
     }
 

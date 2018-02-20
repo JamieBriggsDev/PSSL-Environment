@@ -6,6 +6,7 @@ out vec4 FragColor;
 uniform vec3 LightPosition;
 uniform vec3 AmbientMaterial;
 uniform vec3 SpecularMaterial;
+uniform float Alpha;
 uniform float Shininess;
 
 float stepmix(float edge0, float edge1, float E, float x)
@@ -50,5 +51,5 @@ void main()
     }
 
     vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(color, Alpha);
 }

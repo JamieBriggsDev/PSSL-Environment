@@ -138,9 +138,10 @@ namespace PSSL_Environment
         }
 
         // Get colors from color picker
-        public vec3 ambientMaterialColour;
-        public vec3 diffuseMaterialColour;
-        public vec3 specularMaterialColour;
+        public vec3 ambientMaterialColor;
+        public vec3 diffuseMaterialColor;
+        public vec3 specularMaterialColor;
+        public float alphaColor;
 
         /// <summary>
         /// Renders the scene in retained mode.
@@ -157,17 +158,17 @@ namespace PSSL_Environment
             // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
             if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
             {
-                ambientMaterialColour = defaultValues;
+                ambientMaterialColor = defaultValues;
             }
             // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
             if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
             {
-                diffuseMaterialColour = defaultValues;
+                diffuseMaterialColor = defaultValues;
             }
             // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
             if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
             {
-                specularMaterialColour = defaultValues;
+                specularMaterialColor = defaultValues;
             }
 
 
@@ -186,6 +187,9 @@ namespace PSSL_Environment
             shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
             shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
+            // Set shader alpha
+            shader.SetUniform1(gl, "Alpha", alphaColor);
+
             //  Go through each mesh and render the vertex buffer array.
             foreach (var mesh in meshes)
             {
@@ -195,12 +199,12 @@ namespace PSSL_Environment
                     //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
                     //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
                     //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
-                    shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColour.x, ambientMaterialColour.y,
-                        ambientMaterialColour.z);
-                    shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColour.x, diffuseMaterialColour.y,
-                        diffuseMaterialColour.z);
-                    shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColour.x, specularMaterialColour.y,
-                        specularMaterialColour.z);
+                    shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
+                        ambientMaterialColor.z);
+                    shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
+                        diffuseMaterialColor.z);
+                    shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
+                        specularMaterialColor.z);
                     shader.SetUniform1(gl, "Shininess", mesh.material.Shininess);
                 }
                 else

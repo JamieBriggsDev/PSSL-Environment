@@ -132,14 +132,25 @@
                                     <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please select a colour from below:</TextBlock>
                                     <wpfTool:ColorCanvas x:Name="singleColorCanvas" Height="274" Margin="26,20,26,261" SelectedColorChanged="ColorPicker_SelectedColorChanged" />-->
                                     <TextBlock>Ambient Colour</TextBlock>
-                                    <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged" 
+                                    <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged"
+                                                         UsingAlphaChannel="False"
                                                          MaxDropDownWidth="250"/>
                                     <TextBlock>Diffuse Colour</TextBlock>
                                     <wpfTool:ColorPicker x:Name="diffuseColorPicker" SelectedColorChanged="diffuseColorPicker_SelectedColorChanged"
+                                                         UsingAlphaChannel="False"
                                                          MaxDropDownWidth="250"/>
                                     <TextBlock>Specular Colour</TextBlock>
                                     <wpfTool:ColorPicker x:Name="specularColorPicker" SelectedColorChanged="specularColorPicker_SelectedColorChanged"
+                                                         UsingAlphaChannel="False"
                                                          MaxDropDownWidth="250"/>
+                                    <TextBlock>Alpha</TextBlock>
+                                    <DockPanel VerticalAlignment="Center">
+                                        <TextBox Text="{Binding ElementName=colorAlphaValue, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                 DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                                        <Slider Maximum="1" TickPlacement="BottomRight" TickFrequency="0.1" 
+                                                Name="colorAlphaValue" ValueChanged="colorAlphaValue_ValueChanged" 
+                                                Value="1"/>
+                                    </DockPanel>
                                 </StackPanel>
                                 <!--Texture Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=textureColour, Converter={StaticResource convVisibility}}" 
