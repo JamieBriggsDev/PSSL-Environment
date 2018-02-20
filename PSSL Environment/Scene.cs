@@ -137,6 +137,11 @@ namespace PSSL_Environment
             
         }
 
+        // Get colors from color picker
+        public vec3 ambientMaterialColour;
+        public vec3 diffuseMaterialColour;
+        public vec3 specularMaterialColour;
+
         /// <summary>
         /// Renders the scene in retained mode.
         /// </summary>
@@ -144,19 +149,19 @@ namespace PSSL_Environment
         /// <param name="useToonShader">if set to <c>true</c> use the toon shader, otherwise use a per-pixel shader.</param>
         public void RenderRetainedMode(OpenGL gl, bool useToonShader)
         {
-            // Get colors from color picker
-            float matColorR = 0.0f;
-            float matColorG = 0.0f;
-            float matColorB = 0.0f;
-
-            // Checks if colour picker has a colour yet or not
-            if(((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor != null)
+            // Checks if colour picker has a colour yet or not and sets a value if it doesnt
+            if(((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor == null)
             {
-                // Get colors from color picker
-                matColorR = (float)((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor.Value.R / 255.0f;
-                matColorG = (float)((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor.Value.G / 255.0f;
-                matColorB = (float)((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor.Value.B / 255.0f;
+                vec3 defaultValues;
+                defaultValues.x = 0.0f;
+                defaultValues.y = 0.0f;
+                defaultValues.z = 0.0f;
+
+                ambientMaterialColour = defaultValues;
+                diffuseMaterialColour = defaultValues;
+                specularMaterialColour = defaultValues;
             }
+
 
 
             //  Get a reference to the appropriate shader.
@@ -182,9 +187,12 @@ namespace PSSL_Environment
                     //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
                     //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
                     //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
-                    shader.SetUniform3(gl, "DiffuseMaterial", matColorR, matColorG, matColorB);
-                    shader.SetUniform3(gl, "AmbientMaterial", matColorR, matColorG, matColorB);
-                    shader.SetUniform3(gl, "SpecularMaterial", matColorR, matColorG, matColorB);
+                    shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColour.x, ambientMaterialColour.y,
+                        ambientMaterialColour.z);
+                    shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColour.x, diffuseMaterialColour.y,
+                        diffuseMaterialColour.z);
+                    shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColour.x, specularMaterialColour.y,
+                        specularMaterialColour.z);
                     shader.SetUniform1(gl, "Shininess", mesh.material.Shininess);
                 }
                 else

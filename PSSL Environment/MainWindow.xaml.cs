@@ -78,8 +78,30 @@ namespace PSSL_Environment
             byte g = singleColorCanvas.G;
             byte b = singleColorCanvas.B;
             byte a = singleColorCanvas.A;
+
+            vec3 rgbValue;
+            rgbValue.x = (float)singleColorCanvas.R / 255;
+            rgbValue.y = (float)singleColorCanvas.G / 255;
+            rgbValue.z = (float)singleColorCanvas.B / 255;
+            
             Viewport.Background = new SolidColorBrush(Color.FromArgb(a, r, g, b));
             //scene.
+
+            // Sets ambient colour if checked
+            if(AmbientColourCheckBox.IsChecked == true)
+            {
+                myScene.ambientMaterialColour = rgbValue;
+            }
+            // Sets diffuse colour if checked
+            if (DiffuseColourCheckBox.IsChecked == true)
+            {
+                myScene.diffuseMaterialColour = rgbValue;
+            }
+            // Sets specular colour if checked
+            if (SpecularColourCheckBox.IsChecked == true)
+            {
+                myScene.specularMaterialColour = rgbValue;
+            }
         }
 
         private void btnLoad_Click(object sender, RoutedEventArgs e)

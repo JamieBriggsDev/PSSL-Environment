@@ -126,6 +126,9 @@
                                 <!--Single Colour Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=singleColour, Converter={StaticResource convVisibility}}" 
                                             Orientation="Vertical" Margin="10,5,20,5">
+                                    <CheckBox x:Name="AmbientColourCheckBox">Ambient Colour</CheckBox>
+                                    <CheckBox x:Name="DiffuseColourCheckBox">Diffuse Colour</CheckBox>
+                                    <CheckBox x:Name="SpecularColourCheckBox">Specular Colour</CheckBox>
                                     <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please select a colour from below:</TextBlock>
                                     <wpfTool:ColorCanvas x:Name="singleColorCanvas" Height="274" Margin="26,20,26,261" SelectedColorChanged="ColorPicker_SelectedColorChanged" />
                                 </StackPanel>
