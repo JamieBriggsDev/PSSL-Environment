@@ -134,11 +134,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Resources\Models\BB8\BB 8 rig 1.max" />
-    <None Include="Resources\Models\BB8\BB 8 rig 2.max" />
-    <None Include="Resources\Models\BB8\bb8.FBX" />
-    <None Include="Resources\Models\BB8\bb8.mtl" />
-    <None Include="Resources\Models\BB8\bb8.obj" />
+    <None Include="Resources\Models\bb8.obj" />
+    <None Include="Resources\Models\MenuArwing.obj" />
+    <None Include="Resources\Models\Tank.obj" />
     <None Include="Shaders\PerPixel.frag" />
     <None Include="Shaders\PerPixel.vert" />
     <None Include="Shaders\Toon.frag" />
@@ -156,23 +154,14 @@
   <ItemGroup>
     <Resource Include="Resources\cubeIcon.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Models\BB8\BODY bump line.jpg" />
-    <Resource Include="Resources\Models\BB8\BODY bump MAP.jpg" />
-    <Resource Include="Resources\Models\BB8\Body diff MAP.jpg" />
-    <Resource Include="Resources\Models\BB8\BODY Displace MAP.jpg" />
-    <Resource Include="Resources\Models\BB8\BODY self ill MAP.jpg" />
-    <Resource Include="Resources\Models\BB8\HEAD bump line.jpg" />
-    <Resource Include="Resources\Models\BB8\HEAD bump MAP.jpg" />
-    <Resource Include="Resources\Models\BB8\HEAD diff MAP.jpg" />
-    <Resource Include="Resources\Models\BB8\Head ring bump line.jpg" />
-    <Resource Include="Resources\Models\BB8\Head ring diff MAP.jpg" />
-    <Resource Include="Resources\Models\BB8\head top bump line.jpg" />
-    <Resource Include="Resources\Models\BB8\head top diff MAP.jpg" />
-    <Resource Include="Resources\Models\BB8\white dirt map.jpg" />
-    <Resource Include="Resources\Models\BB8\wildtextures-metal-sheet-scratched-brushed.jpg" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>XCOPY "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /E /I /F /Y</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

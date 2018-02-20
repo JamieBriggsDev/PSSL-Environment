@@ -111,24 +111,27 @@ namespace PSSL_Environment
 
             //  Clear the color and depth buffer.
 
-            if(singleColorCanvas.SelectedColor == null)
-            {
-                gl.ClearColor(1f, 1f, 1f, 1f);
-            }
-            else
-            {
-                //glColorx = singleColorCanvas.SelectedColor.Value.R / 255;
-                //glColory = singleColorCanvas.SelectedColor.Value.G / 255;
-                //glColorz = singleColorCanvas.SelectedColor.Value.B / 255;
-                //glColorw = singleColorCanvas.SelectedColor.Value.A / 255;
+            gl.ClearColor(1f, 1f, 1f, 1f);
+            //if(singleColorCanvas.SelectedColor == null)
+            //{
+            //}
+            //else
+            //{
+            //    //glColorx = singleColorCanvas.SelectedColor.Value.R / 255;
+            //    //glColory = singleColorCanvas.SelectedColor.Value.G / 255;
+            //    //glColorz = singleColorCanvas.SelectedColor.Value.B / 255;
+            //    //glColorw = singleColorCanvas.SelectedColor.Value.A / 255;
 
-                gl.ClearColor((float)singleColorCanvas.SelectedColor.Value.R / 255.0f,
-                              (float)singleColorCanvas.SelectedColor.Value.G / 255.0f,
-                              (float)singleColorCanvas.SelectedColor.Value.B / 255.0f,
-                              (float)singleColorCanvas.SelectedColor.Value.A / 255.0f);
+            //    gl.ClearColor((float)singleColorCanvas.SelectedColor.Value.R / 255.0f,
+            //                  (float)singleColorCanvas.SelectedColor.Value.G / 255.0f,
+            //                  (float)singleColorCanvas.SelectedColor.Value.B / 255.0f,
+            //                  (float)singleColorCanvas.SelectedColor.Value.A / 255.0f);
 
-            }
+            //}
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT | OpenGL.GL_STENCIL_BUFFER_BIT);
+
+            //  Draw the axies.
+            axies.Render(gl, RenderMode.Design);
 
             myScene.RenderRetainedMode(gl, checkBoxUseToonShader.IsChecked.Value);
             //myScene.RenderImmediateMode(gl);

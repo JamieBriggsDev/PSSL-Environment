@@ -88,8 +88,9 @@ namespace PSSL_Environment
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
             mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
-            mat4 translation = glm.translate(mat4.identity(), new vec3(0, 0, -4));
-            modelviewMatrix = rotation * translation;
+            mat4 translation = glm.translate(mat4.identity(), new vec3(0, -1, -4));
+            mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
+            modelviewMatrix = scale * rotation * translation;
             normalMatrix = modelviewMatrix.to_mat3();
         }
 
@@ -143,6 +144,20 @@ namespace PSSL_Environment
         /// <param name="useToonShader">if set to <c>true</c> use the toon shader, otherwise use a per-pixel shader.</param>
         public void RenderRetainedMode(OpenGL gl, bool useToonShader)
         {
+            // Get colors from color picker
+            float matColorR = 0.0f;
+            float matColorG = 0.0f;
+            float matColorB = 0.0f;
+
+            // Checks if colour picker has a colour yet or not
+            if(((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor != null)
+            {
+                // Get colors from color picker
+                matColorR = (float)((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor.Value.R / 255.0f;
+                matColorG = (float)((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor.Value.G / 255.0f;
+                matColorB = (float)((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor.Value.B / 255.0f;
+            }
+
 
             //  Get a reference to the appropriate shader.
             var shader = useToonShader ? shaderToon : shaderPerPixel;
@@ -164,9 +179,12 @@ namespace PSSL_Environment
                 //  If we have a material for the mesh, we'll use it. If we don't, we'll use the default material.
                 if (mesh.material != null)
                 {
-                    shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
-                    shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
-                    shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                    //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
+                    //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
+                    //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                    shader.SetUniform3(gl, "DiffuseMaterial", matColorR, matColorG, matColorB);
+                    shader.SetUniform3(gl, "AmbientMaterial", matColorR, matColorG, matColorB);
+                    shader.SetUniform3(gl, "SpecularMaterial", matColorR, matColorG, matColorB);
                     shader.SetUniform1(gl, "Shininess", mesh.material.Shininess);
                 }
                 else
