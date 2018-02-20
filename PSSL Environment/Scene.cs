@@ -149,16 +149,24 @@ namespace PSSL_Environment
         /// <param name="useToonShader">if set to <c>true</c> use the toon shader, otherwise use a per-pixel shader.</param>
         public void RenderRetainedMode(OpenGL gl, bool useToonShader)
         {
-            // Checks if colour picker has a colour yet or not and sets a value if it doesnt
-            if(((MainWindow)System.Windows.Application.Current.MainWindow).singleColorCanvas.SelectedColor == null)
-            {
-                vec3 defaultValues;
-                defaultValues.x = 0.0f;
-                defaultValues.y = 0.0f;
-                defaultValues.z = 0.0f;
+            vec3 defaultValues;
+            defaultValues.x = 0.0f;
+            defaultValues.y = 0.0f;
+            defaultValues.z = 0.0f;
 
+            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+            if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+            {
                 ambientMaterialColour = defaultValues;
+            }
+            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+            if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
+            {
                 diffuseMaterialColour = defaultValues;
+            }
+            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+            if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
+            {
                 specularMaterialColour = defaultValues;
             }
 

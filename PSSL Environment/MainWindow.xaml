@@ -126,11 +126,20 @@
                                 <!--Single Colour Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=singleColour, Converter={StaticResource convVisibility}}" 
                                             Orientation="Vertical" Margin="10,5,20,5">
-                                    <CheckBox x:Name="AmbientColourCheckBox">Ambient Colour</CheckBox>
+                                    <!--<CheckBox x:Name="AmbientColourCheckBox">Ambient Colour</CheckBox>
                                     <CheckBox x:Name="DiffuseColourCheckBox">Diffuse Colour</CheckBox>
                                     <CheckBox x:Name="SpecularColourCheckBox">Specular Colour</CheckBox>
                                     <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please select a colour from below:</TextBlock>
-                                    <wpfTool:ColorCanvas x:Name="singleColorCanvas" Height="274" Margin="26,20,26,261" SelectedColorChanged="ColorPicker_SelectedColorChanged" />
+                                    <wpfTool:ColorCanvas x:Name="singleColorCanvas" Height="274" Margin="26,20,26,261" SelectedColorChanged="ColorPicker_SelectedColorChanged" />-->
+                                    <TextBlock>Ambient Colour</TextBlock>
+                                    <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged" 
+                                                         MaxDropDownWidth="250"/>
+                                    <TextBlock>Diffuse Colour</TextBlock>
+                                    <wpfTool:ColorPicker x:Name="diffuseColorPicker" SelectedColorChanged="diffuseColorPicker_SelectedColorChanged"
+                                                         MaxDropDownWidth="250"/>
+                                    <TextBlock>Specular Colour</TextBlock>
+                                    <wpfTool:ColorPicker x:Name="specularColorPicker" SelectedColorChanged="specularColorPicker_SelectedColorChanged"
+                                                         MaxDropDownWidth="250"/>
                                 </StackPanel>
                                 <!--Texture Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=textureColour, Converter={StaticResource convVisibility}}" 
@@ -149,6 +158,7 @@
                 </TabItem>
                 <TabItem Header="Vertex Shader">
                     <!--End of vertex Shader Tab Item-->
+                   
                 </TabItem>
             </TabControl>
 
