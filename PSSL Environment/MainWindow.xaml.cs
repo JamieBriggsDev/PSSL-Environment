@@ -124,7 +124,7 @@ namespace PSSL_Environment
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT | OpenGL.GL_STENCIL_BUFFER_BIT);
 
             //  Draw the axies.
-            axies.Render(gl, RenderMode.Design);
+            //axies.Render(gl, RenderMode.Design);
 
             myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
             //myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
@@ -187,8 +187,6 @@ namespace PSSL_Environment
 
                 //  Load the data into the scene.
                 myScene.Load(openGlCtrl.OpenGL, filePath);
-
-                
 
                 //  Auto scale.
                 textBoxScale.Text = myScene.SetScaleFactorAuto().ToString();

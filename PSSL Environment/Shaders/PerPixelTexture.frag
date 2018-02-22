@@ -24,5 +24,6 @@ void main()
 
     vec4 color = vec4(AmbientMaterial + df * Diffuse + sf * SpecularMaterial, Alpha);
 	FragColor = texture2D(Texture, TexCoordV) * color;
+	//FragColor = vec4(1, TexCoordV, Alpha);
     //FragColor = vec4(texture, Alpha);
 }

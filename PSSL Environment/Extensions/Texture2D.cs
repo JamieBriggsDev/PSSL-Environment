@@ -118,6 +118,6 @@ namespace SharpGL.Textures
         public uint Width { get; private set; }
         public uint Height { get; private set; }
 
-        private uint textureObject;
+        public uint textureObject;
     }
 }

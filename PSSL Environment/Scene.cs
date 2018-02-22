@@ -47,7 +47,7 @@ namespace PSSL_Environment
                 {texCoordAttribute, "TexCoord" },
             };
 
-            //  Create the per pixel shader.
+            //  Create the per pixel shader.tr
             shaderPerPixel = new ShaderProgram();
             shaderPerPixel.Create(gl,
                 ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert"),
@@ -96,7 +96,7 @@ namespace PSSL_Environment
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
             mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
-            mat4 translation = glm.translate(mat4.identity(), new vec3(-1, -1, -5));
+            mat4 translation = glm.translate(mat4.identity(), new vec3(-1, -1, -10));
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotation * translation;
             normalMatrix = modelviewMatrix.to_mat3();
@@ -160,11 +160,11 @@ namespace PSSL_Environment
         public Texture2D meshTexture;
         //public SharpGL.GL
 
-        public void LoadTexture(OpenGL gl,Bitmap newTexture)
+        public void LoadTexture(OpenGL gl, Bitmap newTexture)
         {
-            meshTexture = new Texture2D();
-            meshTexture.SetImage(gl, newTexture);
-            AddTexture(gl, meshes, meshTexture);
+            //meshTexture = new Texture2D();
+            //meshTexture.SetImage(gl, newTexture);
+            AddTexture(gl, meshes, newTexture);
             //  Go through each mesh and give texture.
             //foreach (var mesh in meshes)
             //{
@@ -271,6 +271,7 @@ namespace PSSL_Environment
             defaultValues.y = 0.0f;
             defaultValues.z = 0.0f;
 
+
             // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
             if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
             {
@@ -306,17 +307,27 @@ namespace PSSL_Environment
             // Set shader alpha
             shader.SetUniform1(gl, "Alpha", alphaColor);
 
-            // Set shader texture
-            if(meshTexture != null)
-            {
-                GLint texLoc;
-                texLoc = shader.GetUniformLocation(gl, "Texture");
-                shader.SetUniform1(gl, meshTexture.ToString(), texLoc);
-            }
-
             //  Go through each mesh and render the vertex buffer array.
             foreach (var mesh in meshes)
             {
+                // Bind texture
+                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
+                if (texture != null)
+                {
+                    texture.Bind(gl);
+                    GLint texLoc;
+                    texLoc = shader.GetUniformLocation(gl, "Texture");
+                    gl.ActiveTexture(OpenGL.GL_TEXTURE0 + 0);
+                    gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
+                    shader.SetUniform1(gl, "Texture", 0);
+
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
+                    //gl.
+
+                }
+
+
+
                 //  If we have a material for the mesh, we'll use it. If we don't, we'll use the default material.
                 if (mesh.material != null)
                 {
@@ -340,13 +351,21 @@ namespace PSSL_Environment
                 vertexBufferArray.Bind(gl);
 
 
-                //  IMPORTANT: This is interesting. If you use OpenGL 2.1, you can use quads. If you move to 3.0 or onwards, 
-                //  you can only draw the triangle types - cause 3.0 onwards deprecates other types.
-                //  see: http://stackoverflow.com/questions/8041361/simple-opengl-clarification
-                //  this shows that the OpenGL mode selection works - if I choose 2.1 I can draw quads, otherwise I can't.
-                //  There's a good article on tesselating quads to triangles here:
-                //  http://prideout.net/blog/?p=49
-                //  This should be a sample!
+                //uint mode = OpenGL.GL_TRIANGLES;
+                //if (mesh.indicesPerFace == 4)
+                //    mode = OpenGL.GL_QUADS;
+                //else if (mesh.indicesPerFace > 4)
+                //    mode = OpenGL.GL_POLYGON;
+
+                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
+                //gl.DrawArrays(mode, 0, mesh.vertices.Length);
+                //gl.draw
+
+                // Set shader texture
+                //if (meshTexture != null)
+                //{
+
+                //}
 
 
                 uint mode = OpenGL.GL_TRIANGLES;
@@ -355,8 +374,24 @@ namespace PSSL_Environment
                 else if (mesh.indicesPerFace > 4)
                     mode = OpenGL.GL_POLYGON;
 
-                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
-                gl.DrawArrays(mode, 0, mesh.vertices.Length);
+                //  Render the group faces.
+                gl.Begin(mode);
+                for (int i = 0; i < mesh.vertices.Length; i++)
+                {
+                    gl.Vertex(mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z);
+                    if (mesh.normals != null)
+                        gl.Normal(mesh.normals[i].x, mesh.normals[i].y, mesh.normals[i].z);
+                    if (mesh.uvs != null)
+                        gl.TexCoord(mesh.uvs[i].x, mesh.uvs[i].y);
+                }
+                gl.End();
+
+                gl.Flush();
+
+
+
+                if (texture != null)
+                    texture.Unbind(gl);
             }
 
             shader.Unbind(gl);
@@ -480,18 +515,20 @@ namespace PSSL_Environment
             }
         }
 
-        private void AddTexture(OpenGL gl, IEnumerable<Mesh> meshes, Texture2D texture)
+        private void AddTexture(OpenGL gl, IEnumerable<Mesh> meshes, Bitmap image)
         {
-            foreach (var mesh in meshes.Where(m => m.material != null && m.material.TextureMapDiffuse != null))
+            foreach (var mesh in meshes.Where(m => m.uvs.Length > 0))
             {
+                meshTextures[mesh] = null;
                 //  Create a new texture and bind it.
+                var texture = new Texture2D();
                 texture.Create(gl);
                 texture.Bind(gl);
                 texture.SetParameter(gl, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);
                 texture.SetParameter(gl, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
                 texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_CLAMP_TO_EDGE);
                 texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_CLAMP_TO_EDGE);
-                texture.SetImage(gl, (Bitmap)mesh.material.TextureMapDiffuse.Image);
+                texture.SetImage(gl, image);
                 texture.Unbind(gl);
                 meshTextures[mesh] = texture;
             }

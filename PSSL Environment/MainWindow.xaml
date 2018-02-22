@@ -171,7 +171,7 @@
                     <!--End of vertex Shader Tab Item-->
                    
                 </TabItem>
-                <TabItem Header="Model Properties">
+                <TabItem Header="Model Properties" Margin="139,0,-143,0" Height="22" VerticalAlignment="Top">
                     <!--End of vertex Shader Tab Item-->
                     <TabControl>
                         <TabItem Header="Positions">
@@ -196,6 +196,7 @@
                 <TextBox x:Name="PositionDebug">Position = False</TextBox>
                 <TextBox x:Name="NormalDebug">Normal   = False</TextBox>
                 <TextBox x:Name="TexCoordDebug">Texcood= False</TextBox>
+                <CheckBox x:Name="UsingTexture"/>
                 <DockPanel VerticalAlignment="Center">
                     <!--<TextBox Text="{Binding ActualHeight, 
               RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}"/>
