@@ -1,8 +1,10 @@
 ﻿#version 130
 in vec3 EyespaceNormal;
 in vec3 Diffuse;
+in vec2 TexCoordV;
 out vec4 FragColor;
 
+uniform sampler2D Texture;
 uniform vec3 LightPosition;
 uniform vec3 AmbientMaterial;
 uniform vec3 SpecularMaterial;
@@ -20,7 +22,7 @@ void main()
     float sf = max(0.0, dot(N, H));
     sf = pow(sf, Shininess);
 
-    vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
-
-    FragColor = vec4(color, Alpha);
+    vec4 color = vec4(AmbientMaterial + df * Diffuse + sf * SpecularMaterial, Alpha);
+	FragColor = texture2D(Texture, TexCoordV) * color;
+    //FragColor = vec4(texture, Alpha);
 }

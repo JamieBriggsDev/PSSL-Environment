@@ -137,6 +137,8 @@
     <None Include="Resources\Models\bb8.obj" />
     <None Include="Resources\Models\MenuArwing.obj" />
     <None Include="Resources\Models\Tank.obj" />
+    <None Include="Shaders\PerPixelTexture.vert" />
+    <None Include="Shaders\PerPixelTexture.frag" />
     <None Include="Shaders\PerPixel.frag" />
     <None Include="Shaders\PerPixel.vert" />
     <None Include="Shaders\Toon.frag" />

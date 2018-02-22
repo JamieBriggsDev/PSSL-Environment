@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Controls;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using FileFormatWavefront.Model;
@@ -10,6 +11,10 @@ using SharpGL.Enumerations;
 using SharpGL.Shaders;
 using SharpGL.Textures;
 using SharpGL.VertexBuffers;
+using GLint = System.Int32;
+
+
+
 
 namespace PSSL_Environment
 {
@@ -34,17 +39,19 @@ namespace PSSL_Environment
             //  so that we can force both shaders to explicitly have the same locations.
             const uint positionAttribute = 0;
             const uint normalAttribute = 1;
+            const uint texCoordAttribute = 2;
             var attributeLocations = new Dictionary<uint, string>
             {
                 {positionAttribute, "Position"},
                 {normalAttribute, "Normal"},
+                {texCoordAttribute, "TexCoord" },
             };
 
             //  Create the per pixel shader.
             shaderPerPixel = new ShaderProgram();
             shaderPerPixel.Create(gl,
-                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert"),
-                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag"), attributeLocations);
+                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert"),
+                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag"), attributeLocations);
 
             //  Create the toon shader.
             shaderToon = new ShaderProgram();
@@ -153,13 +160,16 @@ namespace PSSL_Environment
         public Texture2D meshTexture;
         //public SharpGL.GL
 
-        public void LoadTexture(OpenGL gl, Bitmap newTexture)
+        public void LoadTexture(OpenGL gl,Bitmap newTexture)
         {
-            foreach(var mesh in meshes)
-            {
-                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
-                texture.SetImage(gl, newTexture);
-            }
+            meshTexture = new Texture2D();
+            meshTexture.SetImage(gl, newTexture);
+            AddTexture(gl, meshes, meshTexture);
+            //  Go through each mesh and give texture.
+            //foreach (var mesh in meshes)
+            //{
+            //    mesh.
+            //}
         }
 
         // Renders the scene with colour input for each of ADS
@@ -296,6 +306,14 @@ namespace PSSL_Environment
             // Set shader alpha
             shader.SetUniform1(gl, "Alpha", alphaColor);
 
+            // Set shader texture
+            if(meshTexture != null)
+            {
+                GLint texLoc;
+                texLoc = shader.GetUniformLocation(gl, "Texture");
+                shader.SetUniform1(gl, meshTexture.ToString(), texLoc);
+            }
+
             //  Go through each mesh and render the vertex buffer array.
             foreach (var mesh in meshes)
             {
@@ -345,7 +363,7 @@ namespace PSSL_Environment
         }
 
 
-        private void CreateVertexBufferArray(OpenGL gl, Mesh mesh)
+        private void CreateVertexBufferArray(OpenGL gl, Mesh newMesh)
         {
             //  Create and bind a vertex buffer array.
             var vertexBufferArray = new VertexBufferArray();
@@ -357,30 +375,64 @@ namespace PSSL_Environment
             verticesVertexBuffer.Create(gl);
             verticesVertexBuffer.Bind(gl);
             verticesVertexBuffer.SetData(gl, VertexAttributes.Position,
-                                 mesh.vertices.SelectMany(v => v.to_array()).ToArray(),
+                                 newMesh.vertices.SelectMany(v => v.to_array()).ToArray(),
                                  false, 3);
-            if (mesh.normals != null)
+            
+            ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDebug.Text = "Position = " + (int)newMesh.vertices.Length;
+            // Fills the Model Properties window
+            int pIndex = 0;
+            ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Clear();
+            foreach (vec3 i in newMesh.vertices)
+            {
+                string Pos = "Position[" + pIndex + "] = ( " + i.x + ", " + i.y + ", " + i.z + ")";
+                ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Add(Pos);
+                pIndex++;
+            }
+             //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.ad(_items);
+
+            if (newMesh.normals != null)
             {
                 var normalsVertexBuffer = new VertexBuffer();
                 normalsVertexBuffer.Create(gl);
                 normalsVertexBuffer.Bind(gl);
                 normalsVertexBuffer.SetData(gl, VertexAttributes.Normal,
-                                            mesh.normals.SelectMany(v => v.to_array()).ToArray(),
+                                            newMesh.normals.SelectMany(v => v.to_array()).ToArray(),
                                             false, 3);
+
+                ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDebug.Text = "Normal = " + (int)newMesh.normals.Length;
+                // Fills the Model Properties window
+                int nIndex = 0;
+                ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Clear();
+                foreach (vec3 i in newMesh.normals)
+                {
+                    string Nor = "Normal[" + nIndex + "] = ( " + i.x + ", " + i.y + ", " + i.z + ")";
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Add(Nor);
+                    nIndex++;
+                }
             }
 
-            if (mesh.uvs != null)
+            if (newMesh.uvs != null)
             {
                 var texCoordsVertexBuffer = new VertexBuffer();
                 texCoordsVertexBuffer.Create(gl);
                 texCoordsVertexBuffer.Bind(gl);
                 texCoordsVertexBuffer.SetData(gl, VertexAttributes.TexCoord,
-                                              mesh.uvs.SelectMany(v => v.to_array()).ToArray(),
+                                              newMesh.uvs.SelectMany(v => v.to_array()).ToArray(),
                                               false, 2);
+                ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDebug.Text = "Texcood = " + (int)newMesh.uvs.Length;
+                // Fills the Model Properties window
+                int tIndex = 0;
+                ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Clear();
+                foreach (vec2 i in newMesh.uvs)
+                {
+                    string Tex = "Normal[" + tIndex + "] = ( " + i.x + ", " + i.y + ")";
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Add(Tex);
+                    tIndex++;
+                }
             }
-            //  We're done creating the vertex buffer array - unbind it and add it to the dictionary.
+
             verticesVertexBuffer.Unbind(gl);
-            meshVertexBufferArrays[mesh] = vertexBufferArray;
+            meshVertexBufferArrays[newMesh] = vertexBufferArray;
         }
 
         public void Load(OpenGL gl, string objectFilePath)
@@ -416,6 +468,23 @@ namespace PSSL_Environment
             {
                 //  Create a new texture and bind it.
                 var texture = new Texture2D();
+                texture.Create(gl);
+                texture.Bind(gl);
+                texture.SetParameter(gl, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);
+                texture.SetParameter(gl, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
+                texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_CLAMP_TO_EDGE);
+                texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_CLAMP_TO_EDGE);
+                texture.SetImage(gl, (Bitmap)mesh.material.TextureMapDiffuse.Image);
+                texture.Unbind(gl);
+                meshTextures[mesh] = texture;
+            }
+        }
+
+        private void AddTexture(OpenGL gl, IEnumerable<Mesh> meshes, Texture2D texture)
+        {
+            foreach (var mesh in meshes.Where(m => m.material != null && m.material.TextureMapDiffuse != null))
+            {
+                //  Create a new texture and bind it.
                 texture.Create(gl);
                 texture.Bind(gl);
                 texture.SetParameter(gl, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);

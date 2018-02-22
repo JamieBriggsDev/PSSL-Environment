@@ -86,7 +86,10 @@ namespace PSSL_Environment
             if (op.ShowDialog() == true)
             {
                 imgPhoto.Source = new BitmapImage(new Uri(op.FileName));
+                System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap(op.FileName);
+                myScene.LoadTexture(openGlCtrl.OpenGL, myTexture);
             }
+
         }
 
         private void OpenGLControl_OpenGLDraw(object sender, OpenGLEventArgs args)
@@ -123,7 +126,8 @@ namespace PSSL_Environment
             //  Draw the axies.
             axies.Render(gl, RenderMode.Design);
 
-            myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
+            myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
+            //myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
             //myScene.RenderImmediateMode(gl);
         }
 
@@ -135,9 +139,11 @@ namespace PSSL_Environment
             myScene.Initialise(gl);
 
             gl.Enable(OpenGL.GL_DEPTH_TEST);
+            gl.Enable(OpenGL.GL_TEXTURE_2D);
 
             // Enable transparency
             gl.Enable(OpenGL.GL_BLEND);
+            //  A bit of extra initialisation here, we have to enable textures.
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
         }
 
@@ -182,10 +188,13 @@ namespace PSSL_Environment
                 //  Load the data into the scene.
                 myScene.Load(openGlCtrl.OpenGL, filePath);
 
+                
+
                 //  Auto scale.
                 textBoxScale.Text = myScene.SetScaleFactorAuto().ToString();
             }
 
+            
         }
 
 

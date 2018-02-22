@@ -13,3 +13,4 @@
         <sys:String x:Key="strColourTemplate">Template</sys:String>
     </Application.Resources>
 </Application>
+ 

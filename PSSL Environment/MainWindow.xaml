@@ -171,6 +171,20 @@
                     <!--End of vertex Shader Tab Item-->
                    
                 </TabItem>
+                <TabItem Header="Model Properties">
+                    <!--End of vertex Shader Tab Item-->
+                    <TabControl>
+                        <TabItem Header="Positions">
+                            <ListBox x:Name="PositionDataList"/>
+                        </TabItem>
+                        <TabItem Header="Normals">
+                            <ListBox x:Name="NormalDataList"/>
+                        </TabItem>
+                        <TabItem Header="TexCoords">
+                            <ListBox x:Name="TexCoordDataList"/>
+                        </TabItem>
+                    </TabControl>
+                </TabItem>
             </TabControl>
 
 
@@ -179,6 +193,9 @@
                         VerticalAlignment="Stretch">
                 <CheckBox x:Name="checkBoxUseToonShader" Content="Use Toon Shader" />
                 <TextBox x:Name="textBoxScale" />
+                <TextBox x:Name="PositionDebug">Position = False</TextBox>
+                <TextBox x:Name="NormalDebug">Normal   = False</TextBox>
+                <TextBox x:Name="TexCoordDebug">Texcood= False</TextBox>
                 <DockPanel VerticalAlignment="Center">
                     <!--<TextBox Text="{Binding ActualHeight, 
               RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}"/>
@@ -187,10 +204,6 @@
                 </DockPanel>
                 <Grid Name="Viewport" Height="{Binding ActualHeight, 
               RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="39*"/>
-                        <ColumnDefinition Width="265*"/>
-                    </Grid.ColumnDefinitions>
                     <sharpGL:OpenGLControl Name="openGlCtrl"
                                            Margin="0,0,0,126" OpenGLDraw="OpenGLControl_OpenGLDraw"
                                            OpenGLInitialized="OpenGLControl_OpenGLInitialized"
