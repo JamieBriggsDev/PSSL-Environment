@@ -141,6 +141,8 @@
     <None Include="Shaders\PerPixelTexture.frag" />
     <None Include="Shaders\PerPixel.frag" />
     <None Include="Shaders\PerPixel.vert" />
+    <None Include="Shaders\ToonTexture.vert" />
+    <None Include="Shaders\ToonTexture.frag" />
     <None Include="Shaders\Toon.frag" />
     <None Include="Shaders\Toon.vert" />
   </ItemGroup>

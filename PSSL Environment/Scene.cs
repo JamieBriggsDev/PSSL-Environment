@@ -47,11 +47,12 @@ namespace PSSL_Environment
                 {texCoordAttribute, "TexCoord" },
             };
 
+            // Create non texture shaders first
             //  Create the per pixel shader.tr
             shaderPerPixel = new ShaderProgram();
             shaderPerPixel.Create(gl,
-                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert"),
-                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag"), attributeLocations);
+                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert"),
+                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag"), attributeLocations);
 
             //  Create the toon shader.
             shaderToon = new ShaderProgram();
@@ -59,9 +60,22 @@ namespace PSSL_Environment
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag"), attributeLocations);
 
-            gl.ClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+            // Creat tecture shaders second
+            //  Create the per pixel shader.tr
+            shaderTexturedPerPixel = new ShaderProgram();
+            shaderTexturedPerPixel.Create(gl,
+                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert"),
+                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag"), attributeLocations);
 
-            //  Immediate mode only features!
+            //  Create the toon shader.
+            shaderTexturedToon = new ShaderProgram();
+            shaderTexturedToon.Create(gl,
+                ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.vert"),
+                ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.frag"), attributeLocations);
+
+            gl.ClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+
+            //  Needed to render textures in viewport
             gl.Enable(OpenGL.GL_TEXTURE_2D);
         }
 
@@ -96,7 +110,7 @@ namespace PSSL_Environment
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
             mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
-            mat4 translation = glm.translate(mat4.identity(), new vec3(-1, -1, -10));
+            mat4 translation = glm.translate(mat4.identity(), new vec3(-1, -1, -5));
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotation * translation;
             normalMatrix = modelviewMatrix.to_mat3();
@@ -152,6 +166,7 @@ namespace PSSL_Environment
             
         }
 
+        public bool usingTexture;
         // Get colors from color picker
         public vec3 ambientMaterialColor;
         public vec3 diffuseMaterialColor;
@@ -218,36 +233,20 @@ namespace PSSL_Environment
             //  Go through each mesh and render the vertex buffer array.
             foreach (var mesh in meshes)
             {
-                //  If we have a material for the mesh, we'll use it. If we don't, we'll use the default material.
-                if (mesh.material != null)
-                {
-                    //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
-                    //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
-                    //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
-                    shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
-                        ambientMaterialColor.z);
-                    shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
-                        diffuseMaterialColor.z);
-                    shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
-                        specularMaterialColor.z);
-                    shader.SetUniform1(gl, "Shininess", mesh.material.Shininess);
-                }
-                else
-                {
-                    int i = 0;
-                    //  TODO: we should really set a default material here.
-                }
+
+                //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
+                //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
+                //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
+                    ambientMaterialColor.z);
+                shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
+                    diffuseMaterialColor.z);
+                shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
+                    specularMaterialColor.z);
+                shader.SetUniform1(gl, "Shininess", (float)((MainWindow)System.Windows.Application.Current.MainWindow).shininessValue.Value);
+
                 var vertexBufferArray = meshVertexBufferArrays[mesh];
                 vertexBufferArray.Bind(gl);
-
-
-                //  IMPORTANT: This is interesting. If you use OpenGL 2.1, you can use quads. If you move to 3.0 or onwards, 
-                //  you can only draw the triangle types - cause 3.0 onwards deprecates other types.
-                //  see: http://stackoverflow.com/questions/8041361/simple-opengl-clarification
-                //  this shows that the OpenGL mode selection works - if I choose 2.1 I can draw quads, otherwise I can't.
-                //  There's a good article on tesselating quads to triangles here:
-                //  http://prideout.net/blog/?p=49
-                //  This should be a sample!
 
 
                 uint mode = OpenGL.GL_TRIANGLES;
@@ -291,7 +290,7 @@ namespace PSSL_Environment
 
 
             //  Get a reference to the appropriate shader.
-            var shader = useToonShader ? shaderToon : shaderPerPixel;
+            var shader = useToonShader ? shaderTexturedToon : shaderTexturedPerPixel;
 
             //  Use the shader program.
             shader.Bind(gl);
@@ -326,27 +325,17 @@ namespace PSSL_Environment
 
                 }
 
+                //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
+                //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
+                //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
+                    ambientMaterialColor.z);
+                shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
+                    diffuseMaterialColor.z);
+                shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
+                    specularMaterialColor.z);
+                shader.SetUniform1(gl, "Shininess", (float)((MainWindow)System.Windows.Application.Current.MainWindow).shininessValue.Value);
 
-
-                //  If we have a material for the mesh, we'll use it. If we don't, we'll use the default material.
-                if (mesh.material != null)
-                {
-                    //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
-                    //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
-                    //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
-                    shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
-                        ambientMaterialColor.z);
-                    shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
-                        diffuseMaterialColor.z);
-                    shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
-                        specularMaterialColor.z);
-                    shader.SetUniform1(gl, "Shininess", mesh.material.Shininess);
-                }
-                else
-                {
-                    int i = 0;
-                    //  TODO: we should really set a default material here.
-                }
                 var vertexBufferArray = meshVertexBufferArrays[mesh];
                 vertexBufferArray.Bind(gl);
 
@@ -559,6 +548,8 @@ namespace PSSL_Environment
         //  The shaders we use.
         private ShaderProgram shaderPerPixel;
         private ShaderProgram shaderToon;
+        private ShaderProgram shaderTexturedPerPixel;
+        private ShaderProgram shaderTexturedToon;
 
         //  The modelview, projection and normal matrices.
         private mat4 modelviewMatrix = mat4.identity();

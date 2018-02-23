@@ -22,8 +22,8 @@ void main()
     float sf = max(0.0, dot(N, H));
     sf = pow(sf, Shininess);
 
-    vec4 color = vec4(AmbientMaterial + df * Diffuse + sf * SpecularMaterial, Alpha);
-	FragColor = texture2D(Texture, TexCoordV) * color;
+    vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
+	FragColor = texture2D(Texture, TexCoordV) * vec4(color, Alpha);
 	//FragColor = vec4(1, TexCoordV, Alpha);
     //FragColor = vec4(texture, Alpha);
 }

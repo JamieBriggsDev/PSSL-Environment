@@ -147,18 +147,30 @@
                                     <DockPanel VerticalAlignment="Center">
                                         <TextBox Text="{Binding ElementName=colorAlphaValue, Path=Value, UpdateSourceTrigger=PropertyChanged}"
                                                  DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                                        <Slider Maximum="1" TickPlacement="BottomRight" TickFrequency="0.1" 
+                                        <Slider Maximum="1" TickPlacement="BottomRight" TickFrequency="0.01" 
                                                 Name="colorAlphaValue" ValueChanged="colorAlphaValue_ValueChanged" 
                                                 Value="1"/>
+                                    </DockPanel>
+                                    <TextBlock>Shininess</TextBlock>
+                                    <DockPanel VerticalAlignment="Center">
+                                        <TextBox Text="{Binding ElementName=shininessValue, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                 DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                                        <Slider Maximum="50" TickPlacement="BottomRight" TickFrequency="0.01" 
+                                                Name="shininessValue" ValueChanged="colorAlphaValue_ValueChanged" 
+                                                Value="5"/>
                                     </DockPanel>
                                 </StackPanel>
                                 <!--Texture Stack Panel-->
                                 <StackPanel Visibility="{Binding IsChecked, ElementName=textureColour, Converter={StaticResource convVisibility}}" 
                                             Orientation="Vertical" Margin="10,5,20,5">
+                                    
+                                        <TextBlock Text="Using Texture:"/>
+                                        <CheckBox x:Name="UsingTexture" DockPanel.Dock="Right" Margin="12,0,0,0"/>
+                                    
                                     <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please load an image from file:</TextBlock>
                                     <Button Height="23" HorizontalAlignment="Left" 
-                                        Margin="12,0,0,34" Name="btnLoad" VerticalAlignment="Bottom" 
-                                        Width="75" Grid.Column="1" Click="btnLoad_Click">Load Image</Button>
+                                        Margin="12,0,0,34" Name="btnImageLoad" VerticalAlignment="Bottom" 
+                                        Width="75" Grid.Column="1" Click="btnLoadImage_Click">Load Image</Button>
                                     <Image Margin="12,12,16,71" Name="imgPhoto" 
                                         Stretch="Fill" Grid.Column="1" />
                                 </StackPanel>
@@ -196,7 +208,6 @@
                 <TextBox x:Name="PositionDebug">Position = False</TextBox>
                 <TextBox x:Name="NormalDebug">Normal   = False</TextBox>
                 <TextBox x:Name="TexCoordDebug">Texcood= False</TextBox>
-                <CheckBox x:Name="UsingTexture"/>
                 <DockPanel VerticalAlignment="Center">
                     <!--<TextBox Text="{Binding ActualHeight, 
               RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}"/>

@@ -72,7 +72,7 @@ namespace PSSL_Environment
         }
 
 
-        private void btnLoad_Click(object sender, RoutedEventArgs e)
+        private void btnLoadImage_Click(object sender, RoutedEventArgs e)
         {
             // File dialog for opening an image file
             OpenFileDialog op = new OpenFileDialog();
@@ -85,6 +85,7 @@ namespace PSSL_Environment
 
             if (op.ShowDialog() == true)
             {
+                UsingTexture.IsChecked = true;
                 imgPhoto.Source = new BitmapImage(new Uri(op.FileName));
                 System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap(op.FileName);
                 myScene.LoadTexture(openGlCtrl.OpenGL, myTexture);
@@ -126,8 +127,10 @@ namespace PSSL_Environment
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
 
-            myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
-            //myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
+            if (UsingTexture.IsChecked == true)
+                myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
+            else
+                myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
             //myScene.RenderImmediateMode(gl);
         }
 
@@ -270,6 +273,7 @@ namespace PSSL_Environment
             // Give the scene that alpha value
             myScene.alphaColor = alpha;
         }
+
     }
 
 
