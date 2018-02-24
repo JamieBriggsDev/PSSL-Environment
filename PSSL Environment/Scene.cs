@@ -77,6 +77,10 @@ namespace PSSL_Environment
 
             //  Needed to render textures in viewport
             gl.Enable(OpenGL.GL_TEXTURE_2D);
+
+
+            // Set up any variables
+            modelLocation = new vec3(-1, -1, -5);
         }
 
         /// <summary>
@@ -110,7 +114,7 @@ namespace PSSL_Environment
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
             mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
-            mat4 translation = glm.translate(mat4.identity(), new vec3(-1, -1, -5));
+            mat4 translation = glm.translate(mat4.identity(), modelLocation);
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotation * translation;
             normalMatrix = modelviewMatrix.to_mat3();
@@ -167,6 +171,7 @@ namespace PSSL_Environment
         }
 
         public bool usingTexture;
+        public vec3 modelLocation;
         // Get colors from color picker
         public vec3 ambientMaterialColor;
         public vec3 diffuseMaterialColor;
@@ -309,21 +314,6 @@ namespace PSSL_Environment
             //  Go through each mesh and render the vertex buffer array.
             foreach (var mesh in meshes)
             {
-                // Bind texture
-                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
-                if (texture != null)
-                {
-                    texture.Bind(gl);
-                    GLint texLoc;
-                    texLoc = shader.GetUniformLocation(gl, "Texture");
-                    gl.ActiveTexture(OpenGL.GL_TEXTURE0 + 0);
-                    gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
-                    shader.SetUniform1(gl, "Texture", 0);
-
-                    ((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
-                    //gl.
-
-                }
 
                 //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
                 //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
@@ -356,6 +346,21 @@ namespace PSSL_Environment
 
                 //}
 
+                // Bind texture
+                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
+                if (texture != null)
+                {
+                    texture.Bind(gl);
+                    GLint texLoc;
+                    texLoc = shader.GetUniformLocation(gl, "Texture");
+                    gl.ActiveTexture(OpenGL.GL_TEXTURE0 + 0);
+                    gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
+                    shader.SetUniform1(gl, "Texture", 0);
+
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
+                    //gl.
+
+                }
 
                 uint mode = OpenGL.GL_TRIANGLES;
                 if (mesh.indicesPerFace == 4)

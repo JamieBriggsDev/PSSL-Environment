@@ -17,13 +17,15 @@ void main()
     vec3 L = normalize(LightPosition);
     vec3 E = vec3(0, 0, 1);
     vec3 H = normalize(L + E);
+
+	vec2 invTexCoordV = vec2(TexCoordV.x, 1 - TexCoordV.y);
     
     float df = max(0.0, dot(N, L));
     float sf = max(0.0, dot(N, H));
     sf = pow(sf, Shininess);
 
     vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
-	FragColor = texture2D(Texture, TexCoordV) * vec4(color, Alpha);
+	FragColor = texture2D(Texture, invTexCoordV) * vec4(color, Alpha);
 	//FragColor = vec4(1, TexCoordV, Alpha);
     //FragColor = vec4(texture, Alpha);
 }

@@ -146,6 +146,9 @@ namespace PSSL_Environment
 
             // Enable transparency
             gl.Enable(OpenGL.GL_BLEND);
+
+            gl.Enable(OpenGL.GL_CULL_FACE);
+
             //  A bit of extra initialisation here, we have to enable textures.
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
         }
@@ -274,6 +277,23 @@ namespace PSSL_Environment
             myScene.alphaColor = alpha;
         }
 
+        private void viewportModelPositionX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            float value = (float)viewportModelPositionX.Value;
+            myScene.modelLocation.x = value;
+        }
+
+        private void viewportModelPositionY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            float value = (float)viewportModelPositionY.Value;
+            myScene.modelLocation.y = value;
+        }
+
+        private void viewportModelPositionZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            float value = (float)viewportModelPositionZ.Value;
+            myScene.modelLocation.z = value;
+        }
     }
 
 
