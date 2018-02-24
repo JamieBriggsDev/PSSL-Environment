@@ -12,9 +12,7 @@ using SharpGL.Shaders;
 using SharpGL.Textures;
 using SharpGL.VertexBuffers;
 using GLint = System.Int32;
-
-
-
+using System.Threading.Tasks;
 
 namespace PSSL_Environment
 {
@@ -238,7 +236,7 @@ namespace PSSL_Environment
             //  Go through each mesh and render the vertex buffer array.
             foreach (var mesh in meshes)
             {
-
+               
                 //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
                 //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
                 //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
@@ -477,7 +475,24 @@ namespace PSSL_Environment
             //  Load the object file.
             var result = FileFormatWavefront.FileFormatObj.Load(objectFilePath, true);
 
-            meshes.AddRange(SceneDenormaliser.Denormalize(result.Model));
+            List<Mesh> denormalized = SceneDenormaliser.Denormalize(result.Model);
+            List<vec3> vertices = new List<vec3>();
+            List<vec3> normals = new List<vec3>();
+            List<vec2> uvs = new List<vec2>();
+            foreach (Mesh mesh in denormalized)
+            {
+                vertices.AddRange(mesh.vertices);
+                normals.AddRange(mesh.normals);
+                uvs.AddRange(mesh.uvs);
+            }
+            Mesh finalMesh = new Mesh
+            {
+                indicesPerFace = denormalized[0].indicesPerFace,
+                vertices = vertices.ToArray(),
+                normals = normals.ToArray(),
+                uvs = uvs.ToArray()
+            };
+            meshes.Add(finalMesh);
 
             //  Create a vertex buffer array for each mesh.
             meshes.ForEach(m => CreateVertexBufferArray(gl, m));
