@@ -142,12 +142,12 @@ namespace PSSL_Environment
             myScene.Initialise(gl);
 
             gl.Enable(OpenGL.GL_DEPTH_TEST);
-            gl.Enable(OpenGL.GL_TEXTURE_2D);
+            //gl.Enable(OpenGL.GL_TEXTURE_2D);
 
             // Enable transparency
             gl.Enable(OpenGL.GL_BLEND);
 
-            gl.Enable(OpenGL.GL_CULL_FACE);
+            //gl.Enable(OpenGL.GL_CULL_FACE);
 
             //  A bit of extra initialisation here, we have to enable textures.
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
@@ -198,7 +198,6 @@ namespace PSSL_Environment
                 textBoxScale.Text = myScene.SetScaleFactorAuto().ToString();
             }
 
-            
         }
 
 

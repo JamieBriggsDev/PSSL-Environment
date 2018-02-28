@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Windows.Controls;
 using System.Linq;
 using System.Windows.Media.Imaging;
-using FileFormatWavefront.Model;
 using GlmNet;
 using SharpGL;
 using SharpGL.Enumerations;
@@ -74,11 +73,11 @@ namespace PSSL_Environment
             gl.ClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
             //  Needed to render textures in viewport
-            gl.Enable(OpenGL.GL_TEXTURE_2D);
+            //gl.Enable(OpenGL.GL_TEXTURE_2D);
 
 
             // Set up any variables
-            modelLocation = new vec3(-1, -1, -5);
+            modelLocation = new vec3(-1, -1, -10);
         }
 
         /// <summary>
@@ -129,44 +128,43 @@ namespace PSSL_Environment
         /// Renders the scene in immediate mode.
         /// </summary>
         /// <param name="gl">The OpenGL instance.</param>
-        public void RenderImmediateMode(OpenGL gl)
-        {
-            //  Setup the modelview matrix.
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
-            gl.MultMatrix(modelviewMatrix.to_array());
+        //public void RenderImmediateMode(OpenGL gl)
+        //{
+        //    //  Setup the modelview matrix.
+        //    gl.MatrixMode(OpenGL.GL_MODELVIEW);
+        //    gl.LoadIdentity();
+        //    gl.MultMatrix(modelviewMatrix.to_array());
 
-            //  Go through each group.
-            foreach (var mesh in meshes)
-            {
-                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
-                if (texture != null)
-                    texture.Bind(gl);
 
-                uint mode = OpenGL.GL_TRIANGLES;
-                if (mesh.indicesPerFace == 4)
-                    mode = OpenGL.GL_QUADS;
-                else if (mesh.indicesPerFace > 4)
-                    mode = OpenGL.GL_POLYGON;
+        //    //var texture = meshTextures.ContainsKey(meshes) ? meshTextures[meshes] : null;
+        //    var texture = meshTextures.Value;
+        //    if (texture != null)
+        //        texture.Bind(gl);
 
-                //  Render the group faces.
-                gl.Begin(mode);
-                for (int i = 0; i < mesh.vertices.Length; i++)
-                {
-                    gl.Vertex(mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z);
-                    if (mesh.normals != null)
-                        gl.Normal(mesh.normals[i].x, mesh.normals[i].y, mesh.normals[i].z);
-                    if (mesh.uvs != null)
-                        gl.TexCoord(mesh.uvs[i].x, mesh.uvs[i].y);
-                }
-                gl.End();
+        //    uint mode = OpenGL.GL_TRIANGLES;
+        //    if (myMesh.indicesPerFace == 4)
+        //        mode = OpenGL.GL_QUADS;
+        //    else if (myMesh.indicesPerFace > 4)
+        //        mode = OpenGL.GL_POLYGON;
 
-                if (texture != null)
-                    texture.Unbind(gl);
-            }
+        //    //  Render the group faces.
+        //    gl.Begin(mode);
+        //    for (int i = 0; i < myMesh.vertices.Length; i++)
+        //    {
+        //        gl.Vertex(myMesh.vertices[i].x, myMesh.vertices[i].y, myMesh.vertices[i].z);
+        //        if (myMesh.normals != null)
+        //            gl.Normal(myMesh.normals[i].x, myMesh.normals[i].y, myMesh.normals[i].z);
+        //        if (myMesh.uvs != null)
+        //            gl.TexCoord(myMesh.uvs[i].x, myMesh.uvs[i].y);
+        //    }
+        //    gl.End();
+
+        //    if (texture != null)
+        //        texture.Unbind(gl);
             
             
-        }
+            
+        //}
 
         public bool usingTexture;
         public vec3 modelLocation;
@@ -181,8 +179,9 @@ namespace PSSL_Environment
         public void LoadTexture(OpenGL gl, Bitmap newTexture)
         {
             //meshTexture = new Texture2D();
-            //meshTexture.SetImage(gl, newTexture);
-            AddTexture(gl, meshes, newTexture);
+            meshTexture = new Texture2D();
+            meshTexture.SetImage(gl, newTexture);
+            AddTexture(gl, newTexture);
             //  Go through each mesh and give texture.
             //foreach (var mesh in meshes)
             //{
@@ -193,50 +192,50 @@ namespace PSSL_Environment
         // Renders the scene with colour input for each of ADS
         public void RenderColorMode(OpenGL gl, bool useToonShader)
         {
-            vec3 defaultValues;
-            defaultValues.x = 0.0f;
-            defaultValues.y = 0.0f;
-            defaultValues.z = 0.0f;
-
-            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-            if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+            if(myOBJ != null)
             {
-                ambientMaterialColor = defaultValues;
-            }
-            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-            if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
-            {
-                diffuseMaterialColor = defaultValues;
-            }
-            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-            if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
-            {
-                specularMaterialColor = defaultValues;
-            }
+                vec3 defaultValues;
+                defaultValues.x = 0.0f;
+                defaultValues.y = 0.0f;
+                defaultValues.z = 0.0f;
+
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+                {
+                    ambientMaterialColor = defaultValues;
+                }
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
+                {
+                    diffuseMaterialColor = defaultValues;
+                }
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
+                {
+                    specularMaterialColor = defaultValues;
+                }
 
 
 
-            //  Get a reference to the appropriate shader.
-            var shader = useToonShader ? shaderToon : shaderPerPixel;
+                //  Get a reference to the appropriate shader.
+                var shader = useToonShader ? shaderToon : shaderPerPixel;
 
-            //  Use the shader program.
-            shader.Bind(gl);
+                //  Use the shader program.
+                shader.Bind(gl);
 
-            //  Set the light position.
-            shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
+                //  Set the light position.
+                shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
 
-            //  Set the matrices.
-            shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
-            shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
-            shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+                //  Set the matrices.
+                shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
+                shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+                shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
-            // Set shader alpha
-            shader.SetUniform1(gl, "Alpha", alphaColor);
+                // Set shader alpha
+                shader.SetUniform1(gl, "Alpha", alphaColor);
 
-            //  Go through each mesh and render the vertex buffer array.
-            foreach (var mesh in meshes)
-            {
-               
+
+
                 //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
                 //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
                 //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
@@ -248,70 +247,71 @@ namespace PSSL_Environment
                     specularMaterialColor.z);
                 shader.SetUniform1(gl, "Shininess", (float)((MainWindow)System.Windows.Application.Current.MainWindow).shininessValue.Value);
 
-                var vertexBufferArray = meshVertexBufferArrays[mesh];
-                vertexBufferArray.Bind(gl);
+                var vertexBufferArray = meshVertexBufferArray;
+                //vertexBufferArray.Bind(gl);
+                gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
 
 
-                uint mode = OpenGL.GL_TRIANGLES;
-                if (mesh.indicesPerFace == 4)
-                    mode = OpenGL.GL_QUADS;
-                else if (mesh.indicesPerFace > 4)
-                    mode = OpenGL.GL_POLYGON;
+                //uint mode = OpenGL.GL_TRIANGLES;
+                //if (myMesh.indicesPerFace == 4)
+                //    mode = OpenGL.GL_QUADS;
+                //else if (myMesh.indicesPerFace > 4)
+                //    mode = OpenGL.GL_POLYGON;
 
                 //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
-                gl.DrawArrays(mode, 0, mesh.vertices.Length);
-            }
+                gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count);
 
-            shader.Unbind(gl);
+
+                shader.Unbind(gl);
+            }
+            
         }
         
         // Renders the scene with a texture along with colours for ADS
         public void RenderTextureMode(OpenGL gl, bool useToonShader)
         {
-            vec3 defaultValues;
-            defaultValues.x = 0.0f;
-            defaultValues.y = 0.0f;
-            defaultValues.z = 0.0f;
-
-
-            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-            if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+            if (myOBJ != null)
             {
-                ambientMaterialColor = defaultValues;
-            }
-            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-            if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
-            {
-                diffuseMaterialColor = defaultValues;
-            }
-            // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-            if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
-            {
-                specularMaterialColor = defaultValues;
-            }
+                vec3 defaultValues;
+                defaultValues.x = 0.0f;
+                defaultValues.y = 0.0f;
+                defaultValues.z = 0.0f;
+
+
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+                {
+                    ambientMaterialColor = defaultValues;
+                }
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
+                {
+                    diffuseMaterialColor = defaultValues;
+                }
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
+                {
+                    specularMaterialColor = defaultValues;
+                }
 
 
 
-            //  Get a reference to the appropriate shader.
-            var shader = useToonShader ? shaderTexturedToon : shaderTexturedPerPixel;
+                //  Get a reference to the appropriate shader.
+                var shader = useToonShader ? shaderTexturedToon : shaderTexturedPerPixel;
 
-            //  Use the shader program.
-            shader.Bind(gl);
+                //  Use the shader program.
+                shader.Bind(gl);
 
-            //  Set the light position.
-            shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
+                //  Set the light position.
+                shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
 
-            //  Set the matrices.
-            shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
-            shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
-            shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+                //  Set the matrices.
+                shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
+                shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+                shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
-            // Set shader alpha
-            shader.SetUniform1(gl, "Alpha", alphaColor);
-
-            //  Go through each mesh and render the vertex buffer array.
-            foreach (var mesh in meshes)
-            {
+                // Set shader alpha
+                shader.SetUniform1(gl, "Alpha", alphaColor);
 
                 //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
                 //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
@@ -324,8 +324,9 @@ namespace PSSL_Environment
                     specularMaterialColor.z);
                 shader.SetUniform1(gl, "Shininess", (float)((MainWindow)System.Windows.Application.Current.MainWindow).shininessValue.Value);
 
-                var vertexBufferArray = meshVertexBufferArrays[mesh];
-                vertexBufferArray.Bind(gl);
+                var vertexBufferArray = meshVertexBufferArray;
+                gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
+                //vertexBufferArray.Bind(gl);
 
 
                 //uint mode = OpenGL.GL_TRIANGLES;
@@ -334,7 +335,7 @@ namespace PSSL_Environment
                 //else if (mesh.indicesPerFace > 4)
                 //    mode = OpenGL.GL_POLYGON;
 
-                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
+                //gl.BufferData(OpenGL.GL_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
                 //gl.DrawArrays(mode, 0, mesh.vertices.Length);
                 //gl.draw
 
@@ -345,52 +346,61 @@ namespace PSSL_Environment
                 //}
 
                 // Bind texture
-                var texture = meshTextures.ContainsKey(mesh) ? meshTextures[mesh] : null;
+                //var texture = meshTextures(meshes) ? meshTextures[meshes] : null;
+                var texture = meshTextures.Value;
                 if (texture != null)
                 {
-                    texture.Bind(gl);
                     GLint texLoc;
                     texLoc = shader.GetUniformLocation(gl, "Texture");
-                    gl.ActiveTexture(OpenGL.GL_TEXTURE0 + 0);
+                    gl.Uniform1(texLoc, 0);
+
+                    gl.ActiveTexture(OpenGL.GL_TEXTURE0);
                     gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
-                    shader.SetUniform1(gl, "Texture", 0);
+
+                    //texture.Bind(gl);
+                    //gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
+                    //shader.SetUniform1(gl, "Texture", 0);
 
                     ((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
                     //gl.
 
                 }
 
-                uint mode = OpenGL.GL_TRIANGLES;
-                if (mesh.indicesPerFace == 4)
-                    mode = OpenGL.GL_QUADS;
-                else if (mesh.indicesPerFace > 4)
-                    mode = OpenGL.GL_POLYGON;
+                //uint mode = OpenGL.GL_TRIANGLES;
+                //if (myMesh.indicesPerFace == 4)
+                //    mode = OpenGL.GL_QUADS;
+                //else if (myMesh.indicesPerFace > 4)
+                //    mode = OpenGL.GL_POLYGON;
+
+                //gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count * 3);
+
+                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count * 
+                //    System.Runtime.InteropServices.Marshal.SizeOf(vec3), &)
 
                 //  Render the group faces.
-                gl.Begin(mode);
-                for (int i = 0; i < mesh.vertices.Length; i++)
+                gl.Begin(OpenGL.GL_QUADS);
+                for (int i = 0; i < myOBJ.VertexList.Count; i++)
                 {
-                    gl.Vertex(mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z);
-                    if (mesh.normals != null)
-                        gl.Normal(mesh.normals[i].x, mesh.normals[i].y, mesh.normals[i].z);
-                    if (mesh.uvs != null)
-                        gl.TexCoord(mesh.uvs[i].x, mesh.uvs[i].y);
+                    gl.Vertex(myOBJ.VertexList.ElementAt(i).X, myOBJ.VertexList.ElementAt(i).Y, myOBJ.VertexList.ElementAt(i).Z);
+                    if (myOBJ.NormalList.Count > 0)
+                        gl.Normal(myOBJ.NormalList.ElementAt(i).NX, myOBJ.NormalList.ElementAt(i).NY, myOBJ.NormalList.ElementAt(i).NZ);
+                    if (myOBJ.TextureList.Count > 0)
+                        gl.TexCoord(myOBJ.TextureList.ElementAt(i).X, myOBJ.TextureList.ElementAt(i).Y);
                 }
                 gl.End();
-
                 gl.Flush();
-
 
 
                 if (texture != null)
                     texture.Unbind(gl);
-            }
 
-            shader.Unbind(gl);
+                shader.Unbind(gl);
+            }
+            
         }
 
 
-        private void CreateVertexBufferArray(OpenGL gl, Mesh newMesh)
+        private void CreateVertexBufferArray(OpenGL gl, Obj newObj)
         {
             //  Create and bind a vertex buffer array.
             var vertexBufferArray = new VertexBufferArray();
@@ -402,103 +412,140 @@ namespace PSSL_Environment
             verticesVertexBuffer.Create(gl);
             verticesVertexBuffer.Bind(gl);
             verticesVertexBuffer.SetData(gl, VertexAttributes.Position,
-                                 newMesh.vertices.SelectMany(v => v.to_array()).ToArray(),
+                                 newObj.ToFloatArrayVertex(),
                                  false, 3);
             
-            ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDebug.Text = "Position = " + (int)newMesh.vertices.Length;
+            ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDebug.Text = "Position = " + (int)newObj.VertexList.Count;
             // Fills the Model Properties window
             int pIndex = 0;
             ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Clear();
-            foreach (vec3 i in newMesh.vertices)
+            foreach (var i in newObj.VertexList)
             {
-                string Pos = "Position[" + pIndex + "] = ( " + i.x + ", " + i.y + ", " + i.z + ")";
+                string Pos = "Position[" + pIndex + "] = ( " + i.X + ", " + i.Y + ", " + i.Z + ")";
                 ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Add(Pos);
                 pIndex++;
             }
-             //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.ad(_items);
+            //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.ad(_items);
 
-            if (newMesh.normals != null)
+            if (newObj.NormalList.Count > 0)
             {
                 var normalsVertexBuffer = new VertexBuffer();
                 normalsVertexBuffer.Create(gl);
                 normalsVertexBuffer.Bind(gl);
                 normalsVertexBuffer.SetData(gl, VertexAttributes.Normal,
-                                            newMesh.normals.SelectMany(v => v.to_array()).ToArray(),
+                                            newObj.ToFloatArrayNormal(),
                                             false, 3);
 
-                ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDebug.Text = "Normal = " + (int)newMesh.normals.Length;
+                ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDebug.Text = "Normal = " + (int)newObj.NormalList.Count;
                 // Fills the Model Properties window
                 int nIndex = 0;
                 ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Clear();
-                foreach (vec3 i in newMesh.normals)
+                foreach (var i in newObj.NormalList)
                 {
-                    string Nor = "Normal[" + nIndex + "] = ( " + i.x + ", " + i.y + ", " + i.z + ")";
+                    string Nor = "Normal[" + nIndex + "] = ( " + i.NX + ", " + i.NY + ", " + i.NZ + ")";
                     ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Add(Nor);
                     nIndex++;
                 }
             }
 
-            if (newMesh.uvs != null)
+            if (newObj.TextureList.Count > 0)
             {
                 var texCoordsVertexBuffer = new VertexBuffer();
                 texCoordsVertexBuffer.Create(gl);
                 texCoordsVertexBuffer.Bind(gl);
                 texCoordsVertexBuffer.SetData(gl, VertexAttributes.TexCoord,
-                                              newMesh.uvs.SelectMany(v => v.to_array()).ToArray(),
+                                              newObj.ToFloatArrayTexture(),
                                               false, 2);
-                ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDebug.Text = "Texcood = " + (int)newMesh.uvs.Length;
+                ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDebug.Text = "Texcood = " + (int)newObj.TextureList.Count;
                 // Fills the Model Properties window
                 int tIndex = 0;
                 ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Clear();
-                foreach (vec2 i in newMesh.uvs)
+                foreach (var i in newObj.TextureList)
                 {
-                    string Tex = "Normal[" + tIndex + "] = ( " + i.x + ", " + i.y + ")";
+                    string Tex = "Normal[" + tIndex + "] = ( " + i.X + ", " + i.Y + ")";
                     ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Add(Tex);
                     tIndex++;
                 }
             }
 
             verticesVertexBuffer.Unbind(gl);
-            meshVertexBufferArrays[newMesh] = vertexBufferArray;
+            //gl.
+            meshVertexBufferArray = new KeyValuePair<Obj, VertexBufferArray>(meshVertexBufferArray.Key, vertexBufferArray);
         }
 
         public void Load(OpenGL gl, string objectFilePath)
         {
             //  TODO: cleanup old files.
 
-            //  Destroy all of the vertex buffer arrays in the meshes.
-            foreach (var vertexBufferArray in meshVertexBufferArrays.Values)
-                vertexBufferArray.Delete(gl);
-            meshes.Clear();
-            meshVertexBufferArrays.Clear();
+            ////  Destroy all of the vertex buffer arrays in the meshes.
+            //foreach (var vertexBufferArray in meshVertexBufferArrays.Values)
+            //    meshVertexBufferArrays.Delete(gl);
+            //meshes.clear();
+            //meshVertexBufferArrays.Clear();
+            myOBJ = new Obj(objectFilePath);
+            //myMesh = new Mesh();
+            //myOBJ.LoadObj(objectFilePath);
+            //myOBJ.v
 
-            //  Load the object file.
-            var result = FileFormatWavefront.FileFormatObj.Load(objectFilePath, true);
+            ////  Load the object file.
+            //var result = FileFormatWavefront.FileFormatObj.Load(objectFilePath, true);
 
-            List<Mesh> denormalized = SceneDenormaliser.Denormalize(result.Model);
-            List<vec3> vertices = new List<vec3>();
-            List<vec3> normals = new List<vec3>();
-            List<vec2> uvs = new List<vec2>();
-            foreach (Mesh mesh in denormalized)
-            {
-                vertices.AddRange(mesh.vertices);
-                normals.AddRange(mesh.normals);
-                uvs.AddRange(mesh.uvs);
-            }
-            Mesh finalMesh = new Mesh
-            {
-                indicesPerFace = denormalized[0].indicesPerFace,
-                vertices = vertices.ToArray(),
-                normals = normals.ToArray(),
-                uvs = uvs.ToArray()
-            };
-            meshes.Add(finalMesh);
+            //// Add vertices to mesh.
+            //for(int i = 0; i < myOBJ.VertexList.Count; i++)
+            //{
+            //    myMesh.vertices[i].x = (float)myOBJ.VertexList.ElementAt(i).X;
+            //    myMesh.vertices[i].y = (float)myOBJ.VertexList.ElementAt(i).Y;
+            //    myMesh.vertices[i].z = (float)myOBJ.VertexList.ElementAt(i).Z;
+            //}
+
+            //// Add indices to mesh.
+            //int faceIndex = 0;
+            //for (int i = 0; i < myOBJ.FaceList.Count; i++)
+            //{
+            //    for(int j = 0; j < myOBJ.FaceList.ElementAt(i).VertexIndexList.Count(); j++)
+            //    {
+            //        myMesh.indices[faceIndex] = (uint)myOBJ.FaceList.ElementAt(i).VertexIndexList.ElementAt(j);
+            //        faceIndex++;
+            //    }
+            //}
+
+            //// Add uvs to mesh.
+            //for (int i = 0; i < myOBJ.TextureList.Count; i++)
+            //{
+            //    myMesh.uvs[i].x = (float)myOBJ.TextureList.ElementAt(i).X;
+            //    myMesh.uvs[i].y = (float)myOBJ.TextureList.ElementAt(i).Y;
+            //}
+
+            //meshes.AddRange(SceneDenormaliser.Denormalize(result.Model));
+
+
+
+            //List<Mesh> denormalized = SceneDenormaliser.Denormalize(result.Model);
+            //List<vec3> vertices = new List<vec3>();
+            //List<vec3> normals = new List<vec3>();
+            //List<vec2> uvs = new List<vec2>();
+            //foreach (Mesh mesh in denormalized)
+            //{
+            //    vertices.AddRange(mesh.vertices);
+            //    normals.AddRange(mesh.normals);
+            //    uvs.AddRange(mesh.uvs);
+            //}
+            //Mesh finalMesh = new Mesh
+            //{
+            //    indicesPerFace = denormalized[0].indicesPerFace,
+            //    vertices = vertices.ToArray(),
+            //    normals = normals.ToArray(),
+            //    uvs = uvs.ToArray()
+            //};
+            //meshes.Add(finalMesh);
 
             //  Create a vertex buffer array for each mesh.
-            meshes.ForEach(m => CreateVertexBufferArray(gl, m));
+
+            //meshes.ForEach(m => CreateVertexBufferArray(gl, m));
+            CreateVertexBufferArray(gl, myOBJ);
 
             //  Create textures for each texture map.
-            CreateTextures(gl, meshes);
+            //CreateTextures(gl, meshes);
 
             //  TODO: handle errors and warnings.
 
@@ -506,41 +553,35 @@ namespace PSSL_Environment
 
         }
 
-        private void CreateTextures(OpenGL gl, IEnumerable<Mesh> meshes)
-        {
-            foreach (var mesh in meshes.Where(m => m.material != null && m.material.TextureMapDiffuse != null))
-            {
-                //  Create a new texture and bind it.
-                var texture = new Texture2D();
-                texture.Create(gl);
-                texture.Bind(gl);
-                texture.SetParameter(gl, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);
-                texture.SetParameter(gl, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
-                texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_CLAMP_TO_EDGE);
-                texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_CLAMP_TO_EDGE);
-                texture.SetImage(gl, (Bitmap)mesh.material.TextureMapDiffuse.Image);
-                texture.Unbind(gl);
-                meshTextures[mesh] = texture;
-            }
-        }
+        //private void CreateTextures(OpenGL gl, Obj mesh)
+        //{
+        //    //  Create a new texture and bind it.
+        //    var texture = new Texture2D();
+        //    texture.Create(gl);
+        //    texture.Bind(gl);
+        //    texture.SetParameter(gl, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);
+        //    texture.SetParameter(gl, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
+        //    texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_CLAMP_TO_EDGE);
+        //    texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_CLAMP_TO_EDGE);
+        //    texture.SetImage(gl, (Bitmap)mesh.material.TextureMapDiffuse.Image);
+        //    texture.Unbind(gl);
+        //    meshTextures = new KeyValuePair<Obj, Texture2D>(meshTextures.Key, texture);
+        //}
 
-        private void AddTexture(OpenGL gl, IEnumerable<Mesh> meshes, Bitmap image)
+        private void AddTexture(OpenGL gl, Bitmap image)
         {
-            foreach (var mesh in meshes.Where(m => m.uvs.Length > 0))
-            {
-                meshTextures[mesh] = null;
-                //  Create a new texture and bind it.
-                var texture = new Texture2D();
-                texture.Create(gl);
-                texture.Bind(gl);
-                texture.SetParameter(gl, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);
-                texture.SetParameter(gl, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
-                texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_CLAMP_TO_EDGE);
-                texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_CLAMP_TO_EDGE);
-                texture.SetImage(gl, image);
-                texture.Unbind(gl);
-                meshTextures[mesh] = texture;
-            }
+
+            //meshTextures[meshes] = null;
+            //  Create a new texture and bind it.
+            var texture = new Texture2D();
+            texture.Create(gl);
+            texture.Bind(gl);
+            texture.SetImage(gl, image);
+            texture.SetParameter(gl, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);
+            texture.SetParameter(gl, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
+            texture.Unbind(gl);
+            meshTextures = new KeyValuePair<Obj, Texture2D>(meshTextures.Key, texture);
+
         }
 
         /// <summary>
@@ -560,10 +601,11 @@ namespace PSSL_Environment
             get { return projectionMatrix; }
         }
 
+        private Obj myOBJ;
 
-        private readonly List<Mesh> meshes = new List<Mesh>();
-        private readonly Dictionary<Mesh, VertexBufferArray> meshVertexBufferArrays = new Dictionary<Mesh, VertexBufferArray>();
-        private readonly Dictionary<Mesh, Texture2D> meshTextures = new Dictionary<Mesh, Texture2D>();
+        //private Mesh myMesh;
+        private KeyValuePair<Obj, VertexBufferArray> meshVertexBufferArray = new KeyValuePair<Obj, VertexBufferArray>();
+        private KeyValuePair<Obj, Texture2D> meshTextures = new KeyValuePair<Obj, Texture2D>();
 
         //  The shaders we use.
         private ShaderProgram shaderPerPixel;
@@ -588,21 +630,21 @@ namespace PSSL_Environment
             //  0.02 good for inet models.
 
             //  If we have no meshes, just use 1.0f.
-            if (!meshes.Any())
+            if (myOBJ == null)
             {
                 scaleFactor = 1.0f;
                 return scaleFactor;
             }
 
             //  Find the maximum vertex value.
-            var maxX = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.x));
-            var maxY = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.y));
-            var maxZ = meshes.SelectMany(m => m.vertices).AsParallel().Max(v => Math.Abs(v.z));
+            var maxX = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.X));
+            var maxY = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.Y));
+            var maxZ = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.Z));
             var max = (new[] { maxX, maxY, maxZ }).Max();
 
             //  Set the scale factor accordingly.
             //  sf = max/c
-            scaleFactor = 2.0f / max;
+            scaleFactor = 2.0f / (float)max;
             return scaleFactor;
         }
     }

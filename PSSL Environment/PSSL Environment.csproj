@@ -36,19 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FileFormatWavefront, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FileFormatWavefront.1.0.3.0\lib\net40\FileFormatWavefront.dll</HintPath>
-    </Reference>
     <Reference Include="GlmNet, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlmNet.0.5.1.0\lib\net40\GlmNet.dll</HintPath>
-    </Reference>
-    <Reference Include="Meshellator, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Meshellator.2.1.0\lib\net40\Meshellator.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Nexus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nexus.2.1.0\lib\net40\Nexus.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="SharpGL, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpGL.2.4.0.0\lib\net40\SharpGL.dll</HintPath>
@@ -102,7 +91,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Extensions\Texture2D.cs" />
+    <Compile Include="Extent.cs" />
     <Compile Include="ManifestResourceLoader.cs" />
+    <Compile Include="Obj.cs" />
+    <Compile Include="ObjTypes\Face.cs" />
+    <Compile Include="ObjTypes\TextureVertex.cs" />
+    <Compile Include="ObjTypes\Type.cs" />
+    <Compile Include="ObjTypes\Normal.cs" />
+    <Compile Include="ObjTypes\Vertex.cs" />
     <Compile Include="PropertyGridView.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneDenormaliser.cs" />
@@ -203,6 +199,7 @@
     <Resource Include="Resources\Models\white dirt map.jpg" />
     <Resource Include="Resources\Models\wildtextures-metal-sheet-scratched-brushed.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>XCOPY "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /E /I /F /Y</PostBuildEvent>
