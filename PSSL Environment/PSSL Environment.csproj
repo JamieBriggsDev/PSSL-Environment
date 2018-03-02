@@ -154,6 +154,8 @@
     <None Include="Resources\Models\Crow\Crow\CROW.OBJ" />
     <None Include="Resources\Models\Cube.mtl" />
     <None Include="Resources\Models\Cube.obj" />
+    <None Include="Resources\Models\Cube\Cube.mtl" />
+    <None Include="Resources\Models\Cube\Cube.obj" />
     <None Include="Resources\Models\MenuArwing.obj" />
     <None Include="Resources\Models\Tank.obj" />
     <None Include="Shaders\PerPixelTexture.vert" />
@@ -199,7 +201,9 @@
     <Resource Include="Resources\Models\white dirt map.jpg" />
     <Resource Include="Resources\Models\wildtextures-metal-sheet-scratched-brushed.jpg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Models\Cube\pCubeShape1_color.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>XCOPY "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /E /I /F /Y</PostBuildEvent>
