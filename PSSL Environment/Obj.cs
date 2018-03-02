@@ -20,6 +20,7 @@ namespace PSSL_Environment
         public List<uint> NormalIndices;
         public List<uint> UVIndices;
 
+        public int IndicesPerFace;
         public Obj(string path)
         {
             VertexList = new List<Vertex>();
@@ -185,6 +186,8 @@ namespace PSSL_Environment
             {
                 processLine(line);
             }
+
+            IndicesPerFace = Face.IndicesPerFace;
 
             updateSize();
         }

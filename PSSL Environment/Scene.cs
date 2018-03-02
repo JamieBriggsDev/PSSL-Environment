@@ -252,14 +252,14 @@ namespace PSSL_Environment
                 gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
 
 
-                //uint mode = OpenGL.GL_TRIANGLES;
-                //if (myMesh.indicesPerFace == 4)
-                //    mode = OpenGL.GL_QUADS;
-                //else if (myMesh.indicesPerFace > 4)
-                //    mode = OpenGL.GL_POLYGON;
+                uint mode = OpenGL.GL_TRIANGLES;
+                if (myOBJ.IndicesPerFace == 4)
+                    mode = OpenGL.GL_QUADS;
+                else if (myOBJ.IndicesPerFace > 4)
+                    mode = OpenGL.GL_POLYGON;
 
+                gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
                 //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
-                gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count);
 
 
                 shader.Unbind(gl);
@@ -374,21 +374,30 @@ namespace PSSL_Environment
 
                 //gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count * 3);
 
+
+                uint mode = OpenGL.GL_TRIANGLES;
+                if (myOBJ.IndicesPerFace == 4)
+                    mode = OpenGL.GL_QUADS;
+                else if (myOBJ.IndicesPerFace > 4)
+                    mode = OpenGL.GL_POLYGON;
+
+                gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
+
                 //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count * 
                 //    System.Runtime.InteropServices.Marshal.SizeOf(vec3), &)
 
                 //  Render the group faces.
-                gl.Begin(OpenGL.GL_QUADS);
-                for (int i = 0; i < myOBJ.VertexList.Count; i++)
-                {
-                    gl.Vertex(myOBJ.VertexList.ElementAt(i).X, myOBJ.VertexList.ElementAt(i).Y, myOBJ.VertexList.ElementAt(i).Z);
-                    if (myOBJ.NormalList.Count > 0)
-                        gl.Normal(myOBJ.NormalList.ElementAt(i).NX, myOBJ.NormalList.ElementAt(i).NY, myOBJ.NormalList.ElementAt(i).NZ);
-                    if (myOBJ.TextureList.Count > 0)
-                        gl.TexCoord(myOBJ.TextureList.ElementAt(i).X, myOBJ.TextureList.ElementAt(i).Y);
-                }
-                gl.End();
-                gl.Flush();
+                //gl.Begin(OpenGL.GL_QUADS);
+                //for (int i = 0; i < myOBJ.VertexList.Count; i++)
+                //{
+                //    gl.Vertex(myOBJ.VertexList.ElementAt(i).X, myOBJ.VertexList.ElementAt(i).Y, myOBJ.VertexList.ElementAt(i).Z);
+                //    if (myOBJ.NormalList.Count > 0)
+                //        gl.Normal(myOBJ.NormalList.ElementAt(i).NX, myOBJ.NormalList.ElementAt(i).NY, myOBJ.NormalList.ElementAt(i).NZ);
+                //    if (myOBJ.TextureList.Count > 0)
+                //        gl.TexCoord(myOBJ.TextureList.ElementAt(i).X, myOBJ.TextureList.ElementAt(i).Y);
+                //}
+                //gl.End();
+                //gl.Flush();
 
 
                 if (texture != null)

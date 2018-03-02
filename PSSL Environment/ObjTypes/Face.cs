@@ -12,6 +12,8 @@ namespace PSSL_Environment.ObjTypes
         public const int MinimumDataLength = 4;
         public const string Prefix = "f";
 
+        public static int IndicesPerFace = 0;
+
         public string UseMtl { get; set; }
         public int[] VertexIndexList { get; set; }
         public int[] NormalIndexList { get; set; }
@@ -60,6 +62,8 @@ namespace PSSL_Environment.ObjTypes
                     }
                 }
             }
+
+            IndicesPerFace = vcount;
         }
 
         // HACKHACK this will write invalid files if there are no texture vertices in
