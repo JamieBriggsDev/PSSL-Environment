@@ -205,31 +205,37 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="25" />
                             <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Column="0">Model Position = </TextBlock>
-                        <wpfTool:DoubleUpDown x:Name="viewportModelPositionX"  
-                                              Grid.Column="1" Minimum="-5" Maximum="5"
-                                              Increment="0.25"
-                                              Value="-1.0"
-                                              ValueChanged="viewportModelPositionX_ValueChanged"/>
-                        <wpfTool:DoubleUpDown x:Name="viewportModelPositionY"  
-                                              Grid.Column="2" Minimum="-5" Maximum="5"
-                                              Increment="0.25"
-                                              Value="-1.0"
-                                              ValueChanged="viewportModelPositionY_ValueChanged"/>
-                        
-                        <wpfTool:DoubleUpDown x:Name="viewportModelPositionZ"  
-                                              Grid.Column="3" Minimum="-15" Maximum="-1"
-                                              Increment="1.0"
-                                              Value="-5.0"
-                                              ValueChanged="viewportModelPositionZ_ValueChanged"/>
+                        <TextBox Text="{Binding ElementName=positionX, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                    Grid.Column="1" Grid.Row="0"             
+                                    DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                        <Slider Maximum="5" Minimum="-5" TickPlacement="Both" TickFrequency="0.5" 
+                                                Name="positionX" ValueChanged="positionX_ValueChanged" 
+                                                Value="-1" Orientation="Vertical" Height="60"
+                                                Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right"/>
+                        <TextBox Text="{Binding ElementName=positionY, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                    Grid.Column="2" Grid.Row="0"             
+                                    DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                        <Slider Maximum="5" Minimum="-5" TickPlacement="Both" TickFrequency="0.5" 
+                                                Name="positionY" ValueChanged="positionY_ValueChanged" 
+                                                Value="-1" Orientation="Vertical" Height="60"
+                                                Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right"/>
+                        <TextBox Text="{Binding ElementName=positionZ, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                    Grid.Column="3" Grid.Row="0"             
+                                    DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                        <Slider Maximum="-5" Minimum="-15" TickPlacement="Both" TickFrequency="0.5" 
+                                                Name="positionZ" ValueChanged="positionZ_ValueChanged" 
+                                                Value="-10" Orientation="Vertical" Height="60"
+                                                Grid.Column="3" Grid.Row="1" HorizontalAlignment="Right"/>
                     </Grid>
                 </TabItem>
             </TabControl>
@@ -258,7 +264,8 @@
                                            DrawFPS="True"
                                            HorizontalAlignment="Stretch"
                                            VerticalAlignment="Stretch"
-                                           Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"/>
+                                           Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"
+                                           Cursor="Cross"/>
                 </Grid>
             </StackPanel>
 

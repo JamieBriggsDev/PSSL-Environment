@@ -33,6 +33,19 @@ namespace PSSL_Environment
 
     public partial class MainWindow : Window
     {
+        public const UInt32 SPI_GETMOUSESPEED = 0x0070;
+
+
+        const UInt32 SPIF_UPDATEINIFILE = 0x01;
+        const UInt32 SPIF_SENDWININICHANGE = 0x02;
+
+        [System.Runtime.InteropServices.DllImport("User32.dll")]
+        static extern Boolean SystemParametersInfo(
+            UInt32 uiAction,
+            UInt32 uiParam,
+            IntPtr pvParam,
+            UInt32 fWinIni);
+
         public MainWindow()
         {
             InitializeComponent();
@@ -276,21 +289,19 @@ namespace PSSL_Environment
             myScene.alphaColor = alpha;
         }
 
-        private void viewportModelPositionX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void positionX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)viewportModelPositionX.Value;
+            float value = (float)positionX.Value;
             myScene.modelLocation.x = value;
         }
-
-        private void viewportModelPositionY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void positionY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)viewportModelPositionY.Value;
+            float value = (float)positionY.Value;
             myScene.modelLocation.y = value;
         }
-
-        private void viewportModelPositionZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void positionZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)viewportModelPositionZ.Value;
+            float value = (float)positionZ.Value;
             myScene.modelLocation.z = value;
         }
     }
