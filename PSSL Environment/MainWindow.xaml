@@ -265,6 +265,7 @@
                                            HorizontalAlignment="Stretch"
                                            VerticalAlignment="Stretch"
                                            Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"
+                                           
                                            Cursor="Cross"/>
                 </Grid>
             </StackPanel>
