@@ -141,19 +141,16 @@ namespace PSSL_Environment
 
             myScene.Initialise(gl);
 
-            //gl.Enable(OpenGL.GL_DEPTH_TEST);
+            gl.Enable(OpenGL.GL_DEPTH_TEST);
             //gl.Enable(OpenGL.GL_TEXTURE_2D);
 
             // Enable transparency
             gl.Enable(OpenGL.GL_BLEND);
 
-            gl.Enable(OpenGL.GL_POLYGON_SMOOTH);
-
             //gl.Enable(OpenGL.GL_CULL_FACE);
 
             //  A bit of extra initialisation here, we have to enable textures.
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
-            //gl.BlendFunc(OpenGL.GL_SRC_ALPHA_SATURATE, OpenGL.GL_ONE);
         }
 
         private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
