@@ -26,9 +26,6 @@ namespace PSSL_Environment
     /// </summary>
     public class Scene
     {
-        // Camera
-        public float horizontalAngle;
-        public float verticalAngle;
         /// <summary>
         /// Initialises the Scene.
         /// </summary>
@@ -81,10 +78,7 @@ namespace PSSL_Environment
 
             // Set up any variables
             modelLocation = new vec3(-1, -1, -10);
-            // Camera
-            horizontalAngle = 0.0f;
-            verticalAngle = 0.0f;
-    }
+        }
 
         /// <summary>
         /// Creates the projection matrix for the given screen size.
