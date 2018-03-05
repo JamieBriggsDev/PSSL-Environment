@@ -135,7 +135,8 @@
                                     <TextBlock>Ambient Colour</TextBlock>
                                     <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged"
                                                          UsingAlphaChannel="False"
-                                                         MaxDropDownWidth="250"/>
+                                                         MaxDropDownWidth="250"
+                                                         AvailableColorsSortingMode="HueSaturationBrightness"/>
                                     <TextBlock>Diffuse Colour</TextBlock>
                                     <wpfTool:ColorPicker x:Name="diffuseColorPicker" SelectedColorChanged="diffuseColorPicker_SelectedColorChanged"
                                                          UsingAlphaChannel="False"
@@ -265,7 +266,9 @@
                                            HorizontalAlignment="Stretch"
                                            VerticalAlignment="Stretch"
                                            Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"
-                                           Cursor="Cross"/>
+                                           Cursor="Cross"
+                                           
+                                           />
                 </Grid>
             </StackPanel>
 

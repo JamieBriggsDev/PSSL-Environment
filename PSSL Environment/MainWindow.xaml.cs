@@ -91,6 +91,9 @@ namespace PSSL_Environment
                 myScene.LoadTexture(openGlCtrl.OpenGL, myTexture);
             }
 
+            ambientColorPicker.SelectedColor = Color.FromRgb(255, 255, 255);
+            //ambientColorPicker.SelectedColorChanged();
+
         }
 
         private void OpenGLControl_OpenGLDraw(object sender, OpenGLEventArgs args)
@@ -122,7 +125,7 @@ namespace PSSL_Environment
             //                  (float)singleColorCanvas.SelectedColor.Value.A / 255.0f);
 
             //}
-            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT | OpenGL.GL_STENCIL_BUFFER_BIT);
+            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
 
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
@@ -141,16 +144,44 @@ namespace PSSL_Environment
 
             myScene.Initialise(gl);
 
-            gl.Enable(OpenGL.GL_DEPTH_TEST);
-            //gl.Enable(OpenGL.GL_TEXTURE_2D);
-
             // Enable transparency
             gl.Enable(OpenGL.GL_BLEND);
 
-            //gl.Enable(OpenGL.GL_CULL_FACE);
+            //gl.Enable(OpenGL.GL_DEPTH_TEST);
+
+            //gl.Enable(OpenGL.GL_DEPTH_RENDERABLE);
+
+            gl.Enable(OpenGL.GL_DEPTH);
 
             //  A bit of extra initialisation here, we have to enable textures.
+            gl.BlendEquation(OpenGL.GL_ADD);
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
+
+
+            //gl.Enable(OpenGL.GL_DOUBLEBUFFER);
+
+            //gl.Enable(OpenGL.GL_TEXTURE_2D);
+            //// Enable antialiasing
+            //gl.Enable(OpenGL.GL_POINT_SMOOTH);
+            gl.Enable(OpenGL.GL_LINE_SMOOTH);
+            //gl.Enable(OpenGL.GL_POLYGON_SMOOTH);
+            //// Telling the OpenGL driver how to do polygon smoothing antialiasing
+            //gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
+            gl.Hint(OpenGL.GL_LINE_SMOOTH_HINT, OpenGL.GL_NICEST);
+            //gl.Hint(OpenGL.GL_POLYGON_SMOOTH_HINT, OpenGL.GL_NICEST);
+
+            gl.LineWidth(1.5f);
+            //SharpGL.RenderContextType
+
+
+
+
+            //gl.Enable(OpenGL.GL_MULTISAMPLE);
+
+            //gl.ShadeModel(OpenGL.GL_SMOOTH);
+
+            //gl.Enable(OpenGL.GL_CULL_FACE);
+
         }
 
         private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -276,21 +307,19 @@ namespace PSSL_Environment
             myScene.alphaColor = alpha;
         }
 
-        private void viewportModelPositionX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void positionX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)viewportModelPositionX.Value;
+            float value = (float)positionX.Value;
             myScene.modelLocation.x = value;
         }
-
-        private void viewportModelPositionY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void positionY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)viewportModelPositionY.Value;
+            float value = (float)positionY.Value;
             myScene.modelLocation.y = value;
         }
-
-        private void viewportModelPositionZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void positionZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            float value = (float)viewportModelPositionZ.Value;
+            float value = (float)positionZ.Value;
             myScene.modelLocation.z = value;
         }
     }

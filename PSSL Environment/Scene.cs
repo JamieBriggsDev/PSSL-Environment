@@ -251,6 +251,7 @@ namespace PSSL_Environment
                 //vertexBufferArray.Bind(gl);
                 gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
 
+                
 
                 uint mode = OpenGL.GL_TRIANGLES;
                 if (myOBJ.IndicesPerFace == 4)
@@ -258,7 +259,11 @@ namespace PSSL_Environment
                 else if (myOBJ.IndicesPerFace > 4)
                     mode = OpenGL.GL_POLYGON;
 
+                gl.Enable(OpenGL.GL_DEPTH);
                 gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
+                gl.Disable(OpenGL.GL_DEPTH);
+
+               
                 //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
 
 
