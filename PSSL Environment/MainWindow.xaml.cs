@@ -157,7 +157,7 @@ namespace PSSL_Environment
             gl.BlendEquation(OpenGL.GL_ADD);
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
 
-
+            //gl.Enable(OpenGL.GL_FPS)
             //gl.Enable(OpenGL.GL_DOUBLEBUFFER);
 
             //gl.Enable(OpenGL.GL_TEXTURE_2D);
@@ -170,7 +170,7 @@ namespace PSSL_Environment
             //gl.Hint(OpenGL.GL_LINE_SMOOTH_HINT, OpenGL.GL_NICEST);
             //gl.Hint(OpenGL.GL_POLYGON_SMOOTH_HINT, OpenGL.GL_NICEST);
 
-            gl.LineWidth(1.5f);
+            //gl.LineWidth(0.0f);
             //SharpGL.RenderContextType
 
 
@@ -341,6 +341,31 @@ namespace PSSL_Environment
         {
             float value = (float)rotationZ.Value;
             myScene.modelRotation.z = value;
+        }
+
+
+        private void SmoothingEnabled_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkBox = sender as CheckBox;
+            var gl = openGlCtrl.OpenGL;
+            if(checkBox.IsChecked == true)
+            {
+                //gl.BlendFunc(OpenGL.GL_SRC_ALPHA_SATURATE, OpenGL.GL_ONE);
+                gl.Enable(OpenGL.GL_POINT_SMOOTH);
+                gl.Enable(OpenGL.GL_LINE_SMOOTH);
+                gl.Enable(OpenGL.GL_POLYGON_SMOOTH);
+                // Telling the OpenGL driver how to do polygon smoothing antialiasing
+                gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
+                gl.Hint(OpenGL.GL_LINE_SMOOTH_HINT, OpenGL.GL_NICEST);
+                gl.Hint(OpenGL.GL_POLYGON_SMOOTH_HINT, OpenGL.GL_NICEST);
+            }
+            else
+            {
+                gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
+                gl.Disable(OpenGL.GL_POINT_SMOOTH);
+                gl.Disable(OpenGL.GL_LINE_SMOOTH);
+                gl.Disable(OpenGL.GL_POLYGON_SMOOTH);
+            }
         }
     }
 

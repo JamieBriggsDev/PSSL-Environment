@@ -72,7 +72,7 @@ namespace PSSL_Environment
                 ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.frag"), attributeLocations);
 
-            gl.ClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+            gl.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
             //  Needed to render textures in viewport
             //gl.Enable(OpenGL.GL_TEXTURE_2D);
@@ -80,7 +80,7 @@ namespace PSSL_Environment
 
             // Set up any variables
             modelLocation = new vec3(-1, -1, -10);
-            modelRotation = new vec3(0, 0, 0);
+            modelRotation = new vec3(0, 1, 0);
         }
 
         /// <summary>
