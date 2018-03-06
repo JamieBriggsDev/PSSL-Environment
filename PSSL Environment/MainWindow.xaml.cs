@@ -163,11 +163,11 @@ namespace PSSL_Environment
             //gl.Enable(OpenGL.GL_TEXTURE_2D);
             //// Enable antialiasing
             //gl.Enable(OpenGL.GL_POINT_SMOOTH);
-            gl.Enable(OpenGL.GL_LINE_SMOOTH);
+            //gl.Enable(OpenGL.GL_LINE_SMOOTH);
             //gl.Enable(OpenGL.GL_POLYGON_SMOOTH);
             //// Telling the OpenGL driver how to do polygon smoothing antialiasing
             //gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
-            gl.Hint(OpenGL.GL_LINE_SMOOTH_HINT, OpenGL.GL_NICEST);
+            //gl.Hint(OpenGL.GL_LINE_SMOOTH_HINT, OpenGL.GL_NICEST);
             //gl.Hint(OpenGL.GL_POLYGON_SMOOTH_HINT, OpenGL.GL_NICEST);
 
             gl.LineWidth(1.5f);
@@ -203,6 +203,8 @@ namespace PSSL_Environment
             myScene.CreateProjectionMatrix(gl, (float)ActualWidth, (float)ActualHeight);
 
 
+
+
             //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
             //  is, so set it now.
             gl.MatrixMode(OpenGL.GL_PROJECTION);
@@ -216,7 +218,7 @@ namespace PSSL_Environment
         {
             // Create a file open dialog
             var fileOpenDialog = new OpenFileDialog();
-            fileOpenDialog.Filter = "Wavefront Files (*.obj)|*.obj|All Files (*.*)|*.*";
+            fileOpenDialog.Filter = "Wavefront Files (*.obj)|*.obj";
             if(fileOpenDialog.ShowDialog(this) == true)
             {
                 //  Get the path.
@@ -226,7 +228,7 @@ namespace PSSL_Environment
                 myScene.Load(openGlCtrl.OpenGL, filePath);
 
                 //  Auto scale.
-                textBoxScale.Text = myScene.SetScaleFactorAuto().ToString();
+                myScene.SetScaleFactorAuto().ToString();
             }
 
         }
@@ -321,6 +323,24 @@ namespace PSSL_Environment
         {
             float value = (float)positionZ.Value;
             myScene.modelLocation.z = value;
+        }
+
+        private void rotationX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)rotationX.Value;
+            myScene.modelRotation.x = value;
+        }
+
+        private void rotationY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)rotationY.Value;
+            myScene.modelRotation.y = value;
+        }
+
+        private void rotationZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)rotationZ.Value;
+            myScene.modelRotation.z = value;
         }
     }
 

@@ -12,6 +12,8 @@ using SharpGL.Textures;
 using SharpGL.VertexBuffers;
 using GLint = System.Int32;
 using System.Threading.Tasks;
+using Xceed.Wpf.Toolkit;
+using System.Windows;
 
 namespace PSSL_Environment
 {
@@ -78,6 +80,7 @@ namespace PSSL_Environment
 
             // Set up any variables
             modelLocation = new vec3(-1, -1, -10);
+            modelRotation = new vec3(0, 0, 0);
         }
 
         /// <summary>
@@ -110,7 +113,7 @@ namespace PSSL_Environment
             //  Create the modelview and normal matrix. We'll also rotate the scene
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
-            mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
+            mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, modelRotation);
             mat4 translation = glm.translate(mat4.identity(), modelLocation);
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotation * translation;
@@ -168,6 +171,7 @@ namespace PSSL_Environment
 
         public bool usingTexture;
         public vec3 modelLocation;
+        public vec3 modelRotation;
         // Get colors from color picker
         public vec3 ambientMaterialColor;
         public vec3 diffuseMaterialColor;
@@ -259,9 +263,8 @@ namespace PSSL_Environment
                 else if (myOBJ.IndicesPerFace > 4)
                     mode = OpenGL.GL_POLYGON;
 
-                gl.Enable(OpenGL.GL_DEPTH);
+
                 gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
-                gl.Disable(OpenGL.GL_DEPTH);
 
                
                 //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
@@ -429,7 +432,7 @@ namespace PSSL_Environment
                                  newObj.ToFloatArrayVertex(),
                                  false, 3);
             
-            ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDebug.Text = "Position = " + (int)newObj.VertexList.Count;
+            //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDebug.Text = "Position = " + (int)newObj.VertexList.Count;
             // Fills the Model Properties window
             int pIndex = 0;
             ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Clear();
@@ -450,7 +453,7 @@ namespace PSSL_Environment
                                             newObj.ToFloatArrayNormal(),
                                             false, 3);
 
-                ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDebug.Text = "Normal = " + (int)newObj.NormalList.Count;
+                //((MainWindow)System.Windows.Application.Current.MainWindow).NormalDebug.Text = "Normal = " + (int)newObj.NormalList.Count;
                 // Fills the Model Properties window
                 int nIndex = 0;
                 ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Clear();
@@ -470,7 +473,7 @@ namespace PSSL_Environment
                 texCoordsVertexBuffer.SetData(gl, VertexAttributes.TexCoord,
                                               newObj.ToFloatArrayTexture(),
                                               false, 2);
-                ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDebug.Text = "Texcood = " + (int)newObj.TextureList.Count;
+                //((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDebug.Text = "Texcood = " + (int)newObj.TextureList.Count;
                 // Fills the Model Properties window
                 int tIndex = 0;
                 ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Clear();
@@ -651,10 +654,19 @@ namespace PSSL_Environment
             }
 
             //  Find the maximum vertex value.
-            var maxX = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.X));
-            var maxY = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.Y));
-            var maxZ = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.Z));
-            var max = (new[] { maxX, maxY, maxZ }).Max();
+            double max = 0.0;
+            try
+            {
+                var maxX = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.X));
+                var maxY = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.Y));
+                var maxZ = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.Z));
+                max = (new[] { maxX, maxY, maxZ }).Max();
+            } catch (Exception i)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("No vertices were found.", "Error loading OBJ.", MessageBoxButton.OK, MessageBoxImage.Error);
+                scaleFactor = 1.0f;
+                return scaleFactor;
+            }
 
             //  Set the scale factor accordingly.
             //  sf = max/c

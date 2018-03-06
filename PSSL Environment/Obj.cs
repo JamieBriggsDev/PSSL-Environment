@@ -20,7 +20,7 @@ namespace PSSL_Environment
         public List<uint> NormalIndices;
         public List<uint> UVIndices;
 
-        public int IndicesPerFace;
+        public int IndicesPerFace = 3;
         public Obj(string path)
         {
             VertexList = new List<Vertex>();
@@ -48,17 +48,33 @@ namespace PSSL_Environment
 
             for (int i = 0; i < FaceList.Count; i++)
             {
-                foreach (var j in FaceList.ElementAt(i).VertexIndexList)
+                if(FaceList.ElementAt(i).IndicesPerFace == 3)
                 {
-                    VertexIndices.Add((uint)j);
+                    foreach (var j in FaceList.ElementAt(i).VertexIndexList)
+                    {
+                        VertexIndices.Add((uint)j);
+                    }
+                    foreach (var j in FaceList.ElementAt(i).NormalIndexList)
+                    {
+                        NormalIndices.Add((uint)j);
+                    }
+                    foreach (var j in FaceList.ElementAt(i).TextureVertexIndexList)
+                    {
+                        UVIndices.Add((uint)j);
+                    }
                 }
-                foreach (var j in FaceList.ElementAt(i).NormalIndexList)
+                else if(FaceList.ElementAt(i).IndicesPerFace == 4)
                 {
-                    NormalIndices.Add((uint)j);
-                }
-                foreach (var j in FaceList.ElementAt(i).TextureVertexIndexList)
-                {
-                    UVIndices.Add((uint)j);
+                    int[] indices = new int[]{ 0, 1, 2, 0, 2, 3 };
+                    for(int j = 0; j < 6; j++)
+                    {
+                        VertexIndices.Add((uint)FaceList.ElementAt(i).
+                            VertexIndexList.ElementAt(indices[j]));
+                        NormalIndices.Add((uint)FaceList.ElementAt(i).
+                            NormalIndexList.ElementAt(indices[j]));
+                        UVIndices.Add((uint)FaceList.ElementAt(i).
+                            TextureVertexIndexList.ElementAt(indices[j]));
+                    }
                 }
             }
 
@@ -70,9 +86,9 @@ namespace PSSL_Environment
             //}
 
 
-            string vertexCount = tempVertexList.Count.ToString();
-            string NormalCount = tempNormalList.Count.ToString();
-            string TextureCount = tempTextureList.Count.ToString();
+            string vertexCount = VertexIndices.Count.ToString();
+            string NormalCount = NormalIndices.Count.ToString();
+            string TextureCount = UVIndices.Count.ToString();
 
             Debug.Write("Vertex Count: " + vertexCount);
             Debug.Write("Normal Count: " + NormalCount);
@@ -187,7 +203,7 @@ namespace PSSL_Environment
                 processLine(line);
             }
 
-            IndicesPerFace = Face.IndicesPerFace;
+            //IndicesPerFace = Face.IndicesPerFace;
 
             updateSize();
         }
