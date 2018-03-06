@@ -213,6 +213,8 @@
                             <RowDefinition Height="25" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="25" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Column="0">Model Position = </TextBlock>
@@ -260,11 +262,36 @@
                                                 Name="rotationZ" ValueChanged="rotationZ_ValueChanged" 
                                                 Value="0" Orientation="Vertical" Height="60"
                                                 Grid.Column="3" Grid.Row="3" HorizontalAlignment="Right"/>
+
+                        <TextBlock Grid.Column="0" Grid.Row="4">Light Location =</TextBlock>
+                        <TextBox Text="{Binding ElementName=lightPositionX, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                    Grid.Column="1" Grid.Row="4"             
+                                    DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                        <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
+                                                Name="lightPositionX" ValueChanged="lightPositionX_ValueChanged" 
+                                                Value="0.25" Orientation="Vertical" Height="60"
+                                                Grid.Column="1" Grid.Row="5" HorizontalAlignment="Right"/>
+                        <TextBox Text="{Binding ElementName=lightPositionY, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                    Grid.Column="2" Grid.Row="4"             
+                                    DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                        <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
+                                                Name="lightPositionY" ValueChanged="lightPositionY_ValueChanged" 
+                                                Value="0.25" Orientation="Vertical" Height="60"
+                                                Grid.Column="2" Grid.Row="5" HorizontalAlignment="Right"/>
+                        <TextBox Text="{Binding ElementName=lightPositionZ, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                    Grid.Column="3" Grid.Row="4"             
+                                    DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
+                        <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
+                                                Name="lightPositionZ" ValueChanged="lightPositionZ_ValueChanged" 
+                                                Value="10" Orientation="Vertical" Height="60"
+                                                Grid.Column="3" Grid.Row="5" HorizontalAlignment="Right"/>
+                        
+                        
                         <TextBlock Text="Smoothing(EXPERIEMENTAL)="
-                                 Grid.Row="4"/>
+                                 Grid.Row="6"/>
                         <CheckBox x:Name="SmoothingEnabled" IsChecked="False" 
                                   Click="SmoothingEnabled_Click"
-                                  Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                                  Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                 </TabItem>
             </TabControl>

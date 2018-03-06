@@ -81,6 +81,7 @@ namespace PSSL_Environment
             // Set up any variables
             modelLocation = new vec3(-1, -1, -10);
             modelRotation = new vec3(0, 1, 0);
+            lightLocation = new vec3(0.25f, 0.25f, 10f);
         }
 
         /// <summary>
@@ -113,8 +114,8 @@ namespace PSSL_Environment
             //  Create the modelview and normal matrix. We'll also rotate the scene
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
-            mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, modelRotation);
-            mat4 translation = glm.translate(mat4.identity(), modelLocation);
+            mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
+            mat4 translation = glm.translate(mat4.identity(), new vec3(0, -1, -4));
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotation * translation;
             normalMatrix = modelviewMatrix.to_mat3();
@@ -172,6 +173,7 @@ namespace PSSL_Environment
         public bool usingTexture;
         public vec3 modelLocation;
         public vec3 modelRotation;
+        public vec3 lightLocation;
         // Get colors from color picker
         public vec3 ambientMaterialColor;
         public vec3 diffuseMaterialColor;
@@ -228,7 +230,7 @@ namespace PSSL_Environment
                 shader.Bind(gl);
 
                 //  Set the light position.
-                shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
+                shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
 
                 //  Set the matrices.
                 shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
@@ -311,7 +313,7 @@ namespace PSSL_Environment
                 shader.Bind(gl);
 
                 //  Set the light position.
-                shader.SetUniform3(gl, "LightPosition", 0.25f, 0.25f, 10f);
+                shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
 
                 //  Set the matrices.
                 shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());

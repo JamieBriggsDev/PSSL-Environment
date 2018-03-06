@@ -344,6 +344,24 @@ namespace PSSL_Environment
         }
 
 
+
+        private void lightPositionX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)lightPositionX.Value;
+            myScene.lightLocation.x = value;
+        }
+
+        private void lightPositionY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)lightPositionY.Value;
+            myScene.lightLocation.y = value;
+        }
+
+        private void lightPositionZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)lightPositionZ.Value;
+            myScene.lightLocation.z = value;
+        }
         private void SmoothingEnabled_Click(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = sender as CheckBox;
