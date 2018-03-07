@@ -166,6 +166,8 @@
     <None Include="Shaders\ToonTexture.frag" />
     <None Include="Shaders\Toon.frag" />
     <None Include="Shaders\Toon.vert" />
+    <None Include="Shaders\Water\Water.frag" />
+    <None Include="Shaders\Water\Water.vert" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -203,6 +205,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Models\Cube\pCubeShape1_color.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Textures\Water.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

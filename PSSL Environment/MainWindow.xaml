@@ -184,6 +184,27 @@
                     <!--End of vertex Shader Tab Item-->
                    
                 </TabItem>
+                <TabItem Header="Templates">
+                    <!--End of vertex Shader Tab Item-->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">Water Effect: </TextBlock>
+                        <CheckBox x:Name="WaterEnabled" Click="WaterEnabled_Click"
+                                  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" 
+                                  HorizontalContentAlignment="Center" VerticalAlignment="Center" 
+                                  VerticalContentAlignment="Center"/>
+                    </Grid>
+                </TabItem>
                 <TabItem Header="Model Properties">
                     <!--End of vertex Shader Tab Item-->
                     <TabControl>

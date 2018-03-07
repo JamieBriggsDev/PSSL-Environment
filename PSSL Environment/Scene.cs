@@ -28,6 +28,43 @@ namespace PSSL_Environment
     /// </summary>
     public class Scene
     {
+
+        private Obj myOBJ;
+
+        //private Mesh myMesh;
+        private KeyValuePair<Obj, VertexBufferArray> meshVertexBufferArray = new KeyValuePair<Obj, VertexBufferArray>();
+        private KeyValuePair<Obj, Texture2D> meshTextures = new KeyValuePair<Obj, Texture2D>();
+
+        //  The shaders we use.
+        private ShaderProgram shaderPerPixel;
+        private ShaderProgram shaderToon;
+        private ShaderProgram shaderTexturedPerPixel;
+        private ShaderProgram shaderTexturedToon;
+        private ShaderProgram shaderWater;
+
+        //  The modelview, projection and normal matrices.
+        private mat4 modelviewMatrix = mat4.identity();
+        private mat4 projectionMatrix = mat4.identity();
+        private mat3 normalMatrix = mat3.identity();
+
+        private float scaleFactor = 1.0f;
+
+        private float time = 0.0f;
+
+        public bool usingTexture;
+        public vec3 modelLocation;
+        public vec3 modelRotation;
+        public vec3 lightLocation;
+        // Get colors from color picker
+        public vec3 ambientMaterialColor;
+        public vec3 diffuseMaterialColor;
+        public vec3 specularMaterialColor;
+        public float alphaColor;
+        public Texture2D meshTexture;
+
+        public Texture2D[] waterTextures = new Texture2D[2];
+        //public SharpGL.GL
+
         /// <summary>
         /// Initialises the Scene.
         /// </summary>
@@ -71,6 +108,12 @@ namespace PSSL_Environment
             shaderTexturedToon.Create(gl,
                 ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.frag"), attributeLocations);
+
+            //  Create the water shader.
+            shaderWater = new ShaderProgram();
+            shaderWater.Create(gl,
+                ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.vert"),
+                ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.frag"), attributeLocations);
 
             gl.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -170,23 +213,28 @@ namespace PSSL_Environment
             
         //}
 
-        public bool usingTexture;
-        public vec3 modelLocation;
-        public vec3 modelRotation;
-        public vec3 lightLocation;
-        // Get colors from color picker
-        public vec3 ambientMaterialColor;
-        public vec3 diffuseMaterialColor;
-        public vec3 specularMaterialColor;
-        public float alphaColor;
-        public Texture2D meshTexture;
-        //public SharpGL.GL
-
         public void LoadTexture(OpenGL gl, Bitmap newTexture)
         {
             //meshTexture = new Texture2D();
             meshTexture = new Texture2D();
             meshTexture.SetImage(gl, newTexture);
+            AddTexture(gl, newTexture);
+            //  Go through each mesh and give texture.
+            //foreach (var mesh in meshes)
+            //{
+            //    mesh.
+            //}
+        }
+
+        public void LoadWaterTextures(OpenGL gl, Bitmap newTexture)
+        {
+            //meshTexture = new Texture2D();
+            waterTextures[0] = new Texture2D();
+            waterTextures[0].SetImage(gl, newTexture);
+            AddTexture(gl, newTexture);
+
+            waterTextures[1] = new Texture2D();
+            waterTextures[1].SetImage(gl, newTexture);
             AddTexture(gl, newTexture);
             //  Go through each mesh and give texture.
             //foreach (var mesh in meshes)
@@ -423,6 +471,159 @@ namespace PSSL_Environment
             
         }
 
+        // Renders the scene with a texture along with colours for ADS
+        public void RenderWaterMode(OpenGL gl)
+        {
+            if (myOBJ != null)
+            {
+                vec3 defaultValues;
+                defaultValues.x = 0.0f;
+                defaultValues.y = 0.0f;
+                defaultValues.z = 0.0f;
+
+                time += 1.0f / 60.0f;
+
+
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+                {
+                    ambientMaterialColor = defaultValues;
+                }
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
+                {
+                    diffuseMaterialColor = defaultValues;
+                }
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
+                {
+                    specularMaterialColor = defaultValues;
+                }
+
+
+
+                //  Get a reference to the appropriate shader.
+                var shader = shaderWater;
+
+                //  Use the shader program.
+                shader.Bind(gl);
+
+                //  Set the light position.
+                shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
+
+                //  Set the matrices.
+                shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
+                shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+                shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+
+                // Set shader alpha
+                shader.SetUniform1(gl, "Alpha", alphaColor);
+
+                // Set shader time
+                shader.SetUniform1(gl, "Time", time);
+
+                //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
+                //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
+                //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
+                    ambientMaterialColor.z);
+                shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
+                    diffuseMaterialColor.z);
+                shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
+                    specularMaterialColor.z);
+                shader.SetUniform1(gl, "Shininess", (float)((MainWindow)System.Windows.Application.Current.MainWindow).shininessValue.Value);
+
+                var vertexBufferArray = meshVertexBufferArray;
+                gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
+                //vertexBufferArray.Bind(gl);
+
+
+                //uint mode = OpenGL.GL_TRIANGLES;
+                //if (mesh.indicesPerFace == 4)
+                //    mode = OpenGL.GL_QUADS;
+                //else if (mesh.indicesPerFace > 4)
+                //    mode = OpenGL.GL_POLYGON;
+
+                //gl.BufferData(OpenGL.GL_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
+                //gl.DrawArrays(mode, 0, mesh.vertices.Length);
+                //gl.draw
+
+                // Set shader texture
+                //if (meshTexture != null)
+                //{
+
+                //}
+
+                // Bind texture
+                //var texture = meshTextures(meshes) ? meshTextures[meshes] : null;
+                var texture = meshTextures.Value;
+                if (texture != null)
+                {
+                    GLint texLocOne;
+                    texLocOne = shader.GetUniformLocation(gl, "tex");
+                    gl.Uniform1(texLocOne, 0);
+                    gl.ActiveTexture(OpenGL.GL_TEXTURE0);
+                    gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
+
+                    GLint texLocTwo;
+                    texLocTwo = shader.GetUniformLocation(gl, "tex2");
+                    gl.Uniform1(texLocTwo, 1);
+                    gl.ActiveTexture(OpenGL.GL_TEXTURE1);
+                    gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
+
+
+                    //texture.Bind(gl);
+                    //gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
+                    //shader.SetUniform1(gl, "Texture", 0);
+
+                    //((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
+                    //gl.
+
+                }
+
+                //uint mode = OpenGL.GL_TRIANGLES;
+                //if (myMesh.indicesPerFace == 4)
+                //    mode = OpenGL.GL_QUADS;
+                //else if (myMesh.indicesPerFace > 4)
+                //    mode = OpenGL.GL_POLYGON;
+
+                //gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count * 3);
+
+
+                uint mode = OpenGL.GL_TRIANGLES;
+                if (myOBJ.IndicesPerFace == 4)
+                    mode = OpenGL.GL_QUADS;
+                else if (myOBJ.IndicesPerFace > 4)
+                    mode = OpenGL.GL_POLYGON;
+
+                gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
+
+
+                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count * 
+                //    System.Runtime.InteropServices.Marshal.SizeOf(vec3), &)
+
+                //  Render the group faces.
+                //gl.Begin(OpenGL.GL_QUADS);
+                //for (int i = 0; i < myOBJ.VertexList.Count; i++)
+                //{
+                //    gl.Vertex(myOBJ.VertexList.ElementAt(i).X, myOBJ.VertexList.ElementAt(i).Y, myOBJ.VertexList.ElementAt(i).Z);
+                //    if (myOBJ.NormalList.Count > 0)
+                //        gl.Normal(myOBJ.NormalList.ElementAt(i).NX, myOBJ.NormalList.ElementAt(i).NY, myOBJ.NormalList.ElementAt(i).NZ);
+                //    if (myOBJ.TextureList.Count > 0)
+                //        gl.TexCoord(myOBJ.TextureList.ElementAt(i).X, myOBJ.TextureList.ElementAt(i).Y);
+                //}
+                //gl.End();
+                //gl.Flush();
+
+
+                if (texture != null)
+                    texture.Unbind(gl);
+
+                shader.Unbind(gl);
+            }
+
+        }
+
 
         private void CreateVertexBufferArray(OpenGL gl, Obj newObj)
         {
@@ -625,24 +826,6 @@ namespace PSSL_Environment
             get { return projectionMatrix; }
         }
 
-        private Obj myOBJ;
-
-        //private Mesh myMesh;
-        private KeyValuePair<Obj, VertexBufferArray> meshVertexBufferArray = new KeyValuePair<Obj, VertexBufferArray>();
-        private KeyValuePair<Obj, Texture2D> meshTextures = new KeyValuePair<Obj, Texture2D>();
-
-        //  The shaders we use.
-        private ShaderProgram shaderPerPixel;
-        private ShaderProgram shaderToon;
-        private ShaderProgram shaderTexturedPerPixel;
-        private ShaderProgram shaderTexturedToon;
-
-        //  The modelview, projection and normal matrices.
-        private mat4 modelviewMatrix = mat4.identity();
-        private mat4 projectionMatrix = mat4.identity();
-        private mat3 normalMatrix = mat3.identity();
-
-        private float scaleFactor = 1.0f;
 
         /// <summary>
         /// Sets the scale factor automatically based on the size of the geometry.
@@ -682,5 +865,5 @@ namespace PSSL_Environment
         }
     }
 
-
+    
 }

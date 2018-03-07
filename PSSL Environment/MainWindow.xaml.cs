@@ -129,12 +129,19 @@ namespace PSSL_Environment
 
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
-
-            if (UsingTexture.IsChecked == true)
-                myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
+            if(WaterEnabled.IsChecked == true)
+            {
+                myScene.RenderWaterMode(gl);
+            }
             else
-                myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
-            //myScene.RenderImmediateMode(gl);
+            {
+                if (UsingTexture.IsChecked == true)
+                    myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
+                else
+                    myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
+                //myScene.RenderImmediateMode(gl);
+            }
+
         }
 
 
@@ -384,6 +391,12 @@ namespace PSSL_Environment
                 gl.Disable(OpenGL.GL_LINE_SMOOTH);
                 gl.Disable(OpenGL.GL_POLYGON_SMOOTH);
             }
+        }
+
+        private void WaterEnabled_Click(object sender, RoutedEventArgs e)
+        {
+            System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap("D:\\PSSL-Environment\\PSSL Environment\\Resources\\Textures\\Water.png");
+            myScene.LoadWaterTextures(openGlCtrl.OpenGL, myTexture);
         }
     }
 
