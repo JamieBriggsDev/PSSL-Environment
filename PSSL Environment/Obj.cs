@@ -156,8 +156,8 @@ namespace PSSL_Environment
         {
             int counter = 0;
             // Make array 3 times the size of vertex list for all coordinates
-            float[] output = new float[FaceList.Count * 3];
-            for (int i = 0; i < FaceList.Count; i++)
+            float[] output = new float[NormalList.Count * 3];
+            for (int i = 0; i < NormalList.Count; i++)
             {
                 output[counter++] = (float)NormalList.ElementAt(i).NX;
                 output[counter++] = (float)NormalList.ElementAt(i).NY;
@@ -281,5 +281,9 @@ namespace PSSL_Environment
             }
         }
 
+        private void generateNormals()
+        {
+
+        }
     }
 }

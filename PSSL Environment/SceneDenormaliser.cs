@@ -4,18 +4,19 @@
 //using System.Text;
 //using FileFormatWavefront.Model;
 //using GlmNet;
+//using PSSL_Environment.ObjTypes;
 
 //namespace PSSL_Environment
 //{
 
 //    public static class SceneDenormaliser
 //    {
-//        public static List<Mesh> Denormalize(FileFormatWavefront.Model.Scene scene)
+//        public static Obj Denormalize(Obj scene)
 //        {
-//            var meshes = new List<Mesh>();
-//            var vertics = scene.Vertices;
-//            var normals = scene.Normals;
-//            var uvs = scene.Uvs;
+//            var meshes = new List<Obj>();
+//            var vertics = scene.VertexList;
+//            var normals = scene.NormalList;
+//            var uvs = scene.TextureList;
 
 //            List<Face> facesWithSameIndexCount = new List<Face>();
 //            int currentIndexCount = -1;

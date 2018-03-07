@@ -114,8 +114,8 @@ namespace PSSL_Environment
             //  Create the modelview and normal matrix. We'll also rotate the scene
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
-            mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, new vec3(0, 1, 0));
-            mat4 translation = glm.translate(mat4.identity(), new vec3(0, -1, -4));
+            mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, modelRotation);
+            mat4 translation = glm.translate(mat4.identity(), modelLocation);
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotation * translation;
             normalMatrix = modelviewMatrix.to_mat3();
@@ -267,9 +267,13 @@ namespace PSSL_Environment
 
 
                 gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
+                gl.DrawArrays(mode, 0, myOBJ.NormalList.Count);
 
-               
-                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
+                //IntPtr[] vertices = new IntPtr[myOBJ.VertexList.Count];
+
+
+
+                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count, myOBJ.VertexList., OpenGL.GL_STATIC_DRAW);
 
 
                 shader.Unbind(gl);
@@ -392,6 +396,7 @@ namespace PSSL_Environment
                     mode = OpenGL.GL_POLYGON;
 
                 gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
+
 
                 //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count * 
                 //    System.Runtime.InteropServices.Marshal.SizeOf(vec3), &)
