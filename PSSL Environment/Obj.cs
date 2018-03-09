@@ -6,10 +6,12 @@ using PSSL_Environment.ObjTypes;
 
 // debug
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace PSSL_Environment
 {
-    class Obj
+    public class Obj
     {
         public List<Vertex> VertexList;
         public List<Normal> NormalList;
@@ -21,20 +23,40 @@ namespace PSSL_Environment
         public List<uint> UVIndices;
 
         public int IndicesPerFace = 3;
-        public Obj(string path)
+        private bool validObject = false;
+        public bool GetValidObject()
         {
+            return validObject;
+        }
+
+        public Obj()
+        {
+
+        }
+
+
+        public async Task<int> Initialise(string path)
+        {
+            
             VertexList = new List<Vertex>();
             FaceList = new List<Face>();
-            TextureList = new List<TextureVertex>();
-            NormalList = new List<Normal>();
-
-            VertexIndices = new List<uint>();
-            NormalIndices = new List<uint>();
+            TextureList = new List<TextureVertex>();         
+            NormalList = new List<Normal>();                 
+                                                             
+            VertexIndices = new List<uint>();                
+            NormalIndices = new List<uint>();                
             UVIndices = new List<uint>();
 
 
-            LoadObj(path);
-            FixIndexing();
+            await Task.Run(() =>
+            {
+                LoadObj(path);
+                FixIndexing();
+            });
+
+            validObject = true;
+
+            return 0;
         }
 
         public void FixIndexing()

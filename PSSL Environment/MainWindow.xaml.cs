@@ -226,21 +226,21 @@ namespace PSSL_Environment
             // Create a file open dialog
             var fileOpenDialog = new OpenFileDialog();
             fileOpenDialog.Filter = "Wavefront Files (*.obj)|*.obj";
-            if(fileOpenDialog.ShowDialog(this) == true)
+            if (fileOpenDialog.ShowDialog(this) == true)
             {
                 //  Get the path.
                 var filePath = fileOpenDialog.FileName;
 
                 //  Load the data into the scene.
-                myScene.Load(openGlCtrl.OpenGL, filePath);
 
-                //  Auto scale.
-                myScene.SetScaleFactorAuto().ToString();
+                myScene.Load(openGlCtrl, filePath);
+                //openGlCtrl.Cursor = Cursors.;
+
             }
 
+            //}
+
         }
-
-
 
         /// <summary>
         /// The axies, which may be drawn.
@@ -397,6 +397,17 @@ namespace PSSL_Environment
         {
             System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap("D:\\PSSL-Environment\\PSSL Environment\\Resources\\Textures\\Water.png");
             myScene.LoadWaterTextures(openGlCtrl.OpenGL, myTexture);
+        }
+
+        private void openGlCtrl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            //if(myScene.getOBJ != null)
+            //{
+            //    if(myScene.getOBJ.GetValidObject() == false)
+            //    {
+            //        Cursor.current = Cursor.w
+            //    }
+            //}
         }
     }
 

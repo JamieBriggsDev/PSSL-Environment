@@ -14,6 +14,8 @@ using GLint = System.Int32;
 using System.Threading.Tasks;
 using Xceed.Wpf.Toolkit;
 using System.Windows;
+using System.Windows.Input;
+using SharpGL.WPF;
 
 namespace PSSL_Environment
 {
@@ -30,6 +32,8 @@ namespace PSSL_Environment
     {
 
         private Obj myOBJ;
+
+        public Obj getOBJ => myOBJ;
 
         //private Mesh myMesh;
         private KeyValuePair<Obj, VertexBufferArray> meshVertexBufferArray = new KeyValuePair<Obj, VertexBufferArray>();
@@ -248,6 +252,8 @@ namespace PSSL_Environment
         {
             if(myOBJ != null)
             {
+                if(myOBJ.GetValidObject() == true)
+            {
                 vec3 defaultValues;
                 defaultValues.x = 0.0f;
                 defaultValues.y = 0.0f;
@@ -326,13 +332,14 @@ namespace PSSL_Environment
 
                 shader.Unbind(gl);
             }
+            }
             
         }
         
         // Renders the scene with a texture along with colours for ADS
         public void RenderTextureMode(OpenGL gl, bool useToonShader)
         {
-            if (myOBJ != null)
+            if (myOBJ.GetValidObject() == true)
             {
                 vec3 defaultValues;
                 defaultValues.x = 0.0f;
@@ -474,7 +481,7 @@ namespace PSSL_Environment
         // Renders the scene with a texture along with colours for ADS
         public void RenderWaterMode(OpenGL gl)
         {
-            if (myOBJ != null)
+            if (myOBJ.GetValidObject() == true)
             {
                 vec3 defaultValues;
                 defaultValues.x = 0.0f;
@@ -625,12 +632,22 @@ namespace PSSL_Environment
         }
 
 
-        private void CreateVertexBufferArray(OpenGL gl, Obj newObj)
+        private int CreateVertexBufferArray(OpenGL gl, Obj newObj)
         {
             //  Create and bind a vertex buffer array.
             var vertexBufferArray = new VertexBufferArray();
-            vertexBufferArray.Create(gl);
-            vertexBufferArray.Bind(gl);
+            try
+            {
+                vertexBufferArray.Create(gl);
+                vertexBufferArray.Bind(gl);
+            } catch(Exception e)
+            {
+                System.Windows.MessageBox.Show("Failed to create and bind vertexBufferArray", "Error loading OBJ.",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return 0;
+            }
+
+
 
             //  Create a vertex buffer for the vertices.
             var verticesVertexBuffer = new VertexBuffer();
@@ -642,14 +659,14 @@ namespace PSSL_Environment
             
             //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDebug.Text = "Position = " + (int)newObj.VertexList.Count;
             // Fills the Model Properties window
-            int pIndex = 0;
-            ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Clear();
-            foreach (var i in newObj.VertexList)
-            {
-                string Pos = "Position[" + pIndex + "] = ( " + i.X + ", " + i.Y + ", " + i.Z + ")";
-                ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Add(Pos);
-                pIndex++;
-            }
+            //int pIndex = 0;
+            //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Clear();
+            //foreach (var i in newObj.VertexList)
+            //{
+            //    string Pos = "Position[" + pIndex + "] = ( " + i.X + ", " + i.Y + ", " + i.Z + ")";
+            //    ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Add(Pos);
+            //    pIndex++;
+            //}
             //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.ad(_items);
 
             if (newObj.NormalList.Count > 0)
@@ -663,14 +680,14 @@ namespace PSSL_Environment
 
                 //((MainWindow)System.Windows.Application.Current.MainWindow).NormalDebug.Text = "Normal = " + (int)newObj.NormalList.Count;
                 // Fills the Model Properties window
-                int nIndex = 0;
-                ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Clear();
-                foreach (var i in newObj.NormalList)
-                {
-                    string Nor = "Normal[" + nIndex + "] = ( " + i.NX + ", " + i.NY + ", " + i.NZ + ")";
-                    ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Add(Nor);
-                    nIndex++;
-                }
+                //int nIndex = 0;
+                //((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Clear();
+                //foreach (var i in newObj.NormalList)
+                //{
+                //    string Nor = "Normal[" + nIndex + "] = ( " + i.NX + ", " + i.NY + ", " + i.NZ + ")";
+                //    ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Add(Nor);
+                //    nIndex++;
+                //}
             }
 
             if (newObj.TextureList.Count > 0)
@@ -683,103 +700,40 @@ namespace PSSL_Environment
                                               false, 2);
                 //((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDebug.Text = "Texcood = " + (int)newObj.TextureList.Count;
                 // Fills the Model Properties window
-                int tIndex = 0;
-                ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Clear();
-                foreach (var i in newObj.TextureList)
-                {
-                    string Tex = "Normal[" + tIndex + "] = ( " + i.X + ", " + i.Y + ")";
-                    ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Add(Tex);
-                    tIndex++;
-                }
+                //int tIndex = 0;
+                //((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Clear();
+                //foreach (var i in newObj.TextureList)
+                //{
+                //    string Tex = "Normal[" + tIndex + "] = ( " + i.X + ", " + i.Y + ")";
+                //    ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Add(Tex);
+                //    tIndex++;
+                //}
             }
 
             verticesVertexBuffer.Unbind(gl);
             //gl.
             meshVertexBufferArray = new KeyValuePair<Obj, VertexBufferArray>(meshVertexBufferArray.Key, vertexBufferArray);
+
+           
+            return 0;
         }
 
-        public void Load(OpenGL gl, string objectFilePath)
+        public async void Load(OpenGLControl openGLContext, string objectFilePath)
         {
-            //  TODO: cleanup old files.
+            OpenGL gl = openGLContext.OpenGL;
+            openGLContext.Cursor = Cursors.Wait;
+            myOBJ = new Obj();
+            int result = await myOBJ.Initialise(objectFilePath);
 
-            ////  Destroy all of the vertex buffer arrays in the meshes.
-            //foreach (var vertexBufferArray in meshVertexBufferArrays.Values)
-            //    meshVertexBufferArrays.Delete(gl);
-            //meshes.clear();
-            //meshVertexBufferArrays.Clear();
-            myOBJ = new Obj(objectFilePath);
-            //myMesh = new Mesh();
-            //myOBJ.LoadObj(objectFilePath);
-            //myOBJ.v
-
-            ////  Load the object file.
-            //var result = FileFormatWavefront.FileFormatObj.Load(objectFilePath, true);
-
-            //// Add vertices to mesh.
-            //for(int i = 0; i < myOBJ.VertexList.Count; i++)
-            //{
-            //    myMesh.vertices[i].x = (float)myOBJ.VertexList.ElementAt(i).X;
-            //    myMesh.vertices[i].y = (float)myOBJ.VertexList.ElementAt(i).Y;
-            //    myMesh.vertices[i].z = (float)myOBJ.VertexList.ElementAt(i).Z;
-            //}
-
-            //// Add indices to mesh.
-            //int faceIndex = 0;
-            //for (int i = 0; i < myOBJ.FaceList.Count; i++)
-            //{
-            //    for(int j = 0; j < myOBJ.FaceList.ElementAt(i).VertexIndexList.Count(); j++)
-            //    {
-            //        myMesh.indices[faceIndex] = (uint)myOBJ.FaceList.ElementAt(i).VertexIndexList.ElementAt(j);
-            //        faceIndex++;
-            //    }
-            //}
-
-            //// Add uvs to mesh.
-            //for (int i = 0; i < myOBJ.TextureList.Count; i++)
-            //{
-            //    myMesh.uvs[i].x = (float)myOBJ.TextureList.ElementAt(i).X;
-            //    myMesh.uvs[i].y = (float)myOBJ.TextureList.ElementAt(i).Y;
-            //}
-
-            //meshes.AddRange(SceneDenormaliser.Denormalize(result.Model));
-
-
-
-            //List<Mesh> denormalized = SceneDenormaliser.Denormalize(result.Model);
-            //List<vec3> vertices = new List<vec3>();
-            //List<vec3> normals = new List<vec3>();
-            //List<vec2> uvs = new List<vec2>();
-            //foreach (Mesh mesh in denormalized)
-            //{
-            //    vertices.AddRange(mesh.vertices);
-            //    normals.AddRange(mesh.normals);
-            //    uvs.AddRange(mesh.uvs);
-            //}
-            //Mesh finalMesh = new Mesh
-            //{
-            //    indicesPerFace = denormalized[0].indicesPerFace,
-            //    vertices = vertices.ToArray(),
-            //    normals = normals.ToArray(),
-            //    uvs = uvs.ToArray()
-            //};
-            //meshes.Add(finalMesh);
-
-            //  Create a vertex buffer array for each mesh.
-
-            //meshes.ForEach(m => CreateVertexBufferArray(gl, m));
             CreateVertexBufferArray(gl, myOBJ);
+            //  Auto scale.
+            SetScaleFactorAuto();
 
-            //  Create textures for each texture map.
-            //CreateTextures(gl, meshes);
-
-            //  TODO: handle errors and warnings.
-
-            //  TODO: cleanup
-
+            openGLContext.Cursor = Cursors.Arrow;
         }
 
         //private void CreateTextures(OpenGL gl, Obj mesh)
-        //{
+        //
         //    //  Create a new texture and bind it.
         //    var texture = new Texture2D();
         //    texture.Create(gl);

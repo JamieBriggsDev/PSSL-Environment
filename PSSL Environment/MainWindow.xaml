@@ -337,7 +337,8 @@
                                            DrawFPS="True"
                                            HorizontalAlignment="Stretch"
                                            VerticalAlignment="Stretch"
-                                           Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"       
+                                           Resized="OpenGLControl_Resized" Grid.ColumnSpan="2"
+                                           MouseEnter="openGlCtrl_MouseEnter"
                                            />
                 </Grid>
             </StackPanel>
