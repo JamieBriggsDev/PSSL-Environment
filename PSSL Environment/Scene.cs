@@ -67,6 +67,10 @@ namespace PSSL_Environment
         public Texture2D meshTexture;
 
         public Texture2D[] waterTextures = new Texture2D[2];
+
+        public float frequency = 1;
+        public float speed = 1;
+        public float amplitude = 1;
         //public SharpGL.GL
 
         /// <summary>
@@ -528,6 +532,11 @@ namespace PSSL_Environment
 
                 // Set shader time
                 shader.SetUniform1(gl, "Time", time);
+
+                // Set speed, amplitude and frequency
+                shader.SetUniform1(gl, "Speed", speed);
+                shader.SetUniform1(gl, "Amplitude", amplitude);
+                shader.SetUniform1(gl, "Frequency", frequency);
 
                 //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
                 //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);

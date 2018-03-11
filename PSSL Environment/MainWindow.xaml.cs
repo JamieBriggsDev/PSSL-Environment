@@ -409,6 +409,24 @@ namespace PSSL_Environment
             //    }
             //}
         }
+
+        private void AmplitudeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)AmplitudeSlider.Value;
+            myScene.amplitude = value;
+        }
+
+        private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)SpeedSlider.Value;
+            myScene.speed = value;
+        }
+
+        private void FrequencySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            float value = (float)FrequencySlider.Value;
+            myScene.frequency = value;
+        }
     }
 
 

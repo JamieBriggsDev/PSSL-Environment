@@ -77,6 +77,8 @@
                     </StackPanel>
                 </Button.ToolTip>
             </Button>
+            <ProgressBar Name="FileLoadProgress" Value="0"
+                         Minimum="0" Maximum="100"/>
         </ToolBar>
 
         <Grid Name="LayoutRoot">
@@ -196,13 +198,39 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="25"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="30"/>
+                            
                         </Grid.ColumnDefinitions>
 
+                        <!--WATER EFFECT-->
                         <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">Water Effect: </TextBlock>
                         <CheckBox x:Name="WaterEnabled" Click="WaterEnabled_Click"
                                   Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" 
                                   HorizontalContentAlignment="Center" VerticalAlignment="Center" 
                                   VerticalContentAlignment="Center"/>
+                        <!-- AMPLITUDE-->
+                        <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Center">Amplitude: </TextBlock>
+                        <Slider x:Name="AmplitudeSlider" Grid.Column="3" Grid.Row="0" VerticalAlignment="Center" 
+                                Minimum="0" Maximum="1" Value="1" TickPlacement="BottomRight" TickFrequency="0.01"
+                                ValueChanged="AmplitudeSlider_ValueChanged"/>
+                        <TextBox Text="{Binding ElementName=AmplitudeSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                  Grid.Row="0" Grid.Column="4" TextAlignment="Left"/>
+                        <!-- SPEED-->
+                        <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center">Speed: </TextBlock>
+                        <Slider x:Name="SpeedSlider" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" 
+                                Minimum="-30" Maximum="30" Value="1" TickPlacement="BottomRight" TickFrequency="0.1"
+                                ValueChanged="SpeedSlider_ValueChanged"/>
+                        <TextBox Text="{Binding ElementName=SpeedSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                  Grid.Row="1" Grid.Column="4" TextAlignment="Left"/>
+
+                        <!-- FREQUENCY-->
+                        <TextBlock Grid.Column="2" Grid.Row="2" VerticalAlignment="Center">Frequency: </TextBlock>
+                        <Slider x:Name="FrequencySlider" Grid.Column="3" Grid.Row="2" VerticalAlignment="Center" 
+                                Minimum="0" Maximum="30" Value="1" TickPlacement="BottomRight" TickFrequency="1"
+                                ValueChanged="FrequencySlider_ValueChanged"/>
+                        <TextBox Text="{Binding ElementName=FrequencySlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                  Grid.Row="2" Grid.Column="4" TextAlignment="Left"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Model Properties">

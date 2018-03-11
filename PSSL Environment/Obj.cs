@@ -8,11 +8,15 @@ using PSSL_Environment.ObjTypes;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows;
 
 namespace PSSL_Environment
 {
     public class Obj
     {
+        public static int totalElements = 0;
+        public static int currentElement = 0;
+        public static float progressLoaded = 0;
         public List<Vertex> VertexList;
         public List<Normal> NormalList;
         public List<Face> FaceList;
@@ -47,19 +51,52 @@ namespace PSSL_Environment
             NormalIndices = new List<uint>();                
             UVIndices = new List<uint>();
 
-
+            bool indexWorking = false;
             await Task.Run(() =>
             {
+                //totalElements = TotalElementsFound(File.ReadAllLines(path));
                 LoadObj(path);
-                FixIndexing();
+                indexWorking = FixIndexing();
+                System.Threading.Thread.Sleep(5000);
             });
 
-            validObject = true;
+            if (indexWorking == true)
+                validObject = true;
 
             return 0;
         }
 
-        public void FixIndexing()
+        public int TotalElementsFound(IEnumerable<string> data)
+        {
+            int output = 0;
+            foreach (var line in data)
+            {
+                string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (parts.Length > 0)
+                {
+                    switch (parts[0])
+                    {
+                        case "v":
+                            output++;
+                            break;
+                        case "vn":
+                            output++;
+                            break;
+                        case "f":
+                            output++;
+                            break;
+                        case "vt":
+                            output++;
+                            break;
+
+                    }
+                }
+            }
+            return output;
+        }
+
+        public bool FixIndexing()
         {
 
 
@@ -120,22 +157,47 @@ namespace PSSL_Environment
             for (int i = 0; i < VertexIndices.Count; i++)
             {
                 uint vertexIndex = VertexIndices.ElementAt(i);
-                Vertex vertexOut = VertexList.ElementAt((int)vertexIndex - 1);
-                tempVertexList.Add(vertexOut);
+                try
+                {
+                    Vertex vertexOut = VertexList.ElementAt((int)vertexIndex - 1);
+                    tempVertexList.Add(vertexOut);
+                } catch (Exception e)
+                {
+                    System.Windows.MessageBox.Show("Failed to fix OBJ indices", "Error loading OBJ.",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
             }
 
             for (int i = 0; i < NormalIndices.Count; i++)
             {
                 uint normalIndex = NormalIndices.ElementAt(i);
-                Normal normalOut = NormalList.ElementAt((int)normalIndex - 1);
-                tempNormalList.Add(normalOut);
+                try
+                {
+                    Normal normalOut = NormalList.ElementAt((int)normalIndex - 1);
+                    tempNormalList.Add(normalOut);
+                } catch (Exception e)
+                {
+                    System.Windows.MessageBox.Show("Failed to fix OBJ indices", "Error loading OBJ.",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+
             }
 
             for (int i = 0; i < UVIndices.Count; i++)
             {
                 uint uvIndex = UVIndices.ElementAt(i);
-                TextureVertex uvOut = TextureList.ElementAt((int)uvIndex - 1);
-                tempTextureList.Add(uvOut);
+                try
+                {
+                    TextureVertex uvOut = TextureList.ElementAt((int)uvIndex - 1);
+                    tempTextureList.Add(uvOut);
+                } catch (Exception e)
+                {
+                    System.Windows.MessageBox.Show("Failed to fix OBJ indices", "Error loading OBJ.",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
             }
 
             if (tempVertexList == VertexList)
@@ -150,6 +212,8 @@ namespace PSSL_Environment
             VertexList = tempVertexList;
             NormalList = tempNormalList;
             TextureList = tempTextureList;
+
+            return true;
         }
 
         //public int indicesPerFace;
@@ -223,7 +287,10 @@ namespace PSSL_Environment
             foreach (var line in data)
             {
                 processLine(line);
+                //progressLoaded = (currentElement / totalElements);
             }
+
+            currentElement = 0;
 
             //IndicesPerFace = Face.IndicesPerFace;
 
@@ -270,33 +337,39 @@ namespace PSSL_Environment
                 {
                     case "usemtl":
                         UseMtl = parts[1];
+                        //currentElement++;
                         break;
                     case "mtllib":
                         Mtl = parts[1];
+                        //currentElement++;
                         break;
                     case "v":
                         Vertex v = new Vertex();
                         v.LoadFromStringArray(parts);
                         VertexList.Add(v);
                         v.Index = VertexList.Count();
+                        currentElement++;
                         break;
                     case "vn":
                         Normal vn = new Normal();
                         vn.LoadFromStringArray(parts);
                         NormalList.Add(vn);
                         vn.Index = VertexList.Count();
+                        currentElement++;
                         break;
                     case "f":
                         Face f = new Face();
                         f.LoadFromStringArray(parts);
                         f.UseMtl = UseMtl;
                         FaceList.Add(f);
+                        currentElement++;
                         break;
                     case "vt":
                         TextureVertex vt = new TextureVertex();
                         vt.LoadFromStringArray(parts);
                         TextureList.Add(vt);
                         vt.Index = TextureList.Count();
+                        currentElement++;
                         break;
 
                 }
