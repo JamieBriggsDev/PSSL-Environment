@@ -25,11 +25,31 @@ namespace PSSL_Environment
         public const uint Normal = 1;
         public const uint TexCoord = 2;
     }
+
+    
     /// <summary>
     /// A class that represents the scene for this sample.
     /// </summary>
     public class Scene
     {
+        private string vertexShader = "#version 130" + Environment.NewLine +
+                                        "in vec4 Position;" + Environment.NewLine +
+                                        "in vec3 Normal;" + Environment.NewLine +
+                                        Environment.NewLine +
+                                        "uniform mat4 Projection;" + Environment.NewLine +
+                                        "uniform mat4 Modelview" + Environment.NewLine +
+                                        "uniform mat4 NormalMatrix" + Environment.NewLine +
+                                        "uniform mat4 DiffuseMaterial" + Environment.NewLine +
+                                        Environment.NewLine +
+                                        "out ve3 EyespaceNormal;" + Environment.NewLine +
+                                        "out ve3 Diffuse;" + Environment.NewLine +
+                                        Environment.NewLine +
+                                        "void main()" + Environment.NewLine +
+                                        "{" + Environment.NewLine +
+                                        "EyespaceNormal = NormalMatrix * Normal;" + Environment.NewLine +
+                                        "gl_Position = Projection * Modelview * Position;" + Environment.NewLine +
+                                        "Diffuse = DiffuseMaterial;" + Environment.NewLine +
+                                        "}" + Environment.NewLine;
 
         private Obj myOBJ;
 
@@ -133,6 +153,9 @@ namespace PSSL_Environment
             modelLocation = new vec3(-1, -1, -10);
             modelRotation = new vec3(0, 1, 0);
             lightLocation = new vec3(0.25f, 0.25f, 10f);
+
+            ((MainWindow)Application.Current.MainWindow).VertexShader.Text = vertexShader;
+
         }
 
         /// <summary>

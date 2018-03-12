@@ -233,17 +233,14 @@
                                                   Grid.Row="2" Grid.Column="4" TextAlignment="Left"/>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Model Properties">
+                <TabItem Header="Source" Height="24" VerticalAlignment="Top">
                     <!--End of vertex Shader Tab Item-->
                     <TabControl>
-                        <TabItem Header="Positions">
-                            <ListBox x:Name="PositionDataList"/>
+                        <TabItem Header="Vertex Shader">
+                            <TextBlock x:Name="VertexShader"/>
                         </TabItem>
-                        <TabItem Header="Normals">
-                            <ListBox x:Name="NormalDataList"/>
-                        </TabItem>
-                        <TabItem Header="TexCoords">
-                            <ListBox x:Name="TexCoordDataList"/>
+                        <TabItem Header="Fragment Shader">
+                            <TextBlock x:Name="FragmentShader"/>
                         </TabItem>
                     </TabControl>
                 </TabItem>
