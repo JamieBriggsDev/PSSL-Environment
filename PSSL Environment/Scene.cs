@@ -770,6 +770,8 @@ namespace PSSL_Environment
                 defaultValues.y = 0.0f;
                 defaultValues.z = 0.0f;
 
+                time += 1.0f / 60.0f;
+
 
                 // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
                 if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
@@ -805,6 +807,9 @@ namespace PSSL_Environment
 
                 // Set shader alpha
                 shader.SetUniform1(gl, "Alpha", alphaColor);
+
+                // Set shader time
+                shader.SetUniform1(gl, "Time", time);
 
                 //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
                 //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);

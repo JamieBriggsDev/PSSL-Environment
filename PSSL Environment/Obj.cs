@@ -57,7 +57,7 @@ namespace PSSL_Environment
                 //totalElements = TotalElementsFound(File.ReadAllLines(path));
                 LoadObj(path);
                 indexWorking = FixIndexing();
-                System.Threading.Thread.Sleep(5000);
+                //System.Threading.Thread.Sleep(5000);
             });
 
             if (indexWorking == true)

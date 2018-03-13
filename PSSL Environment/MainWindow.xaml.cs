@@ -129,21 +129,26 @@ namespace PSSL_Environment
 
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
-            if(CompileShadersAdvButton.IsEnabled == true)
+            if(BasicSettingsRadio.IsEnabled == true)
+            {
+                if(WaterEnabled.IsChecked == true)
+                {
+                    myScene.RenderWaterMode(gl);
+                }
+                else
+                {
+                    if (UsingTexture.IsChecked == true)
+                        myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
+                    else
+                        myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
+                    //myScene.RenderImmediateMode(gl);
+                }
+            }
+
+            if (AdvancedSettingsRadio.IsEnabled == true)
             {
                 myScene.RenderCustomMode(gl);
-            }
-            else if(WaterEnabled.IsChecked == true)
-            {
-                myScene.RenderWaterMode(gl);
-            }
-            else
-            {
-                if (UsingTexture.IsChecked == true)
-                    myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
-                else
-                    myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
-                //myScene.RenderImmediateMode(gl);
+                return;
             }
 
         }
@@ -436,6 +441,19 @@ namespace PSSL_Environment
         {
             CompileErrorOutput.Text = myScene.CompileCustomShader(openGlCtrl.OpenGL,
                 VertexShaderText.Text, FragmentShaderText.Text);
+        }
+
+
+        private void BasicSettingsRadio_Click(object sender, RoutedEventArgs e)
+        {
+            BasicSettingsRadio.IsChecked = true;
+            AdvancedSettingsRadio.IsChecked = false;
+        }
+
+        private void AdvancedSettingsRadio_Click(object sender, RoutedEventArgs e)
+        {
+            BasicSettingsRadio.IsChecked = false;
+            AdvancedSettingsRadio.IsChecked = true;
         }
     }
 
