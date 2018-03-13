@@ -129,7 +129,11 @@ namespace PSSL_Environment
 
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
-            if(WaterEnabled.IsChecked == true)
+            if(CompileShadersAdvButton.IsEnabled == true)
+            {
+                myScene.RenderCustomMode(gl);
+            }
+            else if(WaterEnabled.IsChecked == true)
             {
                 myScene.RenderWaterMode(gl);
             }
@@ -426,6 +430,12 @@ namespace PSSL_Environment
         {
             float value = (float)FrequencySlider.Value;
             myScene.frequency = value;
+        }
+
+        private void CompileShadersAdvButton_Click(object sender, RoutedEventArgs e)
+        {
+            CompileErrorOutput.Text = myScene.CompileCustomShader(openGlCtrl.OpenGL,
+                VertexShaderText.Text, FragmentShaderText.Text);
         }
     }
 

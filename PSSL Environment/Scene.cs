@@ -16,6 +16,9 @@ using Xceed.Wpf.Toolkit;
 using System.Windows;
 using System.Windows.Input;
 using SharpGL.WPF;
+using System.Text.RegularExpressions;
+using System.Text;
+//using SharpGL.SceneGraph.Shaders;
 
 namespace PSSL_Environment
 {
@@ -32,7 +35,7 @@ namespace PSSL_Environment
     /// </summary>
     public class Scene
     {
-        private string vertexShader = "#version 130" + Environment.NewLine +
+        public string vertexShader = "#version 130" + Environment.NewLine +
                                         "in vec4 Position;" + Environment.NewLine +
                                         "in vec3 Normal;" + Environment.NewLine +
                                         Environment.NewLine +
@@ -51,6 +54,25 @@ namespace PSSL_Environment
                                         "Diffuse = DiffuseMaterial;" + Environment.NewLine +
                                         "}" + Environment.NewLine;
 
+        public string fragShader = "#version 130" + Environment.NewLine +
+                                "in vec4 Position;" + Environment.NewLine +
+                                "in vec3 Normal;" + Environment.NewLine +
+                                Environment.NewLine +
+                                "uniform mat4 Projection;" + Environment.NewLine +
+                                "uniform mat4 Modelview" + Environment.NewLine +
+                                "uniform mat4 NormalMatrix" + Environment.NewLine +
+                                "uniform mat4 DiffuseMaterial" + Environment.NewLine +
+                                Environment.NewLine +
+                                "out ve3 EyespaceNormal;" + Environment.NewLine +
+                                "out ve3 Diffuse;" + Environment.NewLine +
+                                Environment.NewLine +
+                                "void main()" + Environment.NewLine +
+                                "{" + Environment.NewLine +
+                                "EyespaceNormal = NormalMatrix * Normal;" + Environment.NewLine +
+                                "gl_Position = Projection * Modelview * Position;" + Environment.NewLine +
+                                "Diffuse = DiffuseMaterial;" + Environment.NewLine +
+                                "}" + Environment.NewLine;
+
         private Obj myOBJ;
 
         public Obj getOBJ => myOBJ;
@@ -60,11 +82,84 @@ namespace PSSL_Environment
         private KeyValuePair<Obj, Texture2D> meshTextures = new KeyValuePair<Obj, Texture2D>();
 
         //  The shaders we use.
-        private ShaderProgram shaderPerPixel;
-        private ShaderProgram shaderToon;
-        private ShaderProgram shaderTexturedPerPixel;
-        private ShaderProgram shaderTexturedToon;
-        private ShaderProgram shaderWater;
+        private SharpGL.Shaders.ShaderProgram shaderPerPixel;
+        private SharpGL.Shaders.ShaderProgram shaderToon;
+        private SharpGL.Shaders.ShaderProgram shaderTexturedPerPixel;
+        private SharpGL.Shaders.ShaderProgram shaderTexturedToon;
+        private SharpGL.Shaders.ShaderProgram shaderWater;
+
+        // Advanced Shaders
+        private ShaderProgram customShaderProgram;
+        private bool ShaderProgramValid = false;
+        //private VertexShader customVertShader;
+        //private FragmentShader customFragShader;
+
+        public string StripControlChars(string s)
+        {
+            //string temp = s;
+            //char newLine = '\n';
+            //string sNewLine = "" + newLine;
+            //Regex.Replace(temp, Environment.NewLine, sNewLine);
+            //return temp;
+
+            Encoding utf8 = Encoding.UTF8;
+            Encoding ascii = Encoding.ASCII;
+
+            //string input = "Auspuffanlage \"Century\" f├╝r";
+            return ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(s)));
+        }
+
+        public string CompileCustomShader(OpenGL gl, string vertexShader, string fragShader)
+        {
+            ShaderProgramValid = false;
+            //  We're going to specify the attribute locations for the position and normal, 
+            //  so that we can force both shaders to explicitly have the same locations.
+            const uint positionAttribute = 0;
+            const uint normalAttribute = 1;
+            const uint texCoordAttribute = 2;
+            var attributeLocations = new Dictionary<uint, string>
+            {
+                {positionAttribute, "Position"},
+                {normalAttribute, "Normal"},
+                {texCoordAttribute, "TexCoord" },
+            };
+
+            // Destroy old shader program first
+            try
+            {
+                customShaderProgram.Delete(gl);
+
+            } catch (Exception e)
+            {
+                // Do nothing as this means there is no context yet
+            }
+
+            // Save shader files first
+            string x = StripControlChars(vertexShader);
+            System.IO.File.WriteAllText(@"Shaders\Custom\CustomVertex.vert", x);
+
+
+
+            string y = StripControlChars(fragShader);
+            System.IO.File.WriteAllText(@"Shaders\Custom\CustomFrag.frag", y);
+
+
+
+            customShaderProgram = new ShaderProgram();
+            try
+            {
+                customShaderProgram.Create(gl, 
+                    ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomVertex.vert"),
+                    ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomFrag.frag"), 
+                    attributeLocations);
+            } catch (SharpGL.Shaders.ShaderCompilationException e)
+            {
+                return e.CompilerOutput;
+            }
+
+            ShaderProgramValid = true;
+            return "Shaders Compiled Succesfully!";
+        }
 
         //  The modelview, projection and normal matrices.
         private mat4 modelviewMatrix = mat4.identity();
@@ -113,32 +208,32 @@ namespace PSSL_Environment
 
             // Create non texture shaders first
             //  Create the per pixel shader.tr
-            shaderPerPixel = new ShaderProgram();
+            shaderPerPixel = new SharpGL.Shaders.ShaderProgram();
             shaderPerPixel.Create(gl,
                 ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag"), attributeLocations);
 
             //  Create the toon shader.
-            shaderToon = new ShaderProgram();
+            shaderToon = new SharpGL.Shaders.ShaderProgram();
             shaderToon.Create(gl,
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag"), attributeLocations);
 
             // Creat tecture shaders second
             //  Create the per pixel shader.tr
-            shaderTexturedPerPixel = new ShaderProgram();
+            shaderTexturedPerPixel = new SharpGL.Shaders.ShaderProgram();
             shaderTexturedPerPixel.Create(gl,
                 ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag"), attributeLocations);
 
             //  Create the toon shader.
-            shaderTexturedToon = new ShaderProgram();
+            shaderTexturedToon = new SharpGL.Shaders.ShaderProgram();
             shaderTexturedToon.Create(gl,
                 ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.frag"), attributeLocations);
 
             //  Create the water shader.
-            shaderWater = new ShaderProgram();
+            shaderWater = new SharpGL.Shaders.ShaderProgram();
             shaderWater.Create(gl,
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.frag"), attributeLocations);
@@ -154,7 +249,7 @@ namespace PSSL_Environment
             modelRotation = new vec3(0, 1, 0);
             lightLocation = new vec3(0.25f, 0.25f, 10f);
 
-            ((MainWindow)Application.Current.MainWindow).VertexShader.Text = vertexShader;
+            ((MainWindow)Application.Current.MainWindow).VertexShaderText.Text = vertexShader;
 
         }
 
@@ -616,6 +711,150 @@ namespace PSSL_Environment
                     //shader.SetUniform1(gl, "Texture", 0);
 
                     //((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
+                    //gl.
+
+                }
+
+                //uint mode = OpenGL.GL_TRIANGLES;
+                //if (myMesh.indicesPerFace == 4)
+                //    mode = OpenGL.GL_QUADS;
+                //else if (myMesh.indicesPerFace > 4)
+                //    mode = OpenGL.GL_POLYGON;
+
+                //gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count * 3);
+
+
+                uint mode = OpenGL.GL_TRIANGLES;
+                if (myOBJ.IndicesPerFace == 4)
+                    mode = OpenGL.GL_QUADS;
+                else if (myOBJ.IndicesPerFace > 4)
+                    mode = OpenGL.GL_POLYGON;
+
+                gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
+
+
+                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count * 
+                //    System.Runtime.InteropServices.Marshal.SizeOf(vec3), &)
+
+                //  Render the group faces.
+                //gl.Begin(OpenGL.GL_QUADS);
+                //for (int i = 0; i < myOBJ.VertexList.Count; i++)
+                //{
+                //    gl.Vertex(myOBJ.VertexList.ElementAt(i).X, myOBJ.VertexList.ElementAt(i).Y, myOBJ.VertexList.ElementAt(i).Z);
+                //    if (myOBJ.NormalList.Count > 0)
+                //        gl.Normal(myOBJ.NormalList.ElementAt(i).NX, myOBJ.NormalList.ElementAt(i).NY, myOBJ.NormalList.ElementAt(i).NZ);
+                //    if (myOBJ.TextureList.Count > 0)
+                //        gl.TexCoord(myOBJ.TextureList.ElementAt(i).X, myOBJ.TextureList.ElementAt(i).Y);
+                //}
+                //gl.End();
+                //gl.Flush();
+
+
+                if (texture != null)
+                    texture.Unbind(gl);
+
+                shader.Unbind(gl);
+            }
+
+        }
+
+        public void RenderCustomMode(OpenGL gl)
+        {
+            if (myOBJ == null)
+                return;
+
+            if (myOBJ.GetValidObject() == true && ShaderProgramValid == true)
+            {
+                vec3 defaultValues;
+                defaultValues.x = 0.0f;
+                defaultValues.y = 0.0f;
+                defaultValues.z = 0.0f;
+
+
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+                {
+                    ambientMaterialColor = defaultValues;
+                }
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
+                {
+                    diffuseMaterialColor = defaultValues;
+                }
+                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
+                {
+                    specularMaterialColor = defaultValues;
+                }
+
+
+
+                //  Get a reference to the appropriate shader.
+                var shader = customShaderProgram;
+
+                //  Use the shader program.
+                shader.Bind(gl);
+
+                //  Set the light position.
+                shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
+
+                //  Set the matrices.
+                shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
+                shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+                shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+
+                // Set shader alpha
+                shader.SetUniform1(gl, "Alpha", alphaColor);
+
+                //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
+                //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
+                //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
+                    ambientMaterialColor.z);
+                shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
+                    diffuseMaterialColor.z);
+                shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
+                    specularMaterialColor.z);
+                shader.SetUniform1(gl, "Shininess", (float)((MainWindow)System.Windows.Application.Current.MainWindow).shininessValue.Value);
+
+                var vertexBufferArray = meshVertexBufferArray;
+                gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
+                //vertexBufferArray.Bind(gl);
+
+
+                //uint mode = OpenGL.GL_TRIANGLES;
+                //if (mesh.indicesPerFace == 4)
+                //    mode = OpenGL.GL_QUADS;
+                //else if (mesh.indicesPerFace > 4)
+                //    mode = OpenGL.GL_POLYGON;
+
+                //gl.BufferData(OpenGL.GL_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
+                //gl.DrawArrays(mode, 0, mesh.vertices.Length);
+                //gl.draw
+
+                // Set shader texture
+                //if (meshTexture != null)
+                //{
+
+                //}
+
+                // Bind texture
+                //var texture = meshTextures(meshes) ? meshTextures[meshes] : null;
+                var texture = meshTextures.Value;
+                if (texture != null)
+                {
+                    GLint texLoc;
+                    texLoc = shader.GetUniformLocation(gl, "Texture");
+                    gl.Uniform1(texLoc, 0);
+
+                    gl.ActiveTexture(OpenGL.GL_TEXTURE0);
+                    gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
+
+                    //texture.Bind(gl);
+                    //gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
+                    //shader.SetUniform1(gl, "Texture", 0);
+
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
                     //gl.
 
                 }
