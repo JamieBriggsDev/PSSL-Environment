@@ -213,6 +213,12 @@
   <ItemGroup>
     <Resource Include="Resources\Textures\Water.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="blue.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="cubeIcon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>XCOPY "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /E /I /F /Y</PostBuildEvent>

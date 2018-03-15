@@ -9,8 +9,8 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
-        Title="{StaticResource strAppName}" Height="720" Width="1280" ResizeMode="CanResize"
-        WindowStartupLocation="CenterOwner">
+        Title="{StaticResource strAppName}" Height="720" Width="1280"
+        WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" Icon="cubeIcon.png">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="convVisibility"/>
@@ -28,393 +28,269 @@
 
 
 
-    <Grid Name="WindowBounds" Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-
-        <ToolBar DockPanel.Dock="Top" Grid.Row="0">
-            <Button ToolTipService.ShowDuration="5000">
-                <Button.Content>
-                    <Image Source="Resources/newFileIcon.png" Width="16" Height="16" />
-                </Button.Content>
-                <Button.ToolTip>
-                    <StackPanel>
-                        <TextBlock FontWeight="Bold" FontSize="14" Margin="0,0,0,5">New file</TextBlock>
-                        <TextBlock>
-                        Create new file.
-                        </TextBlock>
-                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
-                    </StackPanel>
-                </Button.ToolTip>
-            </Button>
-            <Button>
-                <Button.Content>
-                    <Image Source="Resources/folderIcon.png" Width="16" Height="16" />
-                </Button.Content>
-                <Button.ToolTip>
-                    <StackPanel>
-                        <TextBlock FontWeight="Bold" FontSize="14" Margin="0,0,0,5">Open file</TextBlock>
-                        <TextBlock>
-                        Search your computer or local network
-                        <LineBreak />
-                        for a file and open it for editing.
-                        </TextBlock>
-                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
-                    </StackPanel>
-                </Button.ToolTip>
-            </Button>
-            <Button Name="OpenOBJ" Click="fileOpenItem_Click">
-                <Button.Content>
-                    <Image Source="Resources/cubeIcon.png" Width="16" Height="16" />
-                </Button.Content>
-                <Button.ToolTip>
-                    <StackPanel>
-                        <TextBlock FontWeight="Bold" FontSize="14" Margin="0,0,0,5">Open .OBJ</TextBlock>
-                        <TextBlock>
-                        Search your computer or local network
-                        <LineBreak />
-                        for an .obj file to load to viewport.
-                        </TextBlock>
-                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
-                    </StackPanel>
-                </Button.ToolTip>
-            </Button>
-            <ProgressBar Name="FileLoadProgress" Value="0"
-                         Minimum="0" Maximum="100"/>
-        </ToolBar>
-
-        <Grid Name="LayoutRoot" Grid.Row="1">
-            <!--Grid Column definitions to allow for 2 columns of data-->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <!--Making tabs for the left hand side of the
-            program-->
-            <TabControl VerticalContentAlignment="Stretch">
-                <TabItem Header="Basic" Height="24" VerticalAlignment="Center">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="10*"/>
-                            <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                        <RadioButton Name="BasicSettingsRadio"
-                                     VerticalContentAlignment="Center" GroupName="AdvancedBasic" HorizontalAlignment="Left"
-                                     Margin="0" IsChecked="True" Click="BasicSettingsRadio_Click">
-                            <TextBlock>Use Basic Settings</TextBlock>
-                        </RadioButton>
-                        <TabControl Grid.Row="1">
-                            <TabItem Name="PixelShaderTab" Header="Pixel Shader">
-                                <Grid Name="PixelShaderGrid">
-                                    <StackPanel Margin="10,5">
-                                        <Label FontWeight="Bold">Pixel Shader Options</Label>
-                                        <!--Pixel Colour Options-->
-                                        <StackPanel Margin="10,5">
-                                            <Label>Pixel Colour Options</Label>
-                                            <StackPanel Margin="20,5">
-                                                <RadioButton GroupName="pixelColourOptions" Name="singleColour" Tag="singleColour" Checked="RadioButton_Checked">
-                                                    <WrapPanel>
-                                                        <TextBlock Text="{StaticResource strSingleColour}" RenderTransformOrigin="0.5,0.5">
-                                                            <TextBlock.RenderTransform>
-                                                                <TransformGroup>
-                                                                    <ScaleTransform/>
-                                                                    <SkewTransform/>
-                                                                    <RotateTransform Angle="-0.075"/>
-                                                                    <TranslateTransform/>
-                                                                </TransformGroup>
-                                                            </TextBlock.RenderTransform>
-                                                        </TextBlock>
-                                                    </WrapPanel>
-                                                </RadioButton>
-                                                <RadioButton GroupName="pixelColourOptions" Name="textureColour" Tag="textureColour" Checked="RadioButton_Checked">
-                                                    <WrapPanel>
-                                                        <TextBlock Text="{StaticResource strTexture}"/>
-                                                    </WrapPanel>
-                                                </RadioButton>
-                                                <RadioButton GroupName="pixelColourOptions" Name="templateColour" Tag="templateColour" Checked="RadioButton_Checked">
-                                                    <WrapPanel>
-                                                        <TextBlock Text="{StaticResource strColourTemplate}"/>
-                                                    </WrapPanel>
-                                                </RadioButton>
-                                            </StackPanel>
-                                            <!--Hue Selecter-->
-                                            <TextBlock x:Name="PixelColourOptionTitle"/>
-                                            <!--Single Colour Stack Panel-->
-                                            <StackPanel Visibility="{Binding IsChecked, ElementName=singleColour, Converter={StaticResource convVisibility}}" 
-                                                    Orientation="Vertical" Margin="10,5,20,5">
-                                                <!--<CheckBox x:Name="AmbientColourCheckBox">Ambient Colour</CheckBox>
-                                            <CheckBox x:Name="DiffuseColourCheckBox">Diffuse Colour</CheckBox>
-                                            <CheckBox x:Name="SpecularColourCheckBox">Specular Colour</CheckBox>
-                                            <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please select a colour from below:</TextBlock>
-                                            <wpfTool:ColorCanvas x:Name="singleColorCanvas" Height="274" Margin="26,20,26,261" SelectedColorChanged="ColorPicker_SelectedColorChanged" />-->
-                                                <TextBlock>Ambient Colour</TextBlock>
-                                                <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged"
+    <Canvas x:Name="WindowBounds" Height="720" Width="1280" Background="#FF1F1F1F">
+        <Canvas Height="712" Width="182" Background="#FF3E3E3E"/>
+        <Canvas x:Name="ToolBar" Height="46" Canvas.Left="182" Width="1098" Background="#FF3E3E3E">
+            <Button x:Name="LoadOBJ" Content="Load OBJ" Canvas.Left="75" Canvas.Top="10" Width="75" ClickMode="Press"
+                    Click="fileOpenItem_Click"/>
+        </Canvas>
+        <Button x:Name="BasicSettingsButton" Content="Basic&#xD;&#xA;Settings" 
+                Canvas.Top="46" Height="140" Width="182" 
+                FontFamily="Microsoft YaHei UI Light" ClickMode="Press" 
+                Cursor="Cross" HorizontalContentAlignment="Center" 
+                HorizontalAlignment="Center" VerticalContentAlignment="Center" 
+                AutomationProperties.Name="BasicSettings" VerticalAlignment="Center" 
+                FontSize="24" BorderBrush="{x:Null}" Background="#FF727272" 
+                Foreground="White"
+                Click="BasicSettingsButton_Click"/>
+        <Button x:Name="AdvancedSettingsButton" Content="Advanced&#xA;Settings" Canvas.Top="186" Height="140" Width="182" FontFamily="Microsoft YaHei UI Light" ClickMode="Press" Cursor="Cross" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" AutomationProperties.Name="BasicSettings" VerticalAlignment="Center" FontSize="24" BorderBrush="{x:Null}" Background="#FF727272" Foreground="White" Click="AdvancedSettingsButton_Click"/>
+        <Button x:Name="ViewportSettingsButton" Content="Viewport&#xD;&#xA;Settings" Canvas.Top="326" Height="140" Width="182" FontFamily="Microsoft YaHei UI Light" ClickMode="Press" Cursor="Cross" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" AutomationProperties.Name="BasicSettings" VerticalAlignment="Center" FontSize="24" BorderBrush="{x:Null}" Background="#FF727272" Foreground="White" Click="ViewportSettingsButton_Click"/>
+        <Rectangle Fill="Black" Height="46" Stroke="Black" Width="182"/>
+        <Canvas x:Name="OpenGlView" Height="674" Canvas.Left="429.5" Canvas.Top="46" Width="850.5">
+            <sharpGL:OpenGLControl Name="openGlCtrl" OpenGLDraw="OpenGLControl_OpenGLDraw"
+                                           OpenGLInitialized="OpenGLControl_OpenGLInitialized"
+                                           RenderContextType="FBO"
+                                           DrawFPS="True"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch"
+                                           Resized="OpenGLControl_Resized" Grid.ColumnSpan="2" Width="850.5" Height="674"/>
+        </Canvas>
+        <Canvas x:Name="BasicShaderCanvas" Height="783" Canvas.Left="182" Canvas.Top="46" Width="247.5" d:IsHidden="True">
+            <ScrollViewer x:Name="BasicShaderScroll" Height="668" Width="247.5" CanContentScroll="True" VerticalScrollBarVisibility="Hidden">
+                <Grid x:Name="BasicShaderLayout" Height="1144" Width="247.5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="220"/>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="250"/>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="60"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Margin="0" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20"><Run Foreground="White" Text="Color "/><Run Foreground="White" Text="Settings"/></TextBlock>
+                    <TextBlock Margin="0" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Grid.Row="2" RenderTransformOrigin="0.526,1.457"><Run Foreground="White" Text="Texture"/><Run Foreground="White" Text=" "/><Run Foreground="White" Text="Settings"/></TextBlock>
+                    <CheckBox x:Name="UsingTexture" Content="Using Texture" HorizontalAlignment="Left" Margin="27,10,0,0" Grid.Row="3" VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI Light" Foreground="White" Click="UsingTexture_Click"/>
+                    <Canvas x:Name="LoadPictureCanvas" HorizontalAlignment="Left" Height="174.402" Margin="10,30.098,0,0" Grid.Row="3" VerticalAlignment="Top" Width="227.5">
+                        <Button Height="23" HorizontalAlignment="Left" 
+                                                Margin="12,0,0,34" x:Name="btnImageLoad" VerticalAlignment="Bottom" 
+                                                Width="75" Grid.Column="1" Click="btnLoadImage_Click" Background="#FF727272" Foreground="White" Content="Load Image"/>
+                        <Image x:Name="imgPhoto" 
+                                                Stretch="Fill" Grid.Column="1" Height="128" Canvas.Left="12" Canvas.Top="34.667" Width="128" />
+                    </Canvas>
+                    <StackPanel  HorizontalAlignment="Left" Grid.Row="1" Width="247.5" Margin="0" Grid.RowSpan="2">
+                        <TextBlock Foreground="White"><Run Text="Ambient Colour"/></TextBlock>
+                        <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged"
                                                                  UsingAlphaChannel="False"
                                                                  MaxDropDownWidth="250"
                                                                  AvailableColorsSortingMode="HueSaturationBrightness"/>
-                                                <TextBlock>Diffuse Colour</TextBlock>
-                                                <wpfTool:ColorPicker x:Name="diffuseColorPicker" SelectedColorChanged="diffuseColorPicker_SelectedColorChanged"
+                        <TextBlock Foreground="White"><Run Text="Diffuse Colour"/></TextBlock>
+                        <wpfTool:ColorPicker x:Name="diffuseColorPicker" SelectedColorChanged="diffuseColorPicker_SelectedColorChanged"
                                                                  UsingAlphaChannel="False"
                                                                  MaxDropDownWidth="250"/>
-                                                <TextBlock>Specular Colour</TextBlock>
-                                                <wpfTool:ColorPicker x:Name="specularColorPicker" SelectedColorChanged="specularColorPicker_SelectedColorChanged"
+                        <TextBlock Foreground="White"><Run Text="Specular Colour"/></TextBlock>
+                        <wpfTool:ColorPicker x:Name="specularColorPicker" SelectedColorChanged="specularColorPicker_SelectedColorChanged"
                                                                  UsingAlphaChannel="False"
                                                                  MaxDropDownWidth="250"/>
-                                                <TextBlock>Alpha</TextBlock>
-                                                <DockPanel VerticalAlignment="Center">
-                                                    <TextBox Text="{Binding ElementName=colorAlphaValue, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBlock Foreground="White"><Run Text="Alpha"/></TextBlock>
+                        <DockPanel VerticalAlignment="Center">
+                            <TextBox Text="{Binding Value, ElementName=colorAlphaValue, UpdateSourceTrigger=PropertyChanged}"
                                                          DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                                                    <Slider Maximum="1" TickPlacement="BottomRight" TickFrequency="0.01" 
-                                                        Name="colorAlphaValue" ValueChanged="colorAlphaValue_ValueChanged" 
-                                                        Value="1"/>
-                                                </DockPanel>
-                                                <TextBlock>Shininess</TextBlock>
-                                                <DockPanel VerticalAlignment="Center">
-                                                    <TextBox Text="{Binding ElementName=shininessValue, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                            <Slider Maximum="1" TickPlacement="BottomRight" TickFrequency="0.01" 
+                                                        x:Name="colorAlphaValue" ValueChanged="colorAlphaValue_ValueChanged" 
+                                                        Value="1" Foreground="#FF727272" BorderBrush="#FF0A0A0A"/>
+                        </DockPanel>
+                        <TextBlock Foreground="White"><Run Text="Shininess"/></TextBlock>
+                        <DockPanel VerticalAlignment="Center">
+                            <TextBox Text="{Binding Value, ElementName=shininessValue, UpdateSourceTrigger=PropertyChanged}"
                                                          DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                                                    <Slider Maximum="50" TickPlacement="BottomRight" TickFrequency="0.01" 
-                                                        Name="shininessValue" ValueChanged="colorAlphaValue_ValueChanged" 
-                                                        Value="5"/>
-                                                </DockPanel>
-                                            </StackPanel>
-                                            <!--Texture Stack Panel-->
-                                            <StackPanel Visibility="{Binding IsChecked, ElementName=textureColour, Converter={StaticResource convVisibility}}" 
-                                                    Orientation="Vertical" Margin="10,5,20,5">
+                            <Slider Maximum="50" TickPlacement="BottomRight" TickFrequency="0.01" 
+                                                        x:Name="shininessValue" ValueChanged="colorAlphaValue_ValueChanged" 
+                                                        Value="5" Foreground="#FF727272"/>
+                        </DockPanel>
+                    </StackPanel>
+                    <TextBlock Margin="0" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Grid.Row="4" RenderTransformOrigin="0.526,1.457"><Run Foreground="White" Text="Template"/><LineBreak/><Run Foreground="White"/><Run Foreground="White" Text=" "/><Run Foreground="White" Text="Settings"/></TextBlock>
+                    <Grid HorizontalAlignment="Left" Height="267.5" Margin="0,0,0,-207.5" Grid.Row="5" VerticalAlignment="Top" Width="247.5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="65"/>
+                            <ColumnDefinition Width="30"/>
 
-                                                <TextBlock Text="Using Texture:"/>
-                                                <CheckBox x:Name="UsingTexture" DockPanel.Dock="Right" Margin="12,0,0,0"/>
+                        </Grid.ColumnDefinitions>
 
-                                                <TextBlock TextDecorations="{x:Null}" FontStyle="Italic">Please load an image from file:</TextBlock>
-                                                <Button Height="23" HorizontalAlignment="Left" 
-                                                Margin="12,0,0,34" Name="btnImageLoad" VerticalAlignment="Bottom" 
-                                                Width="75" Grid.Column="1" Click="btnLoadImage_Click">Load Image</Button>
-                                                <Image Margin="12,12,16,71" Name="imgPhoto" 
-                                                Stretch="Fill" Grid.Column="1" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Grid>
-                                <!--End of Pixel Shader Tab Item-->
-                            </TabItem>
-                            <TabItem Header="Vertex Shader">
-                                <!--End of vertex Shader Tab Item-->
-
-                            </TabItem>
-                            <TabItem Header="Templates">
-                                <!--End of vertex Shader Tab Item-->
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="25" />
-                                        <RowDefinition Height="25" />
-                                        <RowDefinition Height="25" />
-                                        <RowDefinition Height="25" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="25"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="30"/>
-
-                                    </Grid.ColumnDefinitions>
-
-                                    <!--WATER EFFECT-->
-                                    <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">Water Effect:</TextBlock>
-                                    <CheckBox x:Name="WaterEnabled" Click="WaterEnabled_Click"
+                        <!--WATER EFFECT-->
+                        <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Foreground="White">Water Effect:</TextBlock>
+                        <CheckBox x:Name="WaterEnabled" Click="WaterEnabled_Click"
                                           Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" 
                                           HorizontalContentAlignment="Center" VerticalAlignment="Center" 
-                                          VerticalContentAlignment="Center"/>
-                                    <!-- AMPLITUDE-->
-                                    <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Center">Amplitude:</TextBlock>
-                                    <Slider x:Name="AmplitudeSlider" Grid.Column="3" Grid.Row="0" VerticalAlignment="Center" 
+                                          VerticalContentAlignment="Center" Foreground="White"/>
+                        <!-- AMPLITUDE-->
+                        <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Foreground="White">Amplitude:</TextBlock>
+                        <Slider x:Name="AmplitudeSlider" Grid.Column="3" Grid.Row="0" VerticalAlignment="Center" 
                                         Minimum="0" Maximum="1" Value="1" TickPlacement="BottomRight" TickFrequency="0.01"
-                                        ValueChanged="AmplitudeSlider_ValueChanged"/>
-                                    <TextBox Text="{Binding ElementName=AmplitudeSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
-                                                          Grid.Row="0" Grid.Column="4" TextAlignment="Left"/>
-                                    <!-- SPEED-->
-                                    <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center">Speed:</TextBlock>
-                                    <Slider x:Name="SpeedSlider" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" 
+                                        ValueChanged="AmplitudeSlider_ValueChanged" Foreground="#FF3E3E3E"/>
+                        <TextBox Text="{Binding ElementName=AmplitudeSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                          Grid.Row="0" Grid.Column="4" TextAlignment="Left" Foreground="White"/>
+                        <!-- SPEED-->
+                        <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Foreground="White">Speed:</TextBlock>
+                        <Slider x:Name="SpeedSlider" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" 
                                         Minimum="-30" Maximum="30" Value="1" TickPlacement="BottomRight" TickFrequency="0.1"
-                                        ValueChanged="SpeedSlider_ValueChanged"/>
-                                    <TextBox Text="{Binding ElementName=SpeedSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
-                                                          Grid.Row="1" Grid.Column="4" TextAlignment="Left"/>
+                                        ValueChanged="SpeedSlider_ValueChanged" Foreground="#FF3E3E3E"/>
+                        <TextBox Text="{Binding ElementName=SpeedSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                          Grid.Row="1" Grid.Column="4" TextAlignment="Left" Foreground="White"/>
 
-                                    <!-- FREQUENCY-->
-                                    <TextBlock Grid.Column="2" Grid.Row="2" VerticalAlignment="Center">Frequency:</TextBlock>
-                                    <Slider x:Name="FrequencySlider" Grid.Column="3" Grid.Row="2" VerticalAlignment="Center" 
+                        <!-- FREQUENCY-->
+                        <TextBlock Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" Foreground="White">Frequency:</TextBlock>
+                        <Slider x:Name="FrequencySlider" Grid.Column="3" Grid.Row="2" VerticalAlignment="Center" 
                                         Minimum="0" Maximum="30" Value="1" TickPlacement="BottomRight" TickFrequency="1"
-                                        ValueChanged="FrequencySlider_ValueChanged"/>
-                                    <TextBox Text="{Binding ElementName=FrequencySlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                        ValueChanged="FrequencySlider_ValueChanged" Foreground="#FF3E3E3E"/>
+                        <TextBox Text="{Binding ElementName=FrequencySlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
                                                           Grid.Row="2" Grid.Column="4" TextAlignment="Left"/>
 
-                                    <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center">Toon Shader:</TextBlock>
-                                    <CheckBox x:Name="checkBoxUseToonShader" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" 
+                        <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Foreground="White">Toon Shader:</TextBlock>
+                        <CheckBox x:Name="checkBoxUseToonShader" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" 
                                           HorizontalContentAlignment="Center" VerticalAlignment="Center" 
                                           VerticalContentAlignment="Center"/>
-                                </Grid>
-                            </TabItem>
-                        </TabControl>
                     </Grid>
-                </TabItem>
-                <TabItem Header="Advanced" Height="24" VerticalAlignment="Top">
-                    <!--End of vertex Shader Tab Item-->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="10*"/>
-                            <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                        <RadioButton Name="AdvancedSettingsRadio"
-                            VerticalContentAlignment="Center" GroupName="AdvancedBasic" HorizontalAlignment="Left" Margin="0"
-                                     Click="AdvancedSettingsRadio_Click">
-                            <TextBlock>Use Advanced Settings</TextBlock>
-                        </RadioButton>
-                        <TabControl Grid.Row="1">
-                            <TabItem Header="Vertex Shader">
-                                <ScrollViewer>
-                                    <TextBox x:Name="VertexShaderText" BorderThickness="2" VerticalContentAlignment="Stretch"
-                                             SelectionChanged="CompileShadersAdvButton_Click" AcceptsReturn="True" />
-                                </ScrollViewer>
-                            </TabItem>
-                            <TabItem Header="Fragment Shader">
-                                <ScrollViewer>
-                                    <TextBox x:Name="FragmentShaderText" BorderThickness="2" VerticalContentAlignment="Stretch"
-                                             SelectionChanged="CompileShadersAdvButton_Click" AcceptsReturn="True"/>
-                                </ScrollViewer>
-                            </TabItem>
-                        </TabControl>
-                        <TextBlock x:Name="CompileErrorOutput" Grid.Row="2" TextWrapping="WrapWithOverflow"/>
-                        <Button x:Name="CompileShadersAdvButton" Grid.Row="2" Grid.Column="1" Click="CompileShadersAdvButton_Click">
-                            <TextBlock> Compile Shaders</TextBlock>
-                        </Button>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="View Port" Height="24" VerticalAlignment="Top">
-                    <Grid Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="25" />
-                        </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Column="0">Model Position =</TextBlock>
-                        <TextBox Text="{Binding ElementName=positionX, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                </Grid>
+            </ScrollViewer>
+        </Canvas>
+        <Canvas x:Name="AdvancedShaderCanvas" Height="666" Canvas.Left="182" Canvas.Top="46" Width="247.5">
+            <Grid Height="656" Width="247.5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <TabControl Grid.Row="0">
+                    <TabItem Header="Vertex Shader">
+                        <ScrollViewer>
+                            <TextBox x:Name="VertexShaderText" BorderThickness="2" VerticalContentAlignment="Stretch"
+                                             SelectionChanged="CompileShadersAdvButton_Click" AcceptsReturn="True" Background="#FF333333" Foreground="White" />
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem Header="Fragment Shader">
+                        <ScrollViewer>
+                            <TextBox x:Name="FragmentShaderText" BorderThickness="2" VerticalContentAlignment="Stretch"
+                                             SelectionChanged="CompileShadersAdvButton_Click" AcceptsReturn="True" Background="#FF333333" Foreground="White"/>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+                <TextBlock x:Name="CompileErrorOutput" Grid.Row="1" TextWrapping="WrapWithOverflow" Foreground="White"/>
+            </Grid>
+        </Canvas>
+        <Canvas x:Name="ViewportSettingsCanvas" Height="666" Canvas.Left="182" Canvas.Top="46" Width="247.5" d:IsHidden="True">
+            <Grid Height="361" Width="247.5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Margin="60.495,17.3"><Run Foreground="White" Text="Color "/><Run Foreground="White" Text="Settings"/></TextBlock>
+                <Grid x:Name="ViewportSettingsGrid" Margin="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="25" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Foreground="White"><Run Text="Model Position ="/></TextBlock>
+                    <TextBox Text="{Binding Value, ElementName=positionX, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="1" Grid.Row="0"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="5" Minimum="-5" TickPlacement="Both" TickFrequency="0.5" 
-                                                Name="positionX" ValueChanged="positionX_ValueChanged" 
+                    <Slider Maximum="5" Minimum="-5" TickPlacement="Both" TickFrequency="0.5" 
+                                                x:Name="positionX" ValueChanged="positionX_ValueChanged" 
                                                 Value="-1" Orientation="Vertical" Height="60"
-                                                Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right"/>
-                        <TextBox Text="{Binding ElementName=positionY, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Foreground="#FF727272"/>
+                    <TextBox Text="{Binding Value, ElementName=positionY, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="2" Grid.Row="0"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="5" Minimum="-5" TickPlacement="Both" TickFrequency="0.5" 
-                                                Name="positionY" ValueChanged="positionY_ValueChanged" 
+                    <Slider Maximum="5" Minimum="-5" TickPlacement="Both" TickFrequency="0.5" 
+                                                x:Name="positionY" ValueChanged="positionY_ValueChanged" 
                                                 Value="-1" Orientation="Vertical" Height="60"
-                                                Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right"/>
-                        <TextBox Text="{Binding ElementName=positionZ, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" Foreground="#FF727272"/>
+                    <TextBox Text="{Binding Value, ElementName=positionZ, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="3" Grid.Row="0"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="-5" Minimum="-15" TickPlacement="Both" TickFrequency="0.5" 
-                                                Name="positionZ" ValueChanged="positionZ_ValueChanged" 
+                    <Slider Maximum="-5" Minimum="-15" TickPlacement="Both" TickFrequency="0.5" 
+                                                x:Name="positionZ" ValueChanged="positionZ_ValueChanged" 
                                                 Value="-10" Orientation="Vertical" Height="60"
-                                                Grid.Column="3" Grid.Row="1" HorizontalAlignment="Right"/>
+                                                Grid.Column="3" Grid.Row="1" HorizontalAlignment="Right" Foreground="#FF727272"/>
 
-                        <TextBlock Grid.Column="0" Grid.Row="2">Model Rotation =</TextBlock>
-                        <TextBox Text="{Binding ElementName=rotationX, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBlock Grid.Column="0" Grid.Row="2" Foreground="White"><Run Text="Model Rotation ="/></TextBlock>
+                    <TextBox Text="{Binding Value, ElementName=rotationX, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="1" Grid.Row="2"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="1" Minimum="-1" TickPlacement="Both" TickFrequency="0.1" 
-                                                Name="rotationX" ValueChanged="rotationX_ValueChanged" 
+                    <Slider Maximum="1" Minimum="-1" TickPlacement="Both" TickFrequency="0.1" 
+                                                x:Name="rotationX" ValueChanged="rotationX_ValueChanged" 
                                                 Value="0" Orientation="Vertical" Height="60"
-                                                Grid.Column="1" Grid.Row="3" HorizontalAlignment="Right"/>
-                        <TextBox Text="{Binding ElementName=rotationY, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                Grid.Column="1" Grid.Row="3" HorizontalAlignment="Right" Foreground="#FF727272"/>
+                    <TextBox Text="{Binding Value, ElementName=rotationY, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="2" Grid.Row="2"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="1" Minimum="-1" TickPlacement="Both" TickFrequency="0.1" 
-                                                Name="rotationY" ValueChanged="rotationY_ValueChanged" 
+                    <Slider Maximum="1" Minimum="-1" TickPlacement="Both" TickFrequency="0.1" 
+                                                x:Name="rotationY" ValueChanged="rotationY_ValueChanged" 
                                                 Value="1" Orientation="Vertical" Height="60"
-                                                Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right"/>
-                        <TextBox Text="{Binding ElementName=rotationZ, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" Foreground="#FF727272"/>
+                    <TextBox Text="{Binding Value, ElementName=rotationZ, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="3" Grid.Row="2"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="1" Minimum="-1" TickPlacement="Both" TickFrequency="0.1" 
-                                                Name="rotationZ" ValueChanged="rotationZ_ValueChanged" 
+                    <Slider Maximum="1" Minimum="-1" TickPlacement="Both" TickFrequency="0.1" 
+                                                x:Name="rotationZ" ValueChanged="rotationZ_ValueChanged" 
                                                 Value="0" Orientation="Vertical" Height="60"
-                                                Grid.Column="3" Grid.Row="3" HorizontalAlignment="Right"/>
+                                                Grid.Column="3" Grid.Row="3" HorizontalAlignment="Right" Foreground="#FF727272"/>
 
-                        <TextBlock Grid.Column="0" Grid.Row="4">Light Location =</TextBlock>
-                        <TextBox Text="{Binding ElementName=lightPositionX, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBlock Grid.Column="0" Grid.Row="4" Foreground="White"><Run Text="Light Location ="/></TextBlock>
+                    <TextBox Text="{Binding Value, ElementName=lightPositionX, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="1" Grid.Row="4"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
-                                                Name="lightPositionX" ValueChanged="lightPositionX_ValueChanged" 
+                    <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
+                                                x:Name="lightPositionX" ValueChanged="lightPositionX_ValueChanged" 
                                                 Value="0.25" Orientation="Vertical" Height="60"
-                                                Grid.Column="1" Grid.Row="5" HorizontalAlignment="Right"/>
-                        <TextBox Text="{Binding ElementName=lightPositionY, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                Grid.Column="1" Grid.Row="5" HorizontalAlignment="Right" Foreground="#FF727272"/>
+                    <TextBox Text="{Binding Value, ElementName=lightPositionY, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="2" Grid.Row="4"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
-                                                Name="lightPositionY" ValueChanged="lightPositionY_ValueChanged" 
+                    <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
+                                                x:Name="lightPositionY" ValueChanged="lightPositionY_ValueChanged" 
                                                 Value="0.25" Orientation="Vertical" Height="60"
-                                                Grid.Column="2" Grid.Row="5" HorizontalAlignment="Right"/>
-                        <TextBox Text="{Binding ElementName=lightPositionZ, Path=Value, UpdateSourceTrigger=PropertyChanged}"
+                                                Grid.Column="2" Grid.Row="5" HorizontalAlignment="Right" Foreground="#FF727272"/>
+                    <TextBox Text="{Binding Value, ElementName=lightPositionZ, UpdateSourceTrigger=PropertyChanged}"
                                     Grid.Column="3" Grid.Row="4"             
                                     DockPanel.Dock="Right" TextAlignment="Right" Width="40" />
-                        <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
-                                                Name="lightPositionZ" ValueChanged="lightPositionZ_ValueChanged" 
+                    <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
+                                                x:Name="lightPositionZ" ValueChanged="lightPositionZ_ValueChanged" 
                                                 Value="10" Orientation="Vertical" Height="60"
-                                                Grid.Column="3" Grid.Row="5" HorizontalAlignment="Right"/>
+                                                Grid.Column="3" Grid.Row="5" HorizontalAlignment="Right" Foreground="#FF161616"/>
 
 
-                        <TextBlock Text="Smoothing(EXPERIEMENTAL)="
-                                 Grid.Row="6"/>
-                        <CheckBox x:Name="SmoothingEnabled" IsChecked="False" 
+                    <TextBlock
+                                 Grid.Row="6" Foreground="White"><Run Text="Smoothing"/><Run Text=":"/></TextBlock>
+                    <CheckBox x:Name="SmoothingEnabled" IsChecked="False" 
                                   Click="SmoothingEnabled_Click"
                                   Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </TabItem>
-            </TabControl>
-
-
-
-            <sharpGL:OpenGLControl Name="openGlCtrl"
-                                           Margin="0,0,0,10" OpenGLDraw="OpenGLControl_OpenGLDraw"
-                                           OpenGLInitialized="OpenGLControl_OpenGLInitialized"
-                                           RenderContextType="FBO"
-                                           
-                                           HorizontalAlignment="Stretch"
-                                           VerticalAlignment="Stretch"
-                                           Resized="OpenGLControl_Resized"
-                                           MouseEnter="openGlCtrl_MouseEnter"
-                                   Grid.Column="1" Grid.RowSpan="2" Grid.Row="1"
-                                           />
-        </Grid>
-    </Grid>
+                </Grid>
+            </Grid>
+        </Canvas>
+    </Canvas>
 
 </Window>

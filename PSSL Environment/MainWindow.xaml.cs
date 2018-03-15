@@ -41,36 +41,6 @@ namespace PSSL_Environment
             //device3D.Content = Display3d("C:\\Users\\jamie\\OneDrive\\Individual Project\\Project\\PSSL Environment\\PSSL Environment\\Resources\\Models\\cube.obj");
         }
 
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            RadioButton rb = sender as RadioButton;
-
-
-            if (rb != null)
-            {
-                string colorName = rb.Tag.ToString();
-                switch (colorName)
-                {
-                    case "singleColour":
-                        // Change Title under options
-                        PixelColourOptionTitle.Text = "Single Colour";
-                        //lgb.
-                        break;
-                    case "textureColour":
-                        PixelColourOptionTitle.Text = "Texture";
-
-                        break;
-                    case "templateColour":
-                        PixelColourOptionTitle.Text = "Template";
-                        break;
-                }
-            }
-            else
-            {
-                PixelColourOptionTitle.Text = "Error";
-            }
-        }
-
 
         private void btnLoadImage_Click(object sender, RoutedEventArgs e)
         {
@@ -129,7 +99,7 @@ namespace PSSL_Environment
 
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
-            if(BasicSettingsRadio.IsEnabled == true)
+            if(BasicShaderCanvas.IsVisible == true)
             {
                 if(WaterEnabled.IsChecked == true)
                 {
@@ -145,7 +115,7 @@ namespace PSSL_Environment
                 }
             }
 
-            if (AdvancedSettingsRadio.IsEnabled == true)
+            if (AdvancedShaderCanvas.IsVisible == true)
             {
                 myScene.RenderCustomMode(gl);
                 return;
@@ -444,16 +414,38 @@ namespace PSSL_Environment
         }
 
 
-        private void BasicSettingsRadio_Click(object sender, RoutedEventArgs e)
+        private void BasicSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            BasicSettingsRadio.IsChecked = true;
-            AdvancedSettingsRadio.IsChecked = false;
+            BasicShaderCanvas.Visibility = Visibility.Visible;
+            AdvancedShaderCanvas.Visibility = Visibility.Hidden;
+            ViewportSettingsCanvas.Visibility = Visibility.Hidden;
         }
 
-        private void AdvancedSettingsRadio_Click(object sender, RoutedEventArgs e)
+        private void AdvancedSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            BasicSettingsRadio.IsChecked = false;
-            AdvancedSettingsRadio.IsChecked = true;
+            AdvancedShaderCanvas.Visibility = Visibility.Visible;
+            BasicShaderCanvas.Visibility = Visibility.Hidden;
+            ViewportSettingsCanvas.Visibility = Visibility.Hidden;
+        }
+
+        private void ViewportSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewportSettingsCanvas.Visibility = Visibility.Visible;
+            BasicShaderCanvas.Visibility = Visibility.Hidden;
+            AdvancedShaderCanvas.Visibility = Visibility.Hidden;
+        }
+
+        private void UsingTexture_Click(object sender, RoutedEventArgs e)
+        {
+            var temp = sender as CheckBox;
+            if(temp.IsChecked == true)
+            {
+                LoadPictureCanvas.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                LoadPictureCanvas.Visibility = Visibility.Hidden;
+            }
         }
     }
 
