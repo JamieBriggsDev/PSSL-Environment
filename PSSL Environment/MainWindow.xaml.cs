@@ -447,6 +447,7 @@ namespace PSSL_Environment
                 LoadPictureCanvas.Visibility = Visibility.Hidden;
             }
         }
+
     }
 
 
