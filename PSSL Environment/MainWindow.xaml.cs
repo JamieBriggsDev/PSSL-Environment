@@ -41,6 +41,33 @@ namespace PSSL_Environment
             //device3D.Content = Display3d("C:\\Users\\jamie\\OneDrive\\Individual Project\\Project\\PSSL Environment\\PSSL Environment\\Resources\\Models\\cube.obj");
         }
 
+        private void closeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void maximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Normal)
+                this.WindowState = WindowState.Maximized;
+            else
+                this.WindowState = WindowState.Normal;
+            //this.MinHeight = this.Height;
+            //this.MaxHeight = this.Height;
+            //this.MinWidth = this.Width;
+            //this.MaxWidth = this.Width;
+        }
+
+        private void minimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void ToolBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.WindowState = WindowState.Normal;
+            this.DragMove();
+        }
 
         private void btnLoadImage_Click(object sender, RoutedEventArgs e)
         {
@@ -99,7 +126,7 @@ namespace PSSL_Environment
 
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
-            if(BasicShaderCanvas.IsVisible == true)
+            if(BasicShaderScroll.IsVisible == true)
             {
                 if(WaterEnabled.IsChecked == true)
                 {
@@ -416,7 +443,7 @@ namespace PSSL_Environment
 
         private void BasicSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            BasicShaderCanvas.Visibility = Visibility.Visible;
+            BasicShaderScroll.Visibility = Visibility.Visible;
             AdvancedShaderCanvas.Visibility = Visibility.Hidden;
             ViewportSettingsCanvas.Visibility = Visibility.Hidden;
         }
@@ -424,14 +451,14 @@ namespace PSSL_Environment
         private void AdvancedSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             AdvancedShaderCanvas.Visibility = Visibility.Visible;
-            BasicShaderCanvas.Visibility = Visibility.Hidden;
+            BasicShaderScroll.Visibility = Visibility.Hidden;
             ViewportSettingsCanvas.Visibility = Visibility.Hidden;
         }
 
         private void ViewportSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             ViewportSettingsCanvas.Visibility = Visibility.Visible;
-            BasicShaderCanvas.Visibility = Visibility.Hidden;
+            BasicShaderScroll.Visibility = Visibility.Hidden;
             AdvancedShaderCanvas.Visibility = Visibility.Hidden;
         }
 
@@ -447,6 +474,7 @@ namespace PSSL_Environment
                 LoadPictureCanvas.Visibility = Visibility.Hidden;
             }
         }
+
 
     }
 

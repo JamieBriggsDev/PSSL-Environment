@@ -10,9 +10,9 @@
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
         Title="{StaticResource strAppName}" Height="720" Width="1280"
-        WindowStartupLocation="CenterScreen" Icon="cubeIcon.png" WindowStyle="ToolWindow" 
+        WindowStartupLocation="CenterScreen" Icon="cubeIcon.png" WindowStyle="None" 
         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" 
-        Background="#FF1F1F1F">
+        Background="#FF530000" BorderBrush="Black" BorderThickness="5">
 
 
     <Window.Resources>
@@ -61,131 +61,6 @@
             <Button x:Name="AdvancedSettingsButton" Content="Advanced&#xA;Settings" Canvas.Top="-47.5" FontFamily="Microsoft YaHei UI Light" ClickMode="Press" Cursor="Hand" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" AutomationProperties.Name="BasicSettings" FontSize="24" BorderBrush="{x:Null}" Background="#FF727272" Foreground="White" Click="AdvancedSettingsButton_Click" Canvas.Left="-4.514" Margin="0" Grid.Row="1"/>
             <Button x:Name="ViewportSettingsButton" Content="Viewport&#xA;Settings" Canvas.Top="-47.5" FontFamily="Microsoft YaHei UI Light" ClickMode="Press" Cursor="Hand" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" AutomationProperties.Name="BasicSettings" FontSize="24" BorderBrush="{x:Null}" Background="#FF727272" Foreground="White" Click="ViewportSettingsButton_Click" Canvas.Left="-4.514" Margin="0" Grid.Row="2"/>
         </Grid>
-        <Canvas x:Name="ToolBar" Canvas.Left="182" Background="#FF303030" Grid.ColumnSpan="3">
-            <Button x:Name="LoadOBJ" Content="Load OBJ" Canvas.Left="75" Canvas.Top="10" Width="75" ClickMode="Press"
-                    Click="fileOpenItem_Click" d:IsHidden="True"/>
-        </Canvas>
-        <Canvas x:Name="BasicShaderCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="1" Margin="0" Grid.Row="1" Width="{DynamicResource CanvasOpen}">
-            <Canvas.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <LinearGradientBrush.RelativeTransform>
-                        <TransformGroup>
-                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
-                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
-                            <RotateTransform Angle="90" CenterY="0.5" CenterX="0.5"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </LinearGradientBrush.RelativeTransform>
-                    <GradientStop Color="Black" Offset="0"/>
-                    <GradientStop Color="#FF111111" Offset="0.087"/>
-                </LinearGradientBrush>
-            </Canvas.Background>
-            <ScrollViewer x:Name="BasicShaderScroll" Height="662" CanContentScroll="True" VerticalScrollBarVisibility="Hidden" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="400">
-                <Grid x:Name="BasicShaderLayout" Height="913" HorizontalAlignment="Left" Width="400">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20"><Run Foreground="White" Text="Color "/><Run Foreground="White" Text="Settings"/></TextBlock>
-                    <TextBlock Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Grid.Row="2" RenderTransformOrigin="0.526,1.457"><Run Foreground="White" Text="Texture"/><Run Foreground="White" Text=" "/><Run Foreground="White" Text="Settings"/></TextBlock>
-                    <CheckBox x:Name="UsingTexture" Content="Using Texture" Margin="158.975,32.749,148.26,0" Grid.Row="3" VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI Light" Foreground="White" Click="UsingTexture_Click" d:LayoutOverrides="Width"/>
-                    <Canvas x:Name="LoadPictureCanvas" HorizontalAlignment="Center" Height="174.402" Margin="10,30.098,0,0" Grid.Row="3" VerticalAlignment="Center" Width="227.5">
-                        <Button Height="23" HorizontalAlignment="Left" 
-                                                Margin="12,0,0,34" x:Name="btnImageLoad" VerticalAlignment="Bottom" 
-                                                Width="75" Grid.Column="1" Click="btnLoadImage_Click" Background="#FF727272" Foreground="White" Content="Load Image" d:IsHidden="True"/>
-                        <Image x:Name="imgPhoto" 
-                                                Stretch="Fill" Grid.Column="1" Height="128" Canvas.Left="12" Canvas.Top="34.667" Width="128" d:IsHidden="True" />
-                    </Canvas>
-                    <StackPanel  HorizontalAlignment="Center" Grid.Row="1" Width="247.5" Margin="0">
-                        <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Ambient Colour"/></TextBlock>
-                        <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged"
-                                                                 UsingAlphaChannel="False"
-                                                                 MaxDropDownWidth="250"
-                                                                 AvailableColorsSortingMode="HueSaturationBrightness" d:IsHidden="True"/>
-                        <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Diffuse Colour"/></TextBlock>
-                        <wpfTool:ColorPicker x:Name="diffuseColorPicker" SelectedColorChanged="diffuseColorPicker_SelectedColorChanged"
-                                                                 UsingAlphaChannel="False"
-                                                                 MaxDropDownWidth="250" d:IsHidden="True"/>
-                        <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Specular Colour"/></TextBlock>
-                        <wpfTool:ColorPicker x:Name="specularColorPicker" SelectedColorChanged="specularColorPicker_SelectedColorChanged"
-                                                                 UsingAlphaChannel="False"
-                                                                 MaxDropDownWidth="250" d:IsHidden="True"/>
-                        <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Alpha"/></TextBlock>
-                        <DockPanel VerticalAlignment="Center" d:IsHidden="True">
-                            <TextBox Text="{Binding Value, ElementName=colorAlphaValue, UpdateSourceTrigger=PropertyChanged}"
-                                                         DockPanel.Dock="Right" TextAlignment="Right" Width="40" d:IsHidden="True" />
-                            <Slider Maximum="1" TickPlacement="BottomRight" TickFrequency="0.01" 
-                                                        x:Name="colorAlphaValue" ValueChanged="colorAlphaValue_ValueChanged" 
-                                                        Value="1" Foreground="#FF727272" BorderBrush="#FF0A0A0A" d:IsHidden="True"/>
-                        </DockPanel>
-                        <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Shininess"/></TextBlock>
-                        <DockPanel VerticalAlignment="Center" d:IsHidden="True">
-                            <TextBox Text="{Binding Value, ElementName=shininessValue, UpdateSourceTrigger=PropertyChanged}"
-                                                         DockPanel.Dock="Right" TextAlignment="Right" Width="40" d:IsHidden="True" />
-                            <Slider Maximum="50" TickPlacement="BottomRight" TickFrequency="0.01" 
-                                                        x:Name="shininessValue" ValueChanged="colorAlphaValue_ValueChanged" 
-                                                        Value="5" Foreground="#FF727272" d:IsHidden="True"/>
-                        </DockPanel>
-                    </StackPanel>
-                    <TextBlock Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Grid.Row="4" RenderTransformOrigin="0.526,1.457"><Run Foreground="White" Text="Template"/><LineBreak/><Run Foreground="White"/><Run Foreground="White" Text=" "/><Run Foreground="White" Text="Settings"/></TextBlock>
-                    <Grid HorizontalAlignment="Center" Height="267.5" Margin="0,0,0,-207.5" Grid.Row="5" Width="247.5">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="25"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="65"/>
-                            <ColumnDefinition Width="30"/>
-
-                        </Grid.ColumnDefinitions>
-
-                        <!--WATER EFFECT-->
-                        <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Foreground="White" d:IsHidden="True">Water Effect:</TextBlock>
-                        <CheckBox x:Name="WaterEnabled" Click="WaterEnabled_Click"
-                                          Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" 
-                                          HorizontalContentAlignment="Center" VerticalAlignment="Center" 
-                                          VerticalContentAlignment="Center" Foreground="White" d:IsHidden="True"/>
-                        <!-- AMPLITUDE-->
-                        <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Foreground="White" d:IsHidden="True">Amplitude:</TextBlock>
-                        <Slider x:Name="AmplitudeSlider" Grid.Column="3" Grid.Row="0" VerticalAlignment="Center" 
-                                        Minimum="0" Maximum="1" Value="1" TickPlacement="BottomRight" TickFrequency="0.01"
-                                        ValueChanged="AmplitudeSlider_ValueChanged" Foreground="#FF3E3E3E" d:IsHidden="True"/>
-                        <TextBox Text="{Binding ElementName=AmplitudeSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
-                                                          Grid.Row="0" Grid.Column="4" TextAlignment="Left" Foreground="White" d:IsHidden="True"/>
-                        <!-- SPEED-->
-                        <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Foreground="White" d:IsHidden="True">Speed:</TextBlock>
-                        <Slider x:Name="SpeedSlider" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" 
-                                        Minimum="-30" Maximum="30" Value="1" TickPlacement="BottomRight" TickFrequency="0.1"
-                                        ValueChanged="SpeedSlider_ValueChanged" Foreground="#FF3E3E3E" d:IsHidden="True"/>
-                        <TextBox Text="{Binding ElementName=SpeedSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
-                                                          Grid.Row="1" Grid.Column="4" TextAlignment="Left" Foreground="White" d:IsHidden="True"/>
-
-                        <!-- FREQUENCY-->
-                        <TextBlock Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" Foreground="White" d:IsHidden="True">Frequency:</TextBlock>
-                        <Slider x:Name="FrequencySlider" Grid.Column="3" Grid.Row="2" VerticalAlignment="Center" 
-                                        Minimum="0" Maximum="30" Value="1" TickPlacement="BottomRight" TickFrequency="1"
-                                        ValueChanged="FrequencySlider_ValueChanged" Foreground="#FF3E3E3E" d:IsHidden="True"/>
-                        <TextBox Text="{Binding ElementName=FrequencySlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"
-                                                          Grid.Row="2" Grid.Column="4" TextAlignment="Left" d:IsHidden="True"/>
-
-                        <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Foreground="White" d:IsHidden="True">Toon Shader:</TextBlock>
-                        <CheckBox x:Name="checkBoxUseToonShader" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" 
-                                          HorizontalContentAlignment="Center" VerticalAlignment="Center" 
-                                          VerticalContentAlignment="Center" d:IsHidden="True"/>
-                    </Grid>
-
-                </Grid>
-            </ScrollViewer>
-        </Canvas>
         <Canvas x:Name="AdvancedShaderCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="1" Margin="0" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Hidden">
             <Canvas.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -197,7 +72,7 @@
                             <TranslateTransform/>
                         </TransformGroup>
                     </LinearGradientBrush.RelativeTransform>
-                    <GradientStop Color="Black" Offset="0"/>
+                    <GradientStop Color="#FF040000" Offset="0"/>
                     <GradientStop Color="#FF111111" Offset="0.087"/>
                 </LinearGradientBrush>
             </Canvas.Background>
@@ -237,7 +112,7 @@
                             <TranslateTransform/>
                         </TransformGroup>
                     </LinearGradientBrush.RelativeTransform>
-                    <GradientStop Color="Black" Offset="0"/>
+                    <GradientStop Color="#FF040000" Offset="0"/>
                     <GradientStop Color="#FF111111" Offset="0.087"/>
                 </LinearGradientBrush>
             </Canvas.Background>
@@ -352,6 +227,139 @@
                                            VerticalAlignment="Stretch"
                                            Resized="OpenGLControl_Resized" Grid.ColumnSpan="2" Width="850.5" Height="674" d:IsHidden="True"/>
         </Canvas>
+        <Grid x:Name="ToolBar" Margin="0" Grid.ColumnSpan="3" Background="#FF530000" MouseLeftButtonDown="ToolBar_MouseLeftButtonDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="35"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="LoadOBJ" Content="OBJ" ClickMode="Press"
+                    Click="fileOpenItem_Click" Margin="0,0,0,0.04"/>
+            <wpfTool:IconButton x:Name="closeButton" Content="X" Grid.Column="4" d:LayoutOverrides="Width" Click="closeButton_Click"/>
+            <wpfTool:IconButton x:Name="maximizeButton" Content="| |" Grid.Column="3" d:LayoutOverrides="Width" Margin="0,-0.04,0,0.04" Click="maximizeButton_Click"/>
+            <wpfTool:IconButton x:Name="minimizeButton" Content="_" Grid.Column="2" Margin="0,-0.04,0,0.04" d:LayoutOverrides="Width" Click="minimizeButton_Click"/>
+        </Grid>
+        <ScrollViewer x:Name="BasicShaderScroll" CanContentScroll="True" VerticalScrollBarVisibility="Hidden" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,0,-3" Grid.Column="1" Grid.Row="1">
+            <ScrollViewer.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <LinearGradientBrush.RelativeTransform>
+                        <TransformGroup>
+                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                            <RotateTransform Angle="90" CenterY="0.5" CenterX="0.5"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </LinearGradientBrush.RelativeTransform>
+                    <GradientStop Color="#FF040000" Offset="0"/>
+                    <GradientStop Color="#FF111111" Offset="0.087"/>
+                </LinearGradientBrush>
+            </ScrollViewer.Background>
+            <Grid x:Name="BasicShaderLayout" Height="1477" Width="400">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20"><Run Foreground="White" Text="Color "/><Run Foreground="White" Text="Settings"/></TextBlock>
+                <TextBlock Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Grid.Row="2" RenderTransformOrigin="0.526,1.457"><Run Foreground="White" Text="Texture"/><Run Foreground="White" Text=" "/><Run Foreground="White" Text="Settings"/></TextBlock>
+                <CheckBox x:Name="UsingTexture" Content="Using Texture" Margin="158.975,32.749,148.26,0" Grid.Row="3" VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI Light" Foreground="White" Click="UsingTexture_Click" d:LayoutOverrides="Width"/>
+                <Canvas x:Name="LoadPictureCanvas" HorizontalAlignment="Center" Height="174.402" Margin="10,30.098,0,0" Grid.Row="3" VerticalAlignment="Center" Width="227.5">
+                    <Button Height="23" HorizontalAlignment="Left" 
+                                                Margin="12,0,0,34" x:Name="btnImageLoad" VerticalAlignment="Bottom" 
+                                                Width="75" Grid.Column="1" Click="btnLoadImage_Click" Background="#FF727272" Foreground="White" Content="Load Image" d:IsHidden="True"/>
+                    <Image x:Name="imgPhoto" 
+                                                Stretch="Fill" Grid.Column="1" Height="128" Canvas.Left="12" Canvas.Top="34.667" Width="128" d:IsHidden="True" />
+                </Canvas>
+                <StackPanel  HorizontalAlignment="Center" Grid.Row="1" Width="247.5" Margin="0">
+                    <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Ambient Colour"/></TextBlock>
+                    <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged"
+                                                                 UsingAlphaChannel="False"
+                                                                 MaxDropDownWidth="250"
+                                                                 AvailableColorsSortingMode="HueSaturationBrightness" d:IsHidden="True"/>
+                    <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Diffuse Colour"/></TextBlock>
+                    <wpfTool:ColorPicker x:Name="diffuseColorPicker" SelectedColorChanged="diffuseColorPicker_SelectedColorChanged"
+                                                                 UsingAlphaChannel="False"
+                                                                 MaxDropDownWidth="250" d:IsHidden="True"/>
+                    <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Specular Colour"/></TextBlock>
+                    <wpfTool:ColorPicker x:Name="specularColorPicker" SelectedColorChanged="specularColorPicker_SelectedColorChanged"
+                                                                 UsingAlphaChannel="False"
+                                                                 MaxDropDownWidth="250" d:IsHidden="True"/>
+                    <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Alpha"/></TextBlock>
+                    <DockPanel VerticalAlignment="Center" d:IsHidden="True">
+                        <TextBox Text="{Binding Value, ElementName=colorAlphaValue, UpdateSourceTrigger=PropertyChanged}"
+                                                         DockPanel.Dock="Right" TextAlignment="Right" Width="40" d:IsHidden="True" />
+                        <Slider Maximum="1" TickPlacement="BottomRight" TickFrequency="0.01" 
+                                                        x:Name="colorAlphaValue" ValueChanged="colorAlphaValue_ValueChanged" 
+                                                        Value="1" Foreground="#FF727272" BorderBrush="#FF0A0A0A" d:IsHidden="True"/>
+                    </DockPanel>
+                    <TextBlock Foreground="White" d:IsHidden="True"><Run Text="Shininess"/></TextBlock>
+                    <DockPanel VerticalAlignment="Center" d:IsHidden="True">
+                        <TextBox Text="{Binding Value, ElementName=shininessValue, UpdateSourceTrigger=PropertyChanged}"
+                                                         DockPanel.Dock="Right" TextAlignment="Right" Width="40" d:IsHidden="True" />
+                        <Slider Maximum="50" TickPlacement="BottomRight" TickFrequency="0.01" 
+                                                        x:Name="shininessValue" ValueChanged="colorAlphaValue_ValueChanged" 
+                                                        Value="5" Foreground="#FF727272" d:IsHidden="True"/>
+                    </DockPanel>
+                </StackPanel>
+                <TextBlock Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Grid.Row="4" RenderTransformOrigin="0.526,1.457"><Run Foreground="White" Text="Template"/><LineBreak/><Run Foreground="White"/><Run Foreground="White" Text=" "/><Run Foreground="White" Text="Settings"/></TextBlock>
+                <Grid HorizontalAlignment="Center" Height="267.5" Margin="0,0,0,-207.5" Grid.Row="5" Width="247.5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="65"/>
+                        <ColumnDefinition Width="30"/>
+
+                    </Grid.ColumnDefinitions>
+
+                    <!--WATER EFFECT-->
+                    <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Foreground="White" d:IsHidden="True"><Run Text="Water Effect:"/></TextBlock>
+                    <CheckBox x:Name="WaterEnabled" Click="WaterEnabled_Click"
+                                          Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" 
+                                          HorizontalContentAlignment="Center" VerticalAlignment="Center" 
+                                          VerticalContentAlignment="Center" Foreground="White" d:IsHidden="True"/>
+                    <!-- AMPLITUDE-->
+                    <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Foreground="White" d:IsHidden="True"><Run Text="Amplitude:"/></TextBlock>
+                    <Slider x:Name="AmplitudeSlider" Grid.Column="3" Grid.Row="0" VerticalAlignment="Center" 
+                                        Minimum="0" Maximum="1" Value="1" TickPlacement="BottomRight" TickFrequency="0.01"
+                                        ValueChanged="AmplitudeSlider_ValueChanged" Foreground="#FF3E3E3E" d:IsHidden="True"/>
+                    <TextBox Text="{Binding Value, ElementName=AmplitudeSlider, UpdateSourceTrigger=PropertyChanged}"
+                                                          Grid.Row="0" Grid.Column="4" TextAlignment="Left" Foreground="White" d:IsHidden="True"/>
+                    <!-- SPEED-->
+                    <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Foreground="White" d:IsHidden="True"><Run Text="Speed:"/></TextBlock>
+                    <Slider x:Name="SpeedSlider" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" 
+                                        Minimum="-30" Maximum="30" Value="1" TickPlacement="BottomRight" TickFrequency="0.1"
+                                        ValueChanged="SpeedSlider_ValueChanged" Foreground="#FF3E3E3E" d:IsHidden="True"/>
+                    <TextBox Text="{Binding Value, ElementName=SpeedSlider, UpdateSourceTrigger=PropertyChanged}"
+                                                          Grid.Row="1" Grid.Column="4" TextAlignment="Left" Foreground="White" d:IsHidden="True"/>
+
+                    <!-- FREQUENCY-->
+                    <TextBlock Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" Foreground="White" d:IsHidden="True"><Run Text="Frequency:"/></TextBlock>
+                    <Slider x:Name="FrequencySlider" Grid.Column="3" Grid.Row="2" VerticalAlignment="Center" 
+                                        Minimum="0" Maximum="30" Value="1" TickPlacement="BottomRight" TickFrequency="1"
+                                        ValueChanged="FrequencySlider_ValueChanged" Foreground="#FF3E3E3E" d:IsHidden="True"/>
+                    <TextBox Text="{Binding Value, ElementName=FrequencySlider, UpdateSourceTrigger=PropertyChanged}"
+                                                          Grid.Row="2" Grid.Column="4" TextAlignment="Left" d:IsHidden="True"/>
+
+                    <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Foreground="White" d:IsHidden="True"><Run Text="Toon Shader:"/></TextBlock>
+                    <CheckBox x:Name="checkBoxUseToonShader" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" 
+                                          HorizontalContentAlignment="Center" VerticalAlignment="Center" 
+                                          VerticalContentAlignment="Center" d:IsHidden="True"/>
+                </Grid>
+
+            </Grid>
+        </ScrollViewer>
     </Grid>
 
 </Window>
