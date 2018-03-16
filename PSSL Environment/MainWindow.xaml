@@ -10,9 +10,9 @@
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
         Title="{StaticResource strAppName}" Height="720" Width="1280"
-        WindowStartupLocation="CenterScreen" Icon="cubeIcon.png" WindowStyle="None" 
+        WindowStartupLocation="CenterScreen" Icon="cubeIcon.png" 
         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" 
-        Background="#FF530000" BorderBrush="Black" BorderThickness="5">
+        Background="#FF530000" BorderBrush="Black" BorderThickness="5" AllowsTransparency="True" WindowStyle="None">
 
 
     <Window.Resources>
@@ -218,7 +218,7 @@
                 </Grid>
             </Grid>
         </Canvas>
-        <Canvas x:Name="OpenGlView" Margin="5,0,0,0" Grid.Row="1" Grid.Column="2">
+        <Canvas x:Name="OpenGlView" Margin="0" Grid.Row="1" Grid.Column="2">
             <sharpGL:OpenGLControl x:Name="openGlCtrl" OpenGLDraw="OpenGLControl_OpenGLDraw"
                                            OpenGLInitialized="OpenGLControl_OpenGLInitialized"
                                            RenderContextType="FBO"
