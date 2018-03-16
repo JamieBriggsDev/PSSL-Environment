@@ -461,6 +461,11 @@ namespace PSSL_Environment
         // Renders the scene with a texture along with colours for ADS
         public void RenderTextureMode(OpenGL gl, bool useToonShader)
         {
+            if(myOBJ == null)
+            {
+                return;
+            }
+
             if (myOBJ.GetValidObject() == true)
             {
                 vec3 defaultValues;
@@ -603,6 +608,11 @@ namespace PSSL_Environment
         // Renders the scene with a texture along with colours for ADS
         public void RenderWaterMode(OpenGL gl)
         {
+            if(myOBJ == null)
+            {
+                return;
+            }
+
             if (myOBJ.GetValidObject() == true)
             {
                 vec3 defaultValues;
