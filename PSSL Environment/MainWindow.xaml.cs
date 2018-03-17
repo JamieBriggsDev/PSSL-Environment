@@ -36,7 +36,7 @@ namespace PSSL_Environment
         public MainWindow()
         {
             InitializeComponent();
-
+            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             //ModelVisual3D device3D = new ModelVisual3D();
             //device3D.Content = Display3d("C:\\Users\\jamie\\OneDrive\\Individual Project\\Project\\PSSL Environment\\PSSL Environment\\Resources\\Models\\cube.obj");
         }
@@ -105,7 +105,7 @@ namespace PSSL_Environment
 
             //  Clear the color and depth buffer.
 
-            gl.ClearColor(1f, 1f, 1f, 1f);
+            gl.ClearColor(0.85f, 0.85f, 0.85f, 1f);
             //if(singleColorCanvas.SelectedColor == null)
             //{
             //}
@@ -126,7 +126,7 @@ namespace PSSL_Environment
 
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
-            if(BasicShaderScroll.IsVisible == true)
+            if(myScene.graphicsSettings == UsingSettings.BASIC)
             {
                 if(WaterEnabled.IsChecked == true)
                 {
@@ -142,7 +142,7 @@ namespace PSSL_Environment
                 }
             }
 
-            if (AdvancedShaderCanvas.IsVisible == true)
+            if (myScene.graphicsSettings == UsingSettings.ADVANCED)
             {
                 myScene.RenderCustomMode(gl);
                 return;
@@ -170,6 +170,9 @@ namespace PSSL_Environment
             gl.BlendEquation(OpenGL.GL_ADD);
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
 
+            openGlCtrl.FrameRate = 60;
+
+            openGlCtrl.DrawFPS = true;
             //gl.Enable(OpenGL.GL_FPS)
             //gl.Enable(OpenGL.GL_DOUBLEBUFFER);
 
@@ -405,17 +408,6 @@ namespace PSSL_Environment
             myScene.LoadWaterTextures(openGlCtrl.OpenGL, myTexture);
         }
 
-        private void openGlCtrl_MouseEnter(object sender, MouseEventArgs e)
-        {
-            //if(myScene.getOBJ != null)
-            //{
-            //    if(myScene.getOBJ.GetValidObject() == false)
-            //    {
-            //        Cursor.current = Cursor.w
-            //    }
-            //}
-        }
-
         private void AmplitudeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             float value = (float)AmplitudeSlider.Value;
@@ -446,6 +438,8 @@ namespace PSSL_Environment
             BasicShaderScroll.Visibility = Visibility.Visible;
             AdvancedShaderCanvas.Visibility = Visibility.Hidden;
             ViewportSettingsCanvas.Visibility = Visibility.Hidden;
+            ButtonSelector.SetValue(System.Windows.Controls.Grid.RowProperty, 0);
+            myScene.graphicsSettings = UsingSettings.BASIC;
         }
 
         private void AdvancedSettingsButton_Click(object sender, RoutedEventArgs e)
@@ -453,6 +447,8 @@ namespace PSSL_Environment
             AdvancedShaderCanvas.Visibility = Visibility.Visible;
             BasicShaderScroll.Visibility = Visibility.Hidden;
             ViewportSettingsCanvas.Visibility = Visibility.Hidden;
+            ButtonSelector.SetValue(System.Windows.Controls.Grid.RowProperty, 1);
+            myScene.graphicsSettings = UsingSettings.ADVANCED;
         }
 
         private void ViewportSettingsButton_Click(object sender, RoutedEventArgs e)
@@ -474,8 +470,6 @@ namespace PSSL_Environment
                 LoadPictureCanvas.Visibility = Visibility.Hidden;
             }
         }
-
-
     }
 
 

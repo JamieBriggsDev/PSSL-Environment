@@ -29,12 +29,15 @@ namespace PSSL_Environment
         public const uint TexCoord = 2;
     }
 
+    public enum UsingSettings {  BASIC, ADVANCED};
     
     /// <summary>
     /// A class that represents the scene for this sample.
     /// </summary>
     public class Scene
     {
+        public UsingSettings graphicsSettings = UsingSettings.BASIC;
+
         public string vertexShader = "#version 130" + Environment.NewLine +
                                         "in vec4 Position;" + Environment.NewLine +
                                         "in vec3 Normal;" + Environment.NewLine +
@@ -238,7 +241,7 @@ namespace PSSL_Environment
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.frag"), attributeLocations);
 
-            gl.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            gl.ClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
             //  Needed to render textures in viewport
             //gl.Enable(OpenGL.GL_TEXTURE_2D);
@@ -1098,11 +1101,15 @@ namespace PSSL_Environment
                 return scaleFactor;
             }
 
+
+
             //  Set the scale factor accordingly.
             //  sf = max/c
             scaleFactor = 2.0f / (float)max;
             return scaleFactor;
         }
+
+
     }
 
     
