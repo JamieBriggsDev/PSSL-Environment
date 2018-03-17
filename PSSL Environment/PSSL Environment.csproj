@@ -159,6 +159,8 @@
     <None Include="Resources\Models\Cube\Cube.obj" />
     <None Include="Resources\Models\MenuArwing.obj" />
     <None Include="Resources\Models\Tank.obj" />
+    <None Include="Shaders\Custom\CustomFrag.frag" />
+    <None Include="Shaders\Custom\CustomVertex.vert" />
     <None Include="Shaders\PerPixelTexture.vert" />
     <None Include="Shaders\PerPixelTexture.frag" />
     <None Include="Shaders\PerPixel.frag" />
@@ -219,6 +221,7 @@
   <ItemGroup>
     <Resource Include="cubeIcon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>XCOPY "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /E /I /F /Y</PostBuildEvent>
