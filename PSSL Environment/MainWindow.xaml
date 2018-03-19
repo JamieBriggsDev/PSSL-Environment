@@ -39,6 +39,18 @@
             <GradientStop Color="#FF002527" Offset="1"/>
             <GradientStop Color="#FF004F53" Offset="0.682"/>
         </LinearGradientBrush>
+        <LinearGradientBrush x:Key="PanelBackground" EndPoint="0.5,1" StartPoint="0.5,0">
+            <LinearGradientBrush.RelativeTransform>
+                <TransformGroup>
+                    <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                    <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                    <RotateTransform Angle="90" CenterY="0.5" CenterX="0.5"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </LinearGradientBrush.RelativeTransform>
+            <GradientStop Color="#FF122223" Offset="0"/>
+            <GradientStop Color="#FF363636" Offset="0.087"/>
+        </LinearGradientBrush>
 
     </Window.Resources>
 
@@ -260,21 +272,7 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Grid>
-            <Canvas x:Name="AdvancedShaderCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Hidden">
-                <Canvas.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <LinearGradientBrush.RelativeTransform>
-                            <TransformGroup>
-                                <ScaleTransform CenterY="0.5" CenterX="0.5"/>
-                                <SkewTransform CenterY="0.5" CenterX="0.5"/>
-                                <RotateTransform Angle="90" CenterY="0.5" CenterX="0.5"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </LinearGradientBrush.RelativeTransform>
-                        <GradientStop Color="#FF1B1E3E" Offset="0"/>
-                        <GradientStop Color="#FF363636" Offset="0.087"/>
-                    </LinearGradientBrush>
-                </Canvas.Background>
+            <Canvas x:Name="AdvancedShaderCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Hidden" Background="{DynamicResource PanelBackground}">
                 <Grid Height="660" Width="400" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="3*"/>
@@ -300,21 +298,7 @@
                     <TextBlock x:Name="CompileErrorOutput" Grid.Row="1" TextWrapping="WrapWithOverflow" Foreground="White"/>
                 </Grid>
             </Canvas>
-            <Canvas x:Name="ViewportSettingsCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" Visibility="Hidden">
-                <Canvas.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <LinearGradientBrush.RelativeTransform>
-                            <TransformGroup>
-                                <ScaleTransform CenterY="0.5" CenterX="0.5"/>
-                                <SkewTransform CenterY="0.5" CenterX="0.5"/>
-                                <RotateTransform Angle="90" CenterY="0.5" CenterX="0.5"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </LinearGradientBrush.RelativeTransform>
-                        <GradientStop Color="#FF1B1E3E" Offset="0"/>
-                        <GradientStop Color="#FF363636" Offset="0.087"/>
-                    </LinearGradientBrush>
-                </Canvas.Background>
+            <Canvas x:Name="ViewportSettingsCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" Visibility="Hidden" Background="{DynamicResource PanelBackground}">
                 <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="660" Width="400">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60"/>
@@ -417,21 +401,7 @@
                     </Grid>
                 </Grid>
             </Canvas>
-            <ScrollViewer x:Name="BasicShaderScroll" CanContentScroll="True" VerticalScrollBarVisibility="Hidden" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0" Grid.Column="3" Grid.Row="1">
-                <ScrollViewer.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <LinearGradientBrush.RelativeTransform>
-                            <TransformGroup>
-                                <ScaleTransform CenterY="0.5" CenterX="0.5"/>
-                                <SkewTransform CenterY="0.5" CenterX="0.5"/>
-                                <RotateTransform Angle="90" CenterY="0.5" CenterX="0.5"/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </LinearGradientBrush.RelativeTransform>
-                        <GradientStop Color="#FF122223" Offset="0"/>
-                        <GradientStop Color="#FF363636" Offset="0.087"/>
-                    </LinearGradientBrush>
-                </ScrollViewer.Background>
+            <ScrollViewer x:Name="BasicShaderScroll" CanContentScroll="True" VerticalScrollBarVisibility="Hidden" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0" Grid.Column="3" Grid.Row="1" Background="{DynamicResource PanelBackground}">
                 <Grid x:Name="BasicShaderLayout" Height="1477" Width="400">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60"/>
@@ -443,12 +413,12 @@
                     </Grid.RowDefinitions>
                     <TextBlock Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Foreground="White"><Run Text="Color "/><Run Text="Settings"/></TextBlock>
                     <TextBlock Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="20" Grid.Row="2" RenderTransformOrigin="0.526,1.457" Foreground="White"><Run Text="Texture"/><Run Text=" "/><Run Text="Settings"/></TextBlock>
-                    <CheckBox x:Name="UsingTexture" Content="Using Texture" Margin="106.975,42.048,200.26,0" Grid.Row="3" VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI Light" Foreground="White" Click="UsingTexture_Click"/>
-                    <Canvas x:Name="LoadPictureCanvas" HorizontalAlignment="Center" Height="174.402" Margin="10,30.098,0,0" Grid.Row="3" VerticalAlignment="Center" Width="227.5">
+                    <CheckBox x:Name="UsingTexture" Content="Using Texture" Margin="98,48,210,0" Grid.Row="3" VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI Light" Foreground="White" Click="UsingTexture_Click"/>
+                    <Canvas x:Name="LoadPictureCanvas" HorizontalAlignment="Center" Height="174.402" Margin="0,30.098,0,0" Grid.Row="3" VerticalAlignment="Center" Width="227.5">
                         <Button Height="23" HorizontalAlignment="Left" x:Name="btnImageLoad" VerticalAlignment="Bottom" 
-                            Width="75" Grid.Column="1" Click="btnLoadImage_Click" Background="#FF727272" Foreground="White" Content="Load Image" Canvas.Left="123.333" Canvas.Top="6.667"/>
+                            Width="75" Grid.Column="1" Click="btnLoadImage_Click" Background="#FF727272" Foreground="White" Content="Load Image" Canvas.Left="140" Canvas.Top="12"/>
                         <Image x:Name="imgPhoto" 
-                            Stretch="Fill" Grid.Column="1" Height="128" Canvas.Left="12" Canvas.Top="34.667" Width="128" />
+                            Stretch="Fill" Grid.Column="1" Height="128" Canvas.Left="53" Canvas.Top="35" Width="128" />
                     </Canvas>
                     <StackPanel  HorizontalAlignment="Center" Grid.Row="1" Width="247.5" Margin="0">
                         <TextBlock Foreground="White"><Run Text="Ambient Colour"/></TextBlock>
