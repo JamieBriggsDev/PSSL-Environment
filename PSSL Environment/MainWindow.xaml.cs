@@ -20,6 +20,7 @@ using SharpGL.Enumerations;
 using SharpGL.SceneGraph;
 using SharpGL.SceneGraph.Core;
 using SharpGL.SceneGraph.Primitives;
+using System.Windows.Media.Animation;
 
 //The main PSSL_Enironment namespace
 namespace PSSL_Environment
@@ -63,7 +64,7 @@ namespace PSSL_Environment
             this.WindowState = WindowState.Minimized;
         }
 
-        private void ToolBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void ToolBar_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Normal;
             this.DragMove();
@@ -170,7 +171,7 @@ namespace PSSL_Environment
             gl.BlendEquation(OpenGL.GL_ADD);
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
 
-            openGlCtrl.FrameRate = 60;
+            openGlCtrl.FrameRate = 120;
 
             openGlCtrl.DrawFPS = true;
             //gl.Enable(OpenGL.GL_FPS)
@@ -426,6 +427,8 @@ namespace PSSL_Environment
             myScene.frequency = value;
         }
 
+        
+
         private void CompileShadersAdvButton_Click(object sender, RoutedEventArgs e)
         {
             CompileErrorOutput.Text = myScene.CompileCustomShader(openGlCtrl.OpenGL,
@@ -470,6 +473,13 @@ namespace PSSL_Environment
                 LoadPictureCanvas.Visibility = Visibility.Hidden;
             }
         }
+
+        private void DockButton_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleDockButton.IsChecked = !ToggleDockButton.IsChecked;
+        }
+
+
     }
 
 

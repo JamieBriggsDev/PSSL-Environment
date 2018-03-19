@@ -38,43 +38,9 @@ namespace PSSL_Environment
     {
         public UsingSettings graphicsSettings = UsingSettings.BASIC;
 
-        public string vertexShader = "#version 130" + Environment.NewLine +
-                                        "in vec4 Position;" + Environment.NewLine +
-                                        "in vec3 Normal;" + Environment.NewLine +
-                                        Environment.NewLine +
-                                        "uniform mat4 Projection;" + Environment.NewLine +
-                                        "uniform mat4 Modelview" + Environment.NewLine +
-                                        "uniform mat4 NormalMatrix" + Environment.NewLine +
-                                        "uniform mat4 DiffuseMaterial" + Environment.NewLine +
-                                        Environment.NewLine +
-                                        "out ve3 EyespaceNormal;" + Environment.NewLine +
-                                        "out ve3 Diffuse;" + Environment.NewLine +
-                                        Environment.NewLine +
-                                        "void main()" + Environment.NewLine +
-                                        "{" + Environment.NewLine +
-                                        "EyespaceNormal = NormalMatrix * Normal;" + Environment.NewLine +
-                                        "gl_Position = Projection * Modelview * Position;" + Environment.NewLine +
-                                        "Diffuse = DiffuseMaterial;" + Environment.NewLine +
-                                        "}" + Environment.NewLine;
+        public string vertexShader = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
 
-        public string fragShader = "#version 130" + Environment.NewLine +
-                                "in vec4 Position;" + Environment.NewLine +
-                                "in vec3 Normal;" + Environment.NewLine +
-                                Environment.NewLine +
-                                "uniform mat4 Projection;" + Environment.NewLine +
-                                "uniform mat4 Modelview" + Environment.NewLine +
-                                "uniform mat4 NormalMatrix" + Environment.NewLine +
-                                "uniform mat4 DiffuseMaterial" + Environment.NewLine +
-                                Environment.NewLine +
-                                "out ve3 EyespaceNormal;" + Environment.NewLine +
-                                "out ve3 Diffuse;" + Environment.NewLine +
-                                Environment.NewLine +
-                                "void main()" + Environment.NewLine +
-                                "{" + Environment.NewLine +
-                                "EyespaceNormal = NormalMatrix * Normal;" + Environment.NewLine +
-                                "gl_Position = Projection * Modelview * Position;" + Environment.NewLine +
-                                "Diffuse = DiffuseMaterial;" + Environment.NewLine +
-                                "}" + Environment.NewLine;
+        public string fragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
 
         private Obj myOBJ;
 
@@ -253,6 +219,10 @@ namespace PSSL_Environment
             lightLocation = new vec3(0.25f, 0.25f, 10f);
 
             ((MainWindow)Application.Current.MainWindow).VertexShaderText.Text = vertexShader;
+            ((MainWindow)Application.Current.MainWindow).FragmentShaderText.Text = fragShader;
+
+            ((MainWindow)Application.Current.MainWindow).CompileErrorOutput.Text = CompileCustomShader(gl,
+                vertexShader, fragShader);
 
         }
 
