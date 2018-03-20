@@ -365,16 +365,16 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Grid>
-            <Canvas x:Name="AdvancedShaderCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="{DynamicResource PanelBackground}">
-                <Grid Height="660" Width="400" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <DockPanel x:Name="AdvancedShaderCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="{DynamicResource PanelBackground}">
+                <Grid Width="400" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="5,0,0,0" HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="120"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80"/>
-                        <RowDefinition/>
-                        <RowDefinition Height="15*"/>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="67*"/>
                         <RowDefinition Height="100"/>
                     </Grid.RowDefinitions>
                     <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="36" Margin="42,17" Grid.ColumnSpan="2" Height="46" Width="316"><Run Foreground="White" Text="Advanced Setting"/><Run Foreground="White" Text="s"/></TextBlock>
@@ -393,9 +393,9 @@
                         </TabItem>
                     </TabControl>
                     <TextBlock x:Name="CompileErrorOutput" Grid.Row="3" TextWrapping="WrapWithOverflow" Foreground="White" Grid.ColumnSpan="2"/>
-                    <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="Constants" Foreground="White" Grid.Column="1" Margin="25,6,25,4" Grid.Row="1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="70"/>
+                    <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="Constants" Foreground="White" Grid.Column="1" Margin="25,1,25,0" Grid.Row="1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="70"/>
                 </Grid>
-            </Canvas>
+            </DockPanel>
             <Canvas x:Name="ViewportSettingsCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" Background="{DynamicResource PanelBackground}" Visibility="Hidden">
                 <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="660" Width="400">
                     <Grid.RowDefinitions>
