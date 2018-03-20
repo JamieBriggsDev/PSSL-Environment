@@ -479,7 +479,10 @@ namespace PSSL_Environment
             ToggleDockButton.IsChecked = !ToggleDockButton.IsChecked;
         }
 
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
 
+        }
     }
 
 
