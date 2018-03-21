@@ -21,6 +21,7 @@ using SharpGL.SceneGraph;
 using SharpGL.SceneGraph.Core;
 using SharpGL.SceneGraph.Primitives;
 using System.Windows.Media.Animation;
+using PSSL_Environment.UserControls;
 
 //The main PSSL_Enironment namespace
 namespace PSSL_Environment
@@ -34,10 +35,13 @@ namespace PSSL_Environment
 
     public partial class MainWindow : Window
     {
+        public List<FloatConstant> floatConstantsControls = new List<FloatConstant>();
+
         public MainWindow()
         {
             InitializeComponent();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+
             //ModelVisual3D device3D = new ModelVisual3D();
             //device3D.Content = Display3d("C:\\Users\\jamie\\OneDrive\\Individual Project\\Project\\PSSL Environment\\PSSL Environment\\Resources\\Models\\cube.obj");
         }
@@ -405,7 +409,7 @@ namespace PSSL_Environment
 
         private void WaterEnabled_Click(object sender, RoutedEventArgs e)
         {
-            System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap("D:\\PSSL-Environment\\PSSL Environment\\Resources\\Textures\\Water.png");
+            System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap(@"Resources\Textures\Water.png");
             myScene.LoadWaterTextures(openGlCtrl.OpenGL, myTexture);
         }
 
@@ -479,9 +483,26 @@ namespace PSSL_Environment
             ToggleDockButton.IsChecked = !ToggleDockButton.IsChecked;
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void RemoveConstantControl(UserControl ctl)
         {
+            try
+            {
+                ConstantsDock.Children.Remove(ctl);
+            } catch (Exception e)
+            {
+                return;
+            }
 
+            ctl = null;
+        }
+
+        private void AddFloatConstant_Click(object sender, RoutedEventArgs e)
+        {
+            FloatConstant newConstant = new FloatConstant();
+            ConstantsDock.Children.Add(newConstant);
+            DockPanel.SetDock(newConstant, Dock.Top);
+
+            floatConstantsControls.Add(newConstant);
         }
     }
 

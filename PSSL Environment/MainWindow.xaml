@@ -366,10 +366,11 @@
                 </Rectangle>
             </Grid>
             <DockPanel x:Name="AdvancedShaderCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="{DynamicResource PanelBackground}">
-                <Grid Width="400" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="5,0,0,0" HorizontalAlignment="Center">
+                <Grid x:Name="AdvancedShaderGrid" Width="400" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="5,0,0,0" HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
-                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="74"/>
+                        <ColumnDefinition Width="46"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80"/>
@@ -377,8 +378,8 @@
                         <RowDefinition Height="67*"/>
                         <RowDefinition Height="100"/>
                     </Grid.RowDefinitions>
-                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="36" Margin="42,17" Grid.ColumnSpan="2" Height="46" Width="316"><Run Foreground="White" Text="Advanced Setting"/><Run Foreground="White" Text="s"/></TextBlock>
-                    <TabControl Grid.Row="1" Background="#FF232323" BorderBrush="Black" SelectionChanged="TabControl_SelectionChanged" Grid.RowSpan="2">
+                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="36" Margin="37.5,17,0.5,17" Grid.ColumnSpan="2" Height="46" Width="316"><Run Foreground="White" Text="Advanced Setting"/><Run Foreground="White" Text="s"/></TextBlock>
+                    <TabControl Grid.Row="1" Background="#FF232323" BorderBrush="Black" Grid.RowSpan="2">
                         <TabItem Header="Vertex Shader" Foreground="White" Background="#FF0A0A0A">
                             <ScrollViewer Foreground="#FF4D4D4D">
                                 <TextBox x:Name="VertexShaderText" BorderThickness="2" VerticalContentAlignment="Stretch"
@@ -392,8 +393,17 @@
                             </ScrollViewer>
                         </TabItem>
                     </TabControl>
-                    <TextBlock x:Name="CompileErrorOutput" Grid.Row="3" TextWrapping="WrapWithOverflow" Foreground="White" Grid.ColumnSpan="2"/>
-                    <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="Constants" Foreground="White" Grid.Column="1" Margin="25,1,25,0" Grid.Row="1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="70"/>
+                    <TextBlock x:Name="CompileErrorOutput" Grid.Row="3" TextWrapping="WrapWithOverflow" Foreground="White" Grid.ColumnSpan="3"/>
+                    <TextBlock x:Name="ConstantsTitle" TextWrapping="Wrap" Text="Constants" Foreground="White" Grid.Column="1" Margin="1,0,3,0" Grid.Row="1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="20" Width="70"/>
+                    <ScrollViewer x:Name="ConstantsScroll" RenderTransformOrigin="0.43,0.52" Grid.ColumnSpan="2" Grid.Column="1" Margin="0" Grid.Row="2" Grid.RowSpan="2" HorizontalContentAlignment="Center" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
+                        <DockPanel x:Name="ConstantsDock" LastChildFill="False" ScrollViewer.CanContentScroll="True"/>
+                    </ScrollViewer>
+                    <!--This is the split button to chose a constant you wish to add-->
+                    <wpfTool:DropDownButton x:Name="New_Constant" Content="+" Grid.Column="2" Margin="0" Grid.Row="1">
+                        <wpfTool:DropDownButton.DropDownContent>
+                            <Button x:Name="AddFloatConstant" Content="Float" Click="AddFloatConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}"/>
+                        </wpfTool:DropDownButton.DropDownContent>
+                    </wpfTool:DropDownButton>
                 </Grid>
             </DockPanel>
             <Canvas x:Name="ViewportSettingsCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" Background="{DynamicResource PanelBackground}" Visibility="Hidden">

@@ -18,6 +18,7 @@ using System.Windows.Input;
 using SharpGL.WPF;
 using System.Text.RegularExpressions;
 using System.Text;
+using PSSL_Environment.UserControls;
 //using SharpGL.SceneGraph.Shaders;
 
 namespace PSSL_Environment
@@ -845,6 +846,14 @@ namespace PSSL_Environment
                     ((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
                     //gl.
 
+                }
+
+                // Custom constants
+                // Float Constants
+                List<FloatConstant> floatList = ((MainWindow)System.Windows.Application.Current.MainWindow).floatConstantsControls;
+                foreach(var e in floatList)
+                {
+                    shader.SetUniform1(gl, e.m_ConstantName, e.InputValue);
                 }
 
                 //uint mode = OpenGL.GL_TRIANGLES;
