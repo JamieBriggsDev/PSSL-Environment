@@ -110,6 +110,7 @@
     <Compile Include="PropertyGridView.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneDenormaliser.cs" />
+    <Compile Include="UserControls\ConstantsInterface.cs" />
     <Compile Include="UserControls\FloatConstant.xaml.cs">
       <DependentUpon>FloatConstant.xaml</DependentUpon>
     </Compile>

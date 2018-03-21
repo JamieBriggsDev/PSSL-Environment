@@ -850,10 +850,10 @@ namespace PSSL_Environment
 
                 // Custom constants
                 // Float Constants
-                List<FloatConstant> floatList = ((MainWindow)System.Windows.Application.Current.MainWindow).floatConstantsControls;
-                foreach(var e in floatList)
+                List<ConstantsInterface> ConstantList = ((MainWindow)System.Windows.Application.Current.MainWindow).ConstantsControl;
+                foreach(var e in ConstantList)
                 {
-                    shader.SetUniform1(gl, e.m_ConstantName, e.InputValue);
+                    e.AddToShaderProgram(gl, shader);
                 }
 
                 //uint mode = OpenGL.GL_TRIANGLES;

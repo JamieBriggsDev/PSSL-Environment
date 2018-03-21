@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpGL.Shaders;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -20,7 +21,7 @@ namespace PSSL_Environment.UserControls
     /// <summary>
     /// Interaction logic for FloatConstant.xaml
     /// </summary>
-    public partial class FloatConstant : UserControl
+    public partial class FloatConstant : UserControl, ConstantsInterface
     {
         public string m_ConstantName {
             get; set; }
@@ -74,7 +75,12 @@ namespace PSSL_Environment.UserControls
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             ((MainWindow)Application.Current.MainWindow).RemoveConstantControl(this);
-            ((MainWindow)Application.Current.MainWindow).floatConstantsControls.Remove(this);
+            ((MainWindow)Application.Current.MainWindow).ConstantsControl.Remove(this);
+        }
+
+        void ConstantsInterface.AddToShaderProgram(SharpGL.OpenGL gl, ShaderProgram shader)
+        {
+            shader.SetUniform1(gl, m_ConstantName, InputValue);
         }
 
     }

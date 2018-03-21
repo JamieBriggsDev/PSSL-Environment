@@ -35,7 +35,7 @@ namespace PSSL_Environment
 
     public partial class MainWindow : Window
     {
-        public List<FloatConstant> floatConstantsControls = new List<FloatConstant>();
+        public List<ConstantsInterface> ConstantsControl = new List<ConstantsInterface>();
 
         public MainWindow()
         {
@@ -502,7 +502,7 @@ namespace PSSL_Environment
             ConstantsDock.Children.Add(newConstant);
             DockPanel.SetDock(newConstant, Dock.Top);
 
-            floatConstantsControls.Add(newConstant);
+            ConstantsControl.Add(newConstant);
         }
     }
 
