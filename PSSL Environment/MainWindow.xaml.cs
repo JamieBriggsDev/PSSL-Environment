@@ -128,7 +128,7 @@ namespace PSSL_Environment
 
             //}
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-
+            
             //  Draw the axies.
             //axies.Render(gl, RenderMode.Design);
             if(myScene.graphicsSettings == UsingSettings.BASIC)
@@ -160,6 +160,8 @@ namespace PSSL_Environment
         {
             OpenGL gl = args.OpenGL;
 
+            gl.PolygonMode(FaceMode.Front, PolygonMode.Filled);
+
             myScene.Initialise(gl);
 
             // Enable transparency
@@ -169,7 +171,7 @@ namespace PSSL_Environment
 
             //gl.Enable(OpenGL.GL_DEPTH_RENDERABLE);
 
-            gl.Enable(OpenGL.GL_DEPTH);
+            gl.Enable(OpenGL.GL_DEPTH_TEST);
 
             //  A bit of extra initialisation here, we have to enable textures.
             gl.BlendEquation(OpenGL.GL_ADD);
@@ -201,8 +203,20 @@ namespace PSSL_Environment
 
             //gl.ShadeModel(OpenGL.GL_SMOOTH);
 
-            //gl.Enable(OpenGL.GL_CULL_FACE);
+            gl.Enable(OpenGL.GL_CULL_FACE);
+            gl.CullFace(OpenGL.GL_BACK);
+            gl.Enable(OpenGL.GL_DEPTH_BUFFER);
 
+            gl.FrontFace(OpenGL.GL_CCW);
+
+            gl.ShadeModel(OpenGL.GL_SMOOTH);
+            gl.ClearDepth(1.0f);
+            gl.DepthFunc(OpenGL.GL_LEQUAL);
+            gl.DepthMask(1);
+            gl.Hint(OpenGL.GL_PERSPECTIVE_CORRECTION_HINT, OpenGL.GL_NICEST);
+            gl.Enable(OpenGL.GL_DEPTH_TEST);
+
+            
         }
 
         private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -390,12 +404,12 @@ namespace PSSL_Environment
             if(checkBox.IsChecked == true)
             {
                 //gl.BlendFunc(OpenGL.GL_SRC_ALPHA_SATURATE, OpenGL.GL_ONE);
-                gl.Enable(OpenGL.GL_POINT_SMOOTH);
-                gl.Enable(OpenGL.GL_LINE_SMOOTH);
+                //gl.Enable(OpenGL.GL_POINT_SMOOTH);
+                //gl.Enable(OpenGL.GL_LINE_SMOOTH);
                 gl.Enable(OpenGL.GL_POLYGON_SMOOTH);
                 // Telling the OpenGL driver how to do polygon smoothing antialiasing
-                gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
-                gl.Hint(OpenGL.GL_LINE_SMOOTH_HINT, OpenGL.GL_NICEST);
+                //gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
+                //gl.Hint(OpenGL.GL_LINE_SMOOTH_HINT, OpenGL.GL_NICEST);
                 gl.Hint(OpenGL.GL_POLYGON_SMOOTH_HINT, OpenGL.GL_NICEST);
             }
             else
@@ -495,10 +509,27 @@ namespace PSSL_Environment
 
             ctl = null;
         }
-
         private void AddFloatConstant_Click(object sender, RoutedEventArgs e)
         {
             FloatConstant newConstant = new FloatConstant();
+            ConstantsDock.Children.Add(newConstant);
+            DockPanel.SetDock(newConstant, Dock.Top);
+
+            ConstantsControl.Add(newConstant);
+        }
+
+        private void AddIntConstant_Click(object sender, RoutedEventArgs e)
+        {
+            IntConstant newConstant = new IntConstant();
+            ConstantsDock.Children.Add(newConstant);
+            DockPanel.SetDock(newConstant, Dock.Top);
+
+            ConstantsControl.Add(newConstant);
+        }
+
+        private void AddColorConstant_Click(object sender, RoutedEventArgs e)
+        {
+            ColorConstant newConstant = new ColorConstant();
             ConstantsDock.Children.Add(newConstant);
             DockPanel.SetDock(newConstant, Dock.Top);
 

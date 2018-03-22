@@ -208,7 +208,7 @@ namespace PSSL_Environment
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.frag"), attributeLocations);
 
-            gl.ClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+            
 
             //  Needed to render textures in viewport
             //gl.Enable(OpenGL.GL_TEXTURE_2D);
@@ -415,9 +415,9 @@ namespace PSSL_Environment
                 else if (myOBJ.IndicesPerFace > 4)
                     mode = OpenGL.GL_POLYGON;
 
-
                 gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
-                gl.DrawArrays(mode, 0, myOBJ.NormalList.Count);
+                    //gl.DrawElements(mode, myOBJ.VertexIndices.Count, type, myOBJ.VertexIndices);
+                //gl.DrawArrays(mode, 0, myOBJ.NormalList.Count);
 
                 //IntPtr[] vertices = new IntPtr[myOBJ.VertexList.Count];
 

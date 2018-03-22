@@ -302,6 +302,7 @@
 
             <Grid x:Name="GLGrid" Grid.Row="1"  Grid.Column="4" Background="#FFD9D9D9">
                 <sharpGL:OpenGLControl x:Name="openGlCtrl" OpenGLDraw="OpenGLControl_OpenGLDraw"
+                                OpenGLVersion="OpenGL4_4"
                     OpenGLInitialized="OpenGLControl_OpenGLInitialized"
                     RenderContextType="FBO"
                     DrawFPS="True"
@@ -401,7 +402,11 @@
                     <!--This is the split button to chose a constant you wish to add-->
                     <wpfTool:DropDownButton x:Name="New_Constant" Content="+" Grid.Column="2" Margin="0" Grid.Row="1">
                         <wpfTool:DropDownButton.DropDownContent>
-                            <Button x:Name="AddFloatConstant" Content="Float" Click="AddFloatConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}"/>
+                            <DockPanel>
+                                <Button x:Name="AddFloatConstant" Content="Float" Click="AddFloatConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" DockPanel.Dock="Top"/>
+                                <!--<Button x:Name="AddIntConstant" Content="Int" Click="AddIntConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" DockPanel.Dock="Top"/>-->
+                                <Button x:Name="AddColorConstant" Content="Color" Click="AddColorConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" DockPanel.Dock="Top"/>                            
+                            </DockPanel>
                         </wpfTool:DropDownButton.DropDownContent>
                     </wpfTool:DropDownButton>
                 </Grid>
@@ -535,15 +540,18 @@
                         <wpfTool:ColorPicker x:Name="ambientColorPicker" SelectedColorChanged="ambientColorPicker_SelectedColorChanged"
                             UsingAlphaChannel="False"
                             MaxDropDownWidth="250"
-                            AvailableColorsSortingMode="HueSaturationBrightness"/>
+                            AvailableColorsSortingMode="HueSaturationBrightness"
+                                             SelectedColor="Black"/>
                         <TextBlock Foreground="White"><Run Text="Diffuse Colour"/></TextBlock>
                         <wpfTool:ColorPicker x:Name="diffuseColorPicker" SelectedColorChanged="diffuseColorPicker_SelectedColorChanged"
                             UsingAlphaChannel="False"
-                            MaxDropDownWidth="250"/>
+                            MaxDropDownWidth="250"
+                                             SelectedColor="Orange"/>
                         <TextBlock Foreground="White"><Run Text="Specular Colour"/></TextBlock>
                         <wpfTool:ColorPicker x:Name="specularColorPicker" SelectedColorChanged="specularColorPicker_SelectedColorChanged"
                             UsingAlphaChannel="False"
-                            MaxDropDownWidth="250"/>
+                            MaxDropDownWidth="250"
+                                             SelectedColor="White"/>
                         <TextBlock Foreground="White"><Run Text="Alpha"/></TextBlock>
                         <DockPanel VerticalAlignment="Center">
                             <TextBox Text="{Binding Value, ElementName=colorAlphaValue, UpdateSourceTrigger=PropertyChanged}"

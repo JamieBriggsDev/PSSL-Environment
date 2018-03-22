@@ -1,4 +1,4 @@
-﻿#version 130
+﻿#version 440
 in vec3 EyespaceNormal;
 in vec3 Diffuse;
 out vec4 FragColor;
