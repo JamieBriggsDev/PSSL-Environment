@@ -19,7 +19,7 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" Text="Color" VerticalAlignment="Center" Foreground="White" Width="32" Grid.ColumnSpan="2"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" VerticalAlignment="Center" Foreground="White" Grid.ColumnSpan="2"><Run Text="CV"/><Run Text="ec3"/></TextBlock>
         <TextBox x:Name="ConstantName" Grid.Column="2" Margin="0" TextWrapping="Wrap" Text="constantName" 
                  Background="#FF444343" BorderBrush="#FF494949" Foreground="White" HorizontalContentAlignment="Stretch" 
                  VerticalContentAlignment="Stretch" FontSize="9"

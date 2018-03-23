@@ -405,7 +405,8 @@
                             <DockPanel>
                                 <Button x:Name="AddFloatConstant" Content="Float" Click="AddFloatConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" DockPanel.Dock="Top"/>
                                 <!--<Button x:Name="AddIntConstant" Content="Int" Click="AddIntConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" DockPanel.Dock="Top"/>-->
-                                <Button x:Name="AddColorConstant" Content="Color" Click="AddColorConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" DockPanel.Dock="Top"/>                            
+                                <Button x:Name="AddColorConstant" Content="Color" Click="AddColorConstant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" DockPanel.Dock="Top"/>
+                                <Button x:Name="AddVec3Constant" Content="Vec3" Click="AddVec3Constant_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" Width="{Binding ActualHeight, ElementName=New_Constant, Mode=OneWay}" DockPanel.Dock="Top"/>
                             </DockPanel>
                         </wpfTool:DropDownButton.DropDownContent>
                     </wpfTool:DropDownButton>

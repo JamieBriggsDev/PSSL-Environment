@@ -535,6 +535,15 @@ namespace PSSL_Environment
 
             ConstantsControl.Add(newConstant);
         }
+
+        private void AddVec3Constant_Click(object sender, RoutedEventArgs e)
+        {
+            Vec3Constant newConstant = new Vec3Constant();
+            ConstantsDock.Children.Add(newConstant);
+            DockPanel.SetDock(newConstant, Dock.Top);
+
+            ConstantsControl.Add(newConstant);
+        }
     }
 
 

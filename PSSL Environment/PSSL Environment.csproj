@@ -114,6 +114,9 @@
     <Compile Include="UserControls\ColorConstant.xaml.cs">
       <DependentUpon>ColorConstant.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Vec3Constant.xaml.cs">
+      <DependentUpon>Vec3Constant.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\IntConstant.xaml.cs">
       <DependentUpon>IntConstant.xaml</DependentUpon>
     </Compile>
@@ -137,6 +140,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UserControls\ColorConstant.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\Vec3Constant.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
