@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PSSL_Environment.UserControls"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="PSSL_Environment.UserControls.IntConstant"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Width="120" Height="40">
+             d:DesignHeight="300" d:DesignWidth="300"  Width="{StaticResource ConstantsWidth}" Height="40">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="17.25"/>

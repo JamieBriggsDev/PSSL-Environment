@@ -13,6 +13,7 @@
         <sys:String x:Key="strSingleColour">Single Colour</sys:String>
         <sys:String x:Key="strTexture">Texture</sys:String>
         <sys:String x:Key="strColourTemplate">Template</sys:String>
+        <sys:Double x:Key="ConstantsWidth">150</sys:Double>
     </Application.Resources>
 </Application>
  

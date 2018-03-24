@@ -24,7 +24,12 @@ namespace PSSL_Environment
                 m_instance = new Interpreter(); 
             }
             return m_instance;
-   
+        }
+
+        public bool GenerateConstants()
+        {
+
+            return true;
         }
     }
 }
