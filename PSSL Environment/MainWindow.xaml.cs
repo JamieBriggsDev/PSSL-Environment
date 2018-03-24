@@ -153,6 +153,11 @@ namespace PSSL_Environment
                 return;
             }
 
+            //Interpreter.GetInstance().GenerateConstants(ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomFrag.frag"), 
+            //    ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomVertex.vert"));
+            Interpreter.GetInstance().GenerateConstants(FragmentShaderText.Text,
+                VertexShaderText.Text);
+
         }
 
 

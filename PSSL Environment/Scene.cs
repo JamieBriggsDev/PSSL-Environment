@@ -48,6 +48,7 @@ namespace PSSL_Environment
         public Obj getOBJ => myOBJ;
 
         //private Mesh myMesh;
+        
         private KeyValuePair<Obj, VertexBufferArray> meshVertexBufferArray = new KeyValuePair<Obj, VertexBufferArray>();
         private KeyValuePair<Obj, Texture2D> meshTextures = new KeyValuePair<Obj, Texture2D>();
 
