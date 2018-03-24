@@ -14,11 +14,13 @@ namespace PSSL_Environment
         //  it a singleton
         private static Interpreter m_instance;
 
+
+
         private Interpreter() { }
 
-        enum Type { MAT4, VEC3, FLOAT};
+        private enum Type { MAT4, VEC3, VEC4, FLOAT};
 
-        List<KeyValuePair<Type, string>> Constants = new List<KeyValuePair<Type, string>>();
+        private List<KeyValuePair<Type, string>> Constants = new List<KeyValuePair<Type, string>>();
 
         // Get instance to the interpreter class
         public static Interpreter GetInstance()
@@ -30,6 +32,14 @@ namespace PSSL_Environment
             }
             return m_instance;
         }
+
+        private string ShaderName;
+
+        public void SetShaderName(string name)
+        {
+            ShaderName = name;
+        }
+
 
         public void GenerateConstants(string Frag, string Vert)
         {
@@ -117,7 +127,65 @@ namespace PSSL_Environment
 
                 } while (line != null);
             }
+            SetShaderName("New PSSL Shader");
+            GeneratePSSLConstantsFile();
+        }
+
+        public void GeneratePSSLConstantsFile()
+        {
+            string file, ClassName;
+            // Comment at the start
+            file = "// " + ShaderName + " Shader Constants" + Environment.NewLine;
+
+            // find what the name of the file is in preprocessor standar if #ifndefs
+            ClassName = ShaderName;
+            ClassName = ClassName.ToUpper();
+            ClassName = ClassName.Replace(' ', '_');
+            string preprocessor = "__" + ClassName + "__";
+            // Start with adding the #ifndefs
+            file = file + Environment.NewLine + "#ifndef " + preprocessor + ";" + Environment.NewLine;
+            file = file + "#define " + preprocessor + ";" + Environment.NewLine;
+
+            // Space out start of constants file
+            file = file + Environment.NewLine;
+
+            // Start of unistruct
+            file = file + "unistruct " + ClassName + Environment.NewLine + "{" + Environment.NewLine;
             
+            // Go through each constant in the constants list
+            foreach(var i in Constants)
+            {
+                if(i.Key == Type.MAT4)
+                {
+                    file = file + "\tMatrix4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
+                }
+                else if (i.Key == Type.VEC3 || i.Key == Type.VEC4)
+                {
+                    file = file + "\tVector4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
+                }
+                else if (i.Key == Type.FLOAT)
+                {
+                    file = file + "\t// Only the .x value of this vector is used" + Environment.NewLine;
+                    file = file + "\tVector4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
+                }
+
+            }
+
+            // End unistruct and file
+            file = file + "};" + Environment.NewLine + "#endif";
+
+
+
+            // WRITE TO FILE
+            Encoding utf8 = Encoding.UTF8;
+            Encoding ascii = Encoding.ASCII;
+
+            //string input = "Auspuffanlage \"Century\" f├╝r";
+            //return ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(s)));
+
+            string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(file)));
+            System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
+
         }
     }
 }

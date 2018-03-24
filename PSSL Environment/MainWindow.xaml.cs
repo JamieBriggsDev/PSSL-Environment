@@ -153,10 +153,7 @@ namespace PSSL_Environment
                 return;
             }
 
-            //Interpreter.GetInstance().GenerateConstants(ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomFrag.frag"), 
-            //    ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomVertex.vert"));
-            Interpreter.GetInstance().GenerateConstants(FragmentShaderText.Text,
-                VertexShaderText.Text);
+
 
         }
 
@@ -507,7 +504,7 @@ namespace PSSL_Environment
             try
             {
                 ConstantsDock.Children.Remove(ctl);
-            } catch (Exception e)
+            } catch (Exception)
             {
                 return;
             }
@@ -548,6 +545,14 @@ namespace PSSL_Environment
             DockPanel.SetDock(newConstant, Dock.Top);
 
             ConstantsControl.Add(newConstant);
+        }
+
+        private void DebugButton_Click(object sender, RoutedEventArgs e)
+        {
+            //Interpreter.GetInstance().GenerateConstants(ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomFrag.frag"), 
+            //    ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomVertex.vert"));
+            Interpreter.GetInstance().GenerateConstants(FragmentShaderText.Text,
+                VertexShaderText.Text);
         }
     }
 
