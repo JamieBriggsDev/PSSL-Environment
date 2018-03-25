@@ -303,7 +303,7 @@
 
             <Grid x:Name="GLGrid" Grid.Row="1"  Grid.Column="4" Background="#FFD9D9D9">
                 <sharpGL:OpenGLControl x:Name="openGlCtrl" OpenGLDraw="OpenGLControl_OpenGLDraw"
-                                OpenGLVersion="OpenGL4_4"
+                                
                     OpenGLInitialized="OpenGLControl_OpenGLInitialized"
                     RenderContextType="FBO"
                     DrawFPS="True"

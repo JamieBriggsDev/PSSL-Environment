@@ -547,13 +547,11 @@ namespace PSSL_Environment
             ConstantsControl.Add(newConstant);
         }
 
-        private void DebugButton_Click(object sender, RoutedEventArgs e)
-        {
+        private void DebugButton_Click(object sender, RoutedEventArgs e) =>
+            Interpreter.GetInstance().GeneratePSSLAdvanced(FragmentShaderText.Text,
+                VertexShaderText.Text);
             //Interpreter.GetInstance().GenerateConstants(ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomFrag.frag"), 
             //    ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomVertex.vert"));
-            Interpreter.GetInstance().GenerateConstants(FragmentShaderText.Text,
-                VertexShaderText.Text);
-        }
     }
 
 

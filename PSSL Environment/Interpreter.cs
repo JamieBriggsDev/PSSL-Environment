@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace PSSL_Environment
 { 
@@ -14,7 +15,11 @@ namespace PSSL_Environment
         //  it a singleton
         private static Interpreter m_instance;
 
+        private string filePath;
 
+        private string outputStructName;
+
+        private string ShaderName;
 
         private Interpreter() { }
 
@@ -33,16 +38,23 @@ namespace PSSL_Environment
             return m_instance;
         }
 
-        private string ShaderName;
-
         public void SetShaderName(string name)
         {
             ShaderName = name;
         }
 
 
-        public void GenerateConstants(string Frag, string Vert)
+        public void GeneratePSSLAdvanced(string Frag, string Vert)
         {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = "C:\\Desktop";
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                //MessageBox.Show("You selected: " + dialog.FileName);
+                filePath = dialog.FileName;
+            }
+
             //string fragmentShader = Frag;
             //string vertexShader = Vert;
             Constants = new List<KeyValuePair<Type, string>>();
@@ -127,8 +139,9 @@ namespace PSSL_Environment
 
                 } while (line != null);
             }
-            SetShaderName("New PSSL Shader");
+            SetShaderName("test");
             GeneratePSSLConstantsFile();
+            GeneratePSSLOutputFile();
         }
 
         public void GeneratePSSLConstantsFile()
@@ -141,10 +154,10 @@ namespace PSSL_Environment
             ClassName = ShaderName;
             ClassName = ClassName.ToUpper();
             ClassName = ClassName.Replace(' ', '_');
-            string preprocessor = "__" + ClassName + "__";
+            string preprocessor = "__" + ClassName + "_SHADER_CONSTANTS__";
             // Start with adding the #ifndefs
-            file = file + Environment.NewLine + "#ifndef " + preprocessor + ";" + Environment.NewLine;
-            file = file + "#define " + preprocessor + ";" + Environment.NewLine;
+            file = file + Environment.NewLine + "#ifndef " + preprocessor + Environment.NewLine;
+            file = file + "#define " + preprocessor + Environment.NewLine;
 
             // Space out start of constants file
             file = file + Environment.NewLine;
@@ -184,8 +197,57 @@ namespace PSSL_Environment
             //return ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(s)));
 
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(file)));
-            System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
+            //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
+            string path = filePath + "\\" + ShaderName + "ShaderConstants.h";
+            System.IO.File.WriteAllText(path, output);
 
         }
+
+        public void GeneratePSSLOutputFile()
+        {
+            string file, ClassName;
+            // Comment at the start
+            file = "// " + ShaderName + " Shader Output" + Environment.NewLine;
+
+            // find what the name of the file is in preprocessorS #ifndefs
+            ClassName = ShaderName;
+            ClassName = ClassName.ToUpper();
+            ClassName = ClassName.Replace(' ', '_');
+            string preprocessor = "__" + ClassName + "_VS_OUTPUT__";
+            // Start with adding the #ifndefs
+            file = file + Environment.NewLine + "#ifndef " + preprocessor + Environment.NewLine;
+            file = file + "#define " + preprocessor + Environment.NewLine;
+            // space out preprocessor commands with struct
+            file = file + Environment.NewLine;
+
+            // Find out what the output struct name is
+            outputStructName = ShaderName + "Output";
+
+            // Write out stuct
+            file = file + "struct " + outputStructName + Environment.NewLine;
+            file = file + "{" + Environment.NewLine;
+            file = file + "\tfloat4 m_position\t\t: S_POSITION;" + Environment.NewLine;
+            //file = file + "\tfloat3 m_positionWorld\t\t\t: POS_WORLD;" + Environment.NewLine;
+            file = file + "\tfloat3 m_normal\t\t\t: TEX_COORD;" + Environment.NewLine;
+            file = file + "\tfloat2 m_texcoord\t\t: NORMAL;" + Environment.NewLine;
+            file = file + "};" + Environment.NewLine + Environment.NewLine;
+
+            // End file
+            file = file + "#endif";
+
+            // WRITE TO FILE
+            Encoding utf8 = Encoding.UTF8;
+            Encoding ascii = Encoding.ASCII;
+
+            string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(file)));
+            //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
+            string path = filePath + "\\" + ShaderName + "VSOutput.hs";
+            System.IO.File.WriteAllText(path, output);
+        }
+
+        //public void GeneratePSSLVertexFile(string vert)
+        //{
+        //    string PSSLVert = "// " + ShaderName + " Vertex Shader" + Environment.NewLine;
+        //}
     }
 }
