@@ -1,5 +1,5 @@
 ﻿#version 130
-in vec4 Position;
+in vec4 inPosition;
 in vec3 Normal;
 
 uniform mat4 Projection;
