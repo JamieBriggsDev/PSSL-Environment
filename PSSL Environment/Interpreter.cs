@@ -16,6 +16,7 @@ namespace PSSL_Environment
         public string ShaderVertexFilename;
         public string ShaderConstantsFileName;
         public string ShaderOutputFileName;
+        public string ShaderFragmentOutputName;
     }
     public class Interpreter
     {
@@ -155,7 +156,7 @@ namespace PSSL_Environment
         private void FillConstantsStruct(string Frag, string Vert)
         {
             Constants = new List<KeyValuePair<GLSLType, string>>();
-
+            // Read through the vertex shader first
             using (StringReader reader = new StringReader(Vert))
             {
                 string line = string.Empty;
@@ -245,7 +246,15 @@ namespace PSSL_Environment
                             }
                         }
                     }
+                    // While we are finding variables, find the output variable 
+                    //  at the top of the file
+                    if(line != null && line.Contains("out vec4") && 
+                        FileNames.ShaderFragmentOutputName == null)
+                    {
+                        string[] temp = line.Split(new char[] { ' ', ';' });
 
+                        FileNames.ShaderFragmentOutputName = temp[2];
+                    }
                 } while (line != null);
             }
         }
@@ -271,6 +280,7 @@ namespace PSSL_Environment
             GeneratePSSLConstantsFile();
             GeneratePSSLOutputFile();
             GeneratePSSLVertexFile(Vert);
+            GeneratePSSLFragFile(Frag);
         }
 
         public void GeneratePSSLConstantsFile()
@@ -325,8 +335,6 @@ namespace PSSL_Environment
 
             // End unistruct and file
             file = file + "};" + Environment.NewLine + "#endif";
-
-
 
             // WRITE TO FILE
             Encoding utf8 = Encoding.UTF8;
@@ -537,6 +545,138 @@ namespace PSSL_Environment
             System.IO.File.WriteAllText(path, output);
 
             FileNames.ShaderVertexFilename = FileNames.ShaderName + "_vv.pssl";
+        }
+
+        public void GeneratePSSLFragFile(string frag)
+        {
+            string PSSLFrag = "// " + FileNames.ShaderName + " Pixel Shader" + Environment.NewLine;
+            // Add all includes to top of the file
+            PSSLFrag = PSSLFrag + "#include \"" + FileNames.ShaderConstantsFileName
+                + "\"" + Environment.NewLine;
+            PSSLFrag = PSSLFrag + "#include \"" + FileNames.ShaderOutputFileName
+                + "\"" + Environment.NewLine;
+            // Add space
+            PSSLFrag = PSSLFrag + Environment.NewLine;
+
+            // Split vertex shader into seperate lines
+            string[] fragSplit = frag.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+            // Make some space
+            PSSLFrag = PSSLFrag + Environment.NewLine;
+
+
+            string mainFunc = "";
+            bool foundMain = false;
+            using (StringReader reader = new StringReader(frag))
+            {
+                string line = string.Empty;
+                do
+                {
+                    line = reader.ReadLine();
+                    if (line != null)
+                    {
+                        //string[] temp = line.Split(new char[] { ' ', ';' });
+                        //line.Trim(new char[] { ' ', ';' });
+                        //line.Replace("uniform ", "");
+                        if (line.Contains("main()") || foundMain == true)
+                        {
+                            foundMain = true;
+                            foreach(var i in Constants)
+                            {
+                                line = line.Replace(i.Value, "t_" + i.Value);
+
+                            }
+                            foreach(var i in OutputStruct)
+                            {
+                                line = line.Replace(i.Value, "_input." + i.Value);
+                            }
+                            mainFunc = mainFunc + line + Environment.NewLine;
+                        }
+
+
+                    }
+
+                } while (line != null);
+            }
+            // Split main function into seperate lines
+            string[] mainSplit = mainFunc.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+            // Find all shader constants within the file to know which 
+            //  constants to unpack at the start of the main function
+            List<KeyValuePair<GLSLType, string>> localConstants = new List<KeyValuePair<GLSLType, string>>();
+            foreach (var i in Constants)
+            {
+                for(int j = 0; j < mainSplit.Count(); j++)
+                {
+                    if(mainSplit[j].Contains(i.Value))
+                    {
+                        localConstants.Add(new KeyValuePair<GLSLType, string>
+                            (i.Key, i.Value));
+                        break;
+                    }
+                }
+            }
+
+            // Write main function start with temp variables
+            PSSLFrag = PSSLFrag + 
+                string.Format("float4 main({0} _input) : S_TARGET_OUTPUT\n{{\n\n",
+                FileNames.ShaderOutputStructName);
+            foreach(var localCon in localConstants)
+            {
+                switch(localCon.Key)
+                {
+                    case GLSLType.FLOAT:
+                        PSSLFrag = PSSLFrag + string.Format("\tfloat t_{0} = shc_{0}.x;\n", (string)localCon.Value);
+                        break;
+                    case GLSLType.VEC2:
+                        PSSLFrag = PSSLFrag + string.Format("\tfloat2 t_{0} = float2(shc_{0});\n", (string)localCon.Value);
+                        break;
+                    case GLSLType.VEC3:
+                        PSSLFrag = PSSLFrag + string.Format("\tfloat3 t_{0} = float3(shc_{0});\n", (string)localCon.Value);
+                        break;
+                    case GLSLType.VEC4:
+                        PSSLFrag = PSSLFrag + string.Format("\tfloat4 t_{0} = shc_{0};\n", (string)localCon.Value);
+                        break;
+                }
+            }
+            // Make some space
+            PSSLFrag = PSSLFrag + Environment.NewLine;
+
+            // Go through all constant variables and replace how they should be in mainSplit
+            foreach (var i in localConstants)
+            {
+                for (int j = 0; j < mainSplit.Length; j++)
+                {
+                    if (mainSplit[j].Contains(i.Value))
+                    {
+                        mainSplit[j].Replace(i.Value, "t_" + i.Value);
+                    }
+                }
+            }
+
+            // Add the necasary main split lines (Miss the first line as this is already added
+            for(int i = 2; i < mainSplit.Count(); i++)
+            {
+                PSSLFrag = PSSLFrag + mainSplit[i] + Environment.NewLine;
+            }
+
+            // Replace any last minute function calls or class names
+            //  (vec2 becomes float2)
+            PSSLFrag = PSSLFrag.Replace("vec2", "float2");
+            PSSLFrag = PSSLFrag.Replace("vec3", "float3");
+            PSSLFrag = PSSLFrag.Replace("vec4", "float4");
+            PSSLFrag = PSSLFrag.Replace(string.Format("{0} =", FileNames.ShaderFragmentOutputName), "return ");
+
+            // WRITE TO FILE
+            Encoding utf8 = Encoding.UTF8;
+            Encoding ascii = Encoding.ASCII;
+
+            string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(PSSLFrag)));
+            //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
+            string path = FilePath + "\\" + FileNames.ShaderName + "_p.pssl";
+            System.IO.File.WriteAllText(path, output);
+
+            FileNames.ShaderVertexFilename = FileNames.ShaderName + "_p.pssl";
         }
     }
 }
