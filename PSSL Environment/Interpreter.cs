@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
@@ -570,6 +571,7 @@ namespace PSSL_Environment
             using (StringReader reader = new StringReader(frag))
             {
                 string line = string.Empty;
+
                 do
                 {
                     line = reader.ReadLine();
@@ -583,12 +585,19 @@ namespace PSSL_Environment
                             foundMain = true;
                             foreach(var i in Constants)
                             {
-                                line = line.Replace(i.Value, "t_" + i.Value);
+                                string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
+                                string replace = "t_" + i.Value;
+                                line = Regex.Replace(line, pattern, replace);
+                                //line = line.Replace(i.Value, "t_" + i.Value);
 
                             }
                             foreach(var i in OutputStruct)
                             {
-                                line = line.Replace(i.Value, "_input." + i.Value);
+                                string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
+                                string replace = "_input." + i.Value;
+                                line = Regex.Replace(line, pattern, replace);
+                                
+                                //line = line.Replace(i.Value, "_input." + i.Value);
                             }
                             mainFunc = mainFunc + line + Environment.NewLine;
                         }
