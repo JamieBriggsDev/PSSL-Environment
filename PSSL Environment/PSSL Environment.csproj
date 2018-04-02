@@ -272,6 +272,9 @@
   <ItemGroup>
     <Folder Include="Shaders\Generated\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="TODO.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>XCOPY "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /E /I /F /Y</PostBuildEvent>

@@ -1,0 +1,5 @@
+﻿TODO List.
+
+Remove DEBUG button.
+Make compile button.
+Make basic shaders compile.
