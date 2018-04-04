@@ -282,7 +282,7 @@ namespace PSSL_Environment
         /// <summary>
         /// The scene we're drawing.
         /// </summary>
-        private readonly Scene myScene = new Scene();
+        public readonly Scene myScene = new Scene();
 
         private void ambientColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
@@ -547,11 +547,30 @@ namespace PSSL_Environment
             ConstantsControl.Add(newConstant);
         }
 
-        private void DebugButton_Click(object sender, RoutedEventArgs e) =>
-            Interpreter.GetInstance().GeneratePSSLAdvanced(FragmentShaderText.Text,
-                VertexShaderText.Text);
-            //Interpreter.GetInstance().GenerateConstants(ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomFrag.frag"), 
-            //    ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomVertex.vert"));
+        private void CompileShaders_Click(object sender, RoutedEventArgs e)
+        {
+            if(myScene.graphicsSettings == UsingSettings.ADVANCED)
+            {
+                Interpreter.GetInstance().GeneratePSSLAdvanced(FragmentShaderText.Text,
+                    VertexShaderText.Text);
+            }
+            else
+            {
+                Interpreter.GetInstance().GeneratePSSLBasic();
+            }
+
+        }
+
+
+
+        
+
+        //private void CompileShaders_Click(object sender, RoutedEventArgs e)
+        //{
+
+        //}
+        //Interpreter.GetInstance().GenerateConstants(ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomFrag.frag"), 
+        //    ManifestResourceLoader.LoadTextFile(@"Shaders\Custom\CustomVertex.vert"));
     }
 
 

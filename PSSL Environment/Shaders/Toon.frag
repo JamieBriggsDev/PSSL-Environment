@@ -53,3 +53,4 @@ void main()
     vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
     FragColor = vec4(color, Alpha);
 }
+

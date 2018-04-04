@@ -6,7 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using SharpGL;
 
 namespace PSSL_Environment
 {
@@ -14,9 +16,10 @@ namespace PSSL_Environment
     {
         public string ShaderName;
         public string ShaderOutputStructName;
-        public string ShaderVertexFilename;
         public string ShaderConstantsFileName;
+        public string ShaderConstantsStructName;
         public string ShaderOutputFileName;
+        public string ShaderVertexFilename;
         public string ShaderFragmentOutputName;
     }
     public class Interpreter
@@ -283,6 +286,70 @@ namespace PSSL_Environment
             GeneratePSSLVertexFile(Vert);
             GeneratePSSLFragFile(Frag);
         }
+        public void GeneratePSSLBasic()
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = "C:\\Desktop";
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                //MessageBox.Show("You selected: " + dialog.FileName);
+                FilePath = dialog.FileName;
+            }
+
+            string Frag;
+            string Vert;
+
+            // GET ALREADY EXISTING SHADER FILES
+            if (((MainWindow)Application.Current.MainWindow).WaterEnabled.IsChecked == true)
+            {
+                // Generate Water Shaders
+                Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+                Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+            }
+            else
+            {
+                // Generate Texture Mode
+                if (((MainWindow)Application.Current.MainWindow).UsingTexture.IsChecked == true)
+                {
+                    if (((MainWindow)Application.Current.MainWindow).checkBoxUseToonShader.IsChecked == true)
+                    {
+                        Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
+                        Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+                    }
+                    else
+                    {
+                        Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag");
+                        Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert");
+                    }
+                        
+                }
+                // Generate Color Mode
+                else
+                {
+                    if(((MainWindow)Application.Current.MainWindow).checkBoxUseToonShader.IsChecked == true)
+                    {
+                        Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag");
+                        Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert");
+                    }
+                    else
+                    {
+                        Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
+                        Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+                    }
+                }
+                //myScene.RenderImmediateMode(gl);
+            }
+
+            // Generate PSSL
+
+            SetShaderName("test");
+            FillStructs(Frag, Vert);
+            GeneratePSSLConstantsFile();
+            GeneratePSSLOutputFile();
+            GeneratePSSLVertexFile(Vert);
+            GeneratePSSLFragFile(Frag);
+        }
 
         public void GeneratePSSLConstantsFile()
         {
@@ -303,7 +370,9 @@ namespace PSSL_Environment
             file = file + Environment.NewLine;
 
             // Start of unistruct
-            file = file + "unistruct " + ClassName + Environment.NewLine + "{" + Environment.NewLine;
+            file = file + "unistruct " + FileNames.ShaderConstantsStructName + Environment.NewLine + "{" + Environment.NewLine;
+
+            int padCounter = 0;
             
             // Go through each constant in the constants list
             foreach(var i in Constants)
@@ -314,13 +383,17 @@ namespace PSSL_Environment
                 }
                 else if (i.Key == GLSLType.VEC2)
                 {
-                    file = file + "\t// The .w and .z values of this vector is not used" + Environment.NewLine;
-                    file = file + "\tVector4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
+                    file = file + "\t// Adding padding due to Vector2 taking half the data required for gpu" + Environment.NewLine;
+                    file = file + "\tVector2Unaligned shc_" + i.Value + ";" + Environment.NewLine;
+                    file = file + "\tint pad" + padCounter + "[2];" + Environment.NewLine;
+                    padCounter++;
                 }
                 else if (i.Key == GLSLType.VEC3)
                 {
-                    file = file + "\t// The .w value of this vector is not used" + Environment.NewLine;
-                    file = file + "\tVector4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
+                    file = file + "\t// Adding padding due to Vector3 taking 3/4 the data required for gpu" + Environment.NewLine;
+                    file = file + "\tVector3Unaligned shc_" + i.Value + ";" + Environment.NewLine;
+                    file = file + "\tint pad" + padCounter + "[1];" + Environment.NewLine;
+                    padCounter++;
                 }
                 else if (i.Key == GLSLType.VEC4)
                 {
@@ -328,8 +401,10 @@ namespace PSSL_Environment
                 }
                 else if (i.Key == GLSLType.FLOAT)
                 {
-                    file = file + "\t// Only the .x value of this vector is used" + Environment.NewLine;
-                    file = file + "\tVector4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
+                    file = file + "\t// Adding padding due to float taking 1/4 the data required for gpu" + Environment.NewLine;
+                    file = file + "\tfloat shc_" + i.Value + ";" + Environment.NewLine;
+                    file = file + "\tint pad" + padCounter + "[3];" + Environment.NewLine;
+                    padCounter++;
                 }
 
             }
@@ -350,6 +425,7 @@ namespace PSSL_Environment
             System.IO.File.WriteAllText(path, output);
 
             FileNames.ShaderConstantsFileName = FileNames.ShaderName + "ShaderConstants.h";
+            FileNames.ShaderConstantsStructName = FileNames.ShaderName + "ShaderConstants";
 
         }
         public void GeneratePSSLOutputFile()
@@ -421,6 +497,8 @@ namespace PSSL_Environment
 
             FileNames.ShaderOutputFileName = FileNames.ShaderName + "VSOutput.hs";
         }
+
+
         public void GeneratePSSLVertexFile(string vert)
         {
             string PSSLVert = "// " + FileNames.ShaderName + " Vertex Shader" + Environment.NewLine;
@@ -460,17 +538,6 @@ namespace PSSL_Environment
 
             PSSLVert = PSSLVert + "};" + Environment.NewLine;
 
-            // Add space
-            PSSLVert = PSSLVert + Environment.NewLine;
-
-            // Start main vertex function
-            PSSLVert = PSSLVert + FileNames.ShaderOutputStructName + " main(ptVSInput _input )" + Environment.NewLine;
-            PSSLVert = PSSLVert + "{" + Environment.NewLine;
-            PSSLVert = PSSLVert + "\t" + FileNames.ShaderOutputStructName + " l_output;"+ Environment.NewLine;
-
-            // Make some space
-            PSSLVert = PSSLVert + Environment.NewLine;
-
             // Split vertex shader into seperate lines
             string[] vertSplit = vert.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             string[] outputVariables = new string[OutputStruct.Count];
@@ -481,23 +548,61 @@ namespace PSSL_Environment
                 counter++;
             }
 
-            string mainFunc = "";
-            bool foundMain = false;
+            string body = "";
+            string line = "";
+            bool insideMain = false;
+            int mainCurlyCounter = 0;
             using (StringReader reader = new StringReader(vert))
             {
-                string line = string.Empty;
                 do
                 {
+                    if (line.Contains("void main()"))
+                    {
+                        line = reader.ReadLine();
+                        continue;
+                    }
+                    line = string.Empty;
                     line = reader.ReadLine();
                     if (line != null)
                     {
                         //string[] temp = line.Split(new char[] { ' ', ';' });
                         //line.Trim(new char[] { ' ', ';' });
                         //line.Replace("uniform ", "");
-                        if (line.Contains("main()") || foundMain == true)
+
+                        if (!line.Contains("in ") && !line.Contains("out ") && !line.Contains("uniform ") &&
+                            !line.Contains("#version "))
                         {
-                            foundMain = true;
-                            mainFunc = mainFunc + line + Environment.NewLine;
+                            // Checks for inside of main to place return
+
+                            if (line.Contains("void main()"))
+                            {
+                                body = body + FileNames.ShaderOutputStructName + " main(ptVSInput _input)" + Environment.NewLine;
+                                body = body + "{" + Environment.NewLine;
+                                body = body + "\ttestVSOutput l_output;" + Environment.NewLine;
+                                insideMain = true;
+                                mainCurlyCounter = 1;
+                            }
+                            else
+                            {
+                                if (insideMain == true)
+                                {
+                                    foreach (char i in line)
+                                    {
+                                        if (i == '{')
+                                            mainCurlyCounter++;
+                                        else if (i == '}')
+                                            mainCurlyCounter--;
+
+                                        if (mainCurlyCounter <= 0)
+                                        {
+                                            insideMain = false;
+                                            line = "\treturn l_output;\n}";
+                                        }
+                                    }
+                                }
+
+                                body = body + line + Environment.NewLine;
+                            }
                         }
 
                        
@@ -506,29 +611,33 @@ namespace PSSL_Environment
                 } while (line != null);
             }
             // Split main function into seperate lines
-            string[] mainSplit = mainFunc.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
+            string[] mainSplit = body.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            mainSplit = mainSplit;
             // Go through all output struct variables and check if they are found within the main function
-            foreach(var i in OutputStruct)
+            foreach (var i in OutputStruct)
             {
                 for(int j = 0; j < mainSplit.Length; j++)
                 {
                     if(mainSplit[j].Contains(i.Value))
                     {
-                        PSSLVert = PSSLVert + mainSplit[j].Replace("gl_Position", "Position").Replace(i.Value + " =", "l_output." + i.Value + " =")
-                            + Environment.NewLine;
+                        mainSplit[j] = mainSplit[j].Replace("gl_Position", "Position").Replace(i.Value + " =", "l_output." + i.Value + " =");
                     }
                 }
+            }
+
+            foreach (var i in mainSplit)
+            {
+                PSSLVert = PSSLVert + i + Environment.NewLine;
             }
 
             // Make some space
             PSSLVert = PSSLVert + Environment.NewLine;
 
-            // Return output
-            PSSLVert = PSSLVert + "\treturn l_output" + Environment.NewLine;
+            //// Return output
+            //PSSLVert = PSSLVert + "\treturn l_output;" + Environment.NewLine;
 
-            // Close main function
-            PSSLVert = PSSLVert + "}" + Environment.NewLine;
+            //// Close main function
+            //PSSLVert = PSSLVert + "}" + Environment.NewLine;
 
             // Replace any last minute function calls or class names
             //  (vec2 becomes float2)
@@ -566,11 +675,11 @@ namespace PSSL_Environment
             PSSLFrag = PSSLFrag + Environment.NewLine;
 
 
-            string mainFunc = "";
-            bool foundMain = false;
+            string body = "";
+            string line = "";
             using (StringReader reader = new StringReader(frag))
             {
-                string line = string.Empty;
+                line = string.Empty;
 
                 do
                 {
@@ -580,88 +689,88 @@ namespace PSSL_Environment
                         //string[] temp = line.Split(new char[] { ' ', ';' });
                         //line.Trim(new char[] { ' ', ';' });
                         //line.Replace("uniform ", "");
-                        if (line.Contains("main()") || foundMain == true)
+
+
+                        if (!line.Contains("in ") && !line.Contains("out ") && !line.Contains("uniform ") &&
+                            !line.Contains("#version "))
                         {
-                            foundMain = true;
-                            foreach(var i in Constants)
+                            if (line.Contains("void main()"))
                             {
-                                string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
-                                string replace = "t_" + i.Value;
-                                line = Regex.Replace(line, pattern, replace);
-                                //line = line.Replace(i.Value, "t_" + i.Value);
-
+                                body = body + "float4 main(testVSOutput _input) : S_TARGET_OUTPUT" + Environment.NewLine;
+                                body = body + Environment.NewLine;
                             }
-                            foreach(var i in OutputStruct)
+                            else
                             {
-                                string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
-                                string replace = "_input." + i.Value;
-                                line = Regex.Replace(line, pattern, replace);
-                                
-                                //line = line.Replace(i.Value, "_input." + i.Value);
+                                body = body + line + Environment.NewLine;
                             }
-                            mainFunc = mainFunc + line + Environment.NewLine;
                         }
-
 
                     }
 
                 } while (line != null);
             }
             // Split main function into seperate lines
-            string[] mainSplit = mainFunc.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
-            // Find all shader constants within the file to know which 
-            //  constants to unpack at the start of the main function
-            List<KeyValuePair<GLSLType, string>> localConstants = new List<KeyValuePair<GLSLType, string>>();
+            string[] mainSplit = body.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             foreach (var i in Constants)
             {
-                for(int j = 0; j < mainSplit.Count(); j++)
-                {
-                    if(mainSplit[j].Contains(i.Value))
-                    {
-                        localConstants.Add(new KeyValuePair<GLSLType, string>
-                            (i.Key, i.Value));
-                        break;
-                    }
-                }
-            }
 
-            // Write main function start with temp variables
-            PSSLFrag = PSSLFrag + 
-                string.Format("float4 main({0} _input) : S_TARGET_OUTPUT\n{{\n\n",
-                FileNames.ShaderOutputStructName);
-            foreach(var localCon in localConstants)
-            {
-                switch(localCon.Key)
+                for (int j = 0; j < mainSplit.Length; j++)
                 {
-                    case GLSLType.FLOAT:
-                        PSSLFrag = PSSLFrag + string.Format("\tfloat t_{0} = shc_{0}.x;\n", (string)localCon.Value);
-                        break;
-                    case GLSLType.VEC2:
-                        PSSLFrag = PSSLFrag + string.Format("\tfloat2 t_{0} = float2(shc_{0});\n", (string)localCon.Value);
-                        break;
-                    case GLSLType.VEC3:
-                        PSSLFrag = PSSLFrag + string.Format("\tfloat3 t_{0} = float3(shc_{0});\n", (string)localCon.Value);
-                        break;
-                    case GLSLType.VEC4:
-                        PSSLFrag = PSSLFrag + string.Format("\tfloat4 t_{0} = shc_{0};\n", (string)localCon.Value);
-                        break;
+                    string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
+                    string replace = "shc_" + i.Value;
+                    mainSplit[j] = Regex.Replace(mainSplit[j], pattern, replace);
+                    //line = line.Replace(i.Value, "t_" + i.Value); 
                 }
-            }
-            // Make some space
-            PSSLFrag = PSSLFrag + Environment.NewLine;
 
-            // Go through all constant variables and replace how they should be in mainSplit
-            foreach (var i in localConstants)
+            }
+            foreach (var i in OutputStruct)
             {
                 for (int j = 0; j < mainSplit.Length; j++)
                 {
-                    if (mainSplit[j].Contains(i.Value))
-                    {
-                        mainSplit[j].Replace(i.Value, "t_" + i.Value);
-                    }
+                    string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
+                    string replace = "_input." + i.Value;
+                    mainSplit[j] = Regex.Replace(mainSplit[j], pattern, replace);
+                    //line = line.Replace(i.Value, "t_" + i.Value); 
                 }
             }
+            
+
+           // Write main function start with temp variables
+           //PSSLFrag = PSSLFrag +
+           //    string.Format("float4 main({0} _input) : S_TARGET_OUTPUT\n{{\n\n",
+           //    FileNames.ShaderOutputStructName);
+            //foreach(var localCon in localConstants)
+            //{
+            //    switch(localCon.Key)
+            //    {
+            //        case GLSLType.FLOAT:
+            //            PSSLFrag = PSSLFrag + string.Format("\tfloat t_{0} = shc_{0}.x;\n", (string)localCon.Value);
+            //            break;
+            //        case GLSLType.VEC2:
+            //            PSSLFrag = PSSLFrag + string.Format("\tfloat2 t_{0} = float2(shc_{0});\n", (string)localCon.Value);
+            //            break;
+            //        case GLSLType.VEC3:
+            //            PSSLFrag = PSSLFrag + string.Format("\tfloat3 t_{0} = float3(shc_{0});\n", (string)localCon.Value);
+            //            break;
+            //        case GLSLType.VEC4:
+            //            PSSLFrag = PSSLFrag + string.Format("\tfloat4 t_{0} = shc_{0};\n", (string)localCon.Value);
+            //            break;
+            //    }
+            //}
+            // Make some space
+            //PSSLFrag = PSSLFrag + Environment.NewLine;
+
+            // Go through all constant variables and replace how they should be in mainSplit
+            //foreach (var i in localConstants)
+            //{
+            //    for (int j = 0; j < mainSplit.Length; j++)
+            //    {
+            //        if (mainSplit[j].Contains(i.Value))
+            //        {
+            //            mainSplit[j].Replace(i.Value, "t_" + i.Value);
+            //        }
+            //    }
+            //}
 
             // Add the necasary main split lines (Miss the first line as this is already added
             for(int i = 2; i < mainSplit.Count(); i++)

@@ -225,14 +225,15 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="35"/>
             </Grid.ColumnDefinitions>
             <ToggleButton x:Name="ToggleDockButton" Content="=" IsHitTestVisible="False" Visibility="Collapsed" Margin="15,0,1125,30" Grid.Column="1" />
-            <wpfTool:IconButton x:Name="LoadOBJ" Content="LOAD OBJ" ClickMode="Press"
-                    Click="fileOpenItem_Click" Margin="5,0" Grid.Column="1" HorizontalAlignment="Left" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+            <wpfTool:IconButton x:Name="CompileShaders" Content="COMPILE SHADERS" ClickMode="Press"
+                    Click="CompileShaders_Click" Margin="0" Grid.Column="3" HorizontalAlignment="Left" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
                 <Button.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="Black" Offset="1"/>
@@ -240,8 +241,17 @@
                     </LinearGradientBrush>
                 </Button.Foreground>
             </wpfTool:IconButton>
-            <wpfTool:IconButton x:Name="closeButton" Content="X" Grid.Column="5" d:LayoutOverrides="Width" Click="closeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MouseOverForeground}" Foreground="{DynamicResource TaskbarTextColor}" MouseOverForeground="{DynamicResource MouseOverForeground}"/>
-            <wpfTool:IconButton x:Name="maximizeButton" Content="| |" Grid.Column="4" d:LayoutOverrides="Width" Margin="0,-0.04,0,0.04" Click="maximizeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+            <wpfTool:IconButton x:Name="LoadOBJ" Content="LOAD OBJ" ClickMode="Press"
+                    Click="fileOpenItem_Click" Margin="0" Grid.Column="1" HorizontalAlignment="Left" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+                <Button.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="1"/>
+                        <GradientStop Color="#FF79D2D6" Offset="0.746"/>
+                    </LinearGradientBrush>
+                </Button.Foreground>
+            </wpfTool:IconButton>
+            <wpfTool:IconButton x:Name="closeButton" Content="X" Grid.Column="6" d:LayoutOverrides="Width" Click="closeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MouseOverForeground}" Foreground="{DynamicResource TaskbarTextColor}" MouseOverForeground="{DynamicResource MouseOverForeground}"/>
+            <wpfTool:IconButton x:Name="maximizeButton" Content="| |" Grid.Column="5" d:LayoutOverrides="Width" Margin="0,-0.04,0,0.04" Click="maximizeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
                 <wpfTool:IconButton.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="Black" Offset="1"/>
@@ -249,7 +259,7 @@
                     </LinearGradientBrush>
                 </wpfTool:IconButton.Foreground>
             </wpfTool:IconButton>
-            <wpfTool:IconButton x:Name="minimizeButton" Content="_" Grid.Column="3" Margin="0,-0.04,0,0.04" d:LayoutOverrides="Width" Click="minimizeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+            <wpfTool:IconButton x:Name="minimizeButton" Content="_" Grid.Column="4" Margin="0,-0.04,0,0.04" d:LayoutOverrides="Width" Click="minimizeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
                 <wpfTool:IconButton.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="Black" Offset="1"/>
@@ -287,7 +297,6 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </wpfTool:IconButton>
-            <Button x:Name="DebugButton" Click="DebugButton_Click" Content="DEBUG" Grid.Column="2" HorizontalAlignment="Left" Margin="21,4,0,0" VerticalAlignment="Top" Width="74"/>
         </Grid>
         <Grid x:Name="WindowBounds" Background="#FF002527" Margin="0" DockPanel.Dock="Bottom">
             <Grid.RowDefinitions>

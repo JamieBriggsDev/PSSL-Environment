@@ -1,5 +1,8 @@
 ﻿TODO List.
 
-Remove DEBUG button.
-Make compile button.
-Make basic shaders compile.
+
+else if {}{}}{}{}{}
+not passed in shc_normal dingle (MAt4)
+Multi Function Shader files
+shader constant unalighned variables. bytes of 4 DONE
+Make basic shaders compile. DONE

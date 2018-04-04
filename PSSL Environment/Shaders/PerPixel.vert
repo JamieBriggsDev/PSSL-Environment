@@ -10,6 +10,11 @@ uniform vec3 DiffuseMaterial;
 out vec3 EyespaceNormal;
 out vec3 Diffuse;
 
+void donothing(int x)
+{
+	x++;
+}
+
 void main()
 {
     EyespaceNormal = NormalMatrix * Normal;
