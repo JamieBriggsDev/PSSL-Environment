@@ -33,7 +33,7 @@ namespace PSSL_Environment
         private ShaderFileNames FileNames;
         private Interpreter() { }
 
-        private enum GLSLType { MAT4, VEC2, VEC3, VEC4, FLOAT};
+        private enum GLSLType { MAT4, VEC2, VEC3, VEC4, FLOAT, SAMPLER2D};
         private enum PSSLType { FLOAT1, FLOAT2, FLOAT3, FLOAT4};
 
         private List<KeyValuePair<GLSLType, string>> Constants = new List<KeyValuePair<GLSLType, string>>();
@@ -194,6 +194,11 @@ namespace PSSL_Environment
                             //line.Replace("vec3", "" );
                             Constants.Add(new KeyValuePair<GLSLType, string>(GLSLType.FLOAT, temp[2]));
                         }
+                        else if (temp[1].Contains("sampler2D"))
+                        {
+                            //line.Replace("vec3", "" );
+                            Constants.Add(new KeyValuePair<GLSLType, string>(GLSLType.SAMPLER2D, temp[2]));
+                        }
                     }
 
                 } while (line != null);
@@ -248,6 +253,13 @@ namespace PSSL_Environment
                                 //line.Replace("vec3", "" );
                                 Constants.Add(new KeyValuePair<GLSLType, string>(GLSLType.FLOAT, temp[2]));
                             }
+                        
+                            else if (temp[1].Contains("sampler2D"))
+                            {
+                                //line.Replace("vec3", "" );
+                                Constants.Add(new KeyValuePair<GLSLType, string>(GLSLType.SAMPLER2D, temp[2]));
+                            }
+
                         }
                     }
                     // While we are finding variables, find the output variable 
@@ -668,6 +680,23 @@ namespace PSSL_Environment
             // Add space
             PSSLFrag = PSSLFrag + Environment.NewLine;
 
+
+            List<KeyValuePair<string, string>> samplerList = new List<KeyValuePair<string, string>>();
+
+            // Check to see if samplers were found within the uniforms in both files
+            //  then include the necasary globals into the frag shader in placement
+            foreach (var i in Constants)
+            {
+                if(i.Key == GLSLType.SAMPLER2D)
+                {
+                    string samplerName = String.Format("SamplerState l_{0} : register(s0)", i.Value + samplerList.Count.ToString());
+                    string texture2DName = String.Format("Texture2D l_{0} : register(t0)", i.Value + "ColorMap");
+                    PSSLFrag = PSSLFrag + samplerName + Environment.NewLine;
+                    PSSLFrag = PSSLFrag + texture2DName + Environment.NewLine;
+                    samplerList.Add(new KeyValuePair<string, string>(i.Value + samplerList.Count.ToString(), i.Value + "ColorMap"));
+                }
+            }
+
             // Split vertex shader into seperate lines
             string[] fragSplit = frag.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
@@ -713,6 +742,8 @@ namespace PSSL_Environment
             string[] mainSplit = body.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             foreach (var i in Constants)
             {
+                if (i.Key == GLSLType.SAMPLER2D)
+                    continue;
 
                 for (int j = 0; j < mainSplit.Length; j++)
                 {
@@ -733,12 +764,24 @@ namespace PSSL_Environment
                     //line = line.Replace(i.Value, "t_" + i.Value); 
                 }
             }
-            
+            foreach (var i in samplerList)
+            {
+                for (int j = 0; j < mainSplit.Length; j++)
+                {
+                    //string pattern = "(?<!\\w)texture(" + i.Key + "(?!\\w)";
+                    //string replace = "_input." + i.Value;
+                    //mainSplit[j] = Regex.Replace(mainSplit[j], pattern, replace);
+                    string replace = Regex.Replace(i.Key, "[^A-Za-z]+", "");
+                    mainSplit[j] = mainSplit[j].Replace(string.Format("texture({0}", replace),
+                        string.Format("l_{0}.Sample(l_{1}", i.Key, i.Value));
+                }
+            }
 
-           // Write main function start with temp variables
-           //PSSLFrag = PSSLFrag +
-           //    string.Format("float4 main({0} _input) : S_TARGET_OUTPUT\n{{\n\n",
-           //    FileNames.ShaderOutputStructName);
+
+            // Write main function start with temp variables
+            //PSSLFrag = PSSLFrag +
+            //    string.Format("float4 main({0} _input) : S_TARGET_OUTPUT\n{{\n\n",
+            //    FileNames.ShaderOutputStructName);
             //foreach(var localCon in localConstants)
             //{
             //    switch(localCon.Key)
@@ -773,7 +816,7 @@ namespace PSSL_Environment
             //}
 
             // Add the necasary main split lines (Miss the first line as this is already added
-            for(int i = 2; i < mainSplit.Count(); i++)
+            for (int i = 2; i < mainSplit.Count(); i++)
             {
                 PSSLFrag = PSSLFrag + mainSplit[i] + Environment.NewLine;
             }
