@@ -22,6 +22,7 @@ using SharpGL.SceneGraph.Core;
 using SharpGL.SceneGraph.Primitives;
 using System.Windows.Media.Animation;
 using PSSL_Environment.UserControls;
+using System.Text.RegularExpressions;
 
 //The main PSSL_Enironment namespace
 namespace PSSL_Environment
@@ -36,6 +37,14 @@ namespace PSSL_Environment
     public partial class MainWindow : Window
     {
         public List<ConstantsInterface> ConstantsControl = new List<ConstantsInterface>();
+
+        public enum ViewType { COLOR, TEXTURE, TOON, TOONTEXTURE, RIPPLE, CUSTOM};
+        private ViewType viewType;
+
+        public ViewType GetViewType()
+        {
+            return viewType;
+        }
 
         public MainWindow()
         {
@@ -133,22 +142,37 @@ namespace PSSL_Environment
             //axies.Render(gl, RenderMode.Design);
             if(myScene.graphicsSettings == UsingSettings.BASIC)
             {
-                if(WaterEnabled.IsChecked == true)
+                if (WaterEnabled.IsChecked == true)
                 {
+                    viewType = ViewType.RIPPLE;
                     myScene.RenderWaterMode(gl);
                 }
                 else
                 {
                     if (UsingTexture.IsChecked == true)
+                    {
                         myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
+                        if(checkBoxUseToonShader.IsChecked.Value == true)                       
+                            viewType = ViewType.TOONTEXTURE;
+                        else
+                            viewType = ViewType.TEXTURE;
+                    }
                     else
+                    {
                         myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
+                        if (checkBoxUseToonShader.IsChecked.Value == true)
+                            viewType = ViewType.TOON;
+                        else
+                            viewType = ViewType.COLOR;
+                    }
                     //myScene.RenderImmediateMode(gl);
                 }
+
             }
 
             if (myScene.graphicsSettings == UsingSettings.ADVANCED)
             {
+                viewType = ViewType.CUSTOM;
                 myScene.RenderCustomMode(gl);
                 return;
             }
@@ -562,8 +586,28 @@ namespace PSSL_Environment
         }
 
 
+        private void ShaderNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var temp = sender as TextBox;
+            // Make sure to remove spaces
+            string shaderName = temp.Text.Replace(" ", "_");
 
-        
+            // Makes sure to only keep letters
+            shaderName = Regex.Replace(shaderName, "[^\\w\\._]", "");
+
+            // Change shader name in the interpreter
+            Interpreter.GetInstance().SetShaderName(shaderName);
+            GLSLOutput.GetInstance().SetShaderName(shaderName);
+        }
+
+        private void OutputGLSL_Click(object sender, RoutedEventArgs e)
+        {
+            GLSLOutput.GetInstance().OutputGLSL();
+        }
+
+
+
+
 
         //private void CompileShaders_Click(object sender, RoutedEventArgs e)
         //{

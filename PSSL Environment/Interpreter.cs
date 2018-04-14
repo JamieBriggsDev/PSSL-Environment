@@ -14,7 +14,7 @@ namespace PSSL_Environment
 {
     struct ShaderFileNames
     {
-        public string ShaderName;
+        
         public string ShaderOutputStructName;
         public string ShaderConstantsFileName;
         public string ShaderConstantsStructName;
@@ -28,10 +28,12 @@ namespace PSSL_Environment
         //  it a singleton
         private static Interpreter m_instance;
 
+        public static string ShaderName;
+
         private string FilePath;
 
         private ShaderFileNames FileNames;
-        private Interpreter() { }
+        private Interpreter() { SetShaderName("TEST"); }
 
         private enum GLSLType { MAT4, VEC2, VEC3, VEC4, FLOAT, SAMPLER2D};
         private enum PSSLType { FLOAT1, FLOAT2, FLOAT3, FLOAT4};
@@ -53,7 +55,7 @@ namespace PSSL_Environment
 
         public void SetShaderName(string name)
         {
-            FileNames.ShaderName = name;
+            ShaderName = name;
         }
 
 
@@ -291,7 +293,6 @@ namespace PSSL_Environment
             //string vertexShader = Vert;
             //Constants = new List<KeyValuePair<Type, string>>();
 
-            SetShaderName("test");
             FillStructs(Frag, Vert);
             GeneratePSSLConstantsFile();
             GeneratePSSLOutputFile();
@@ -312,65 +313,99 @@ namespace PSSL_Environment
             string Frag;
             string Vert;
 
-            // GET ALREADY EXISTING SHADER FILES
-            if (((MainWindow)Application.Current.MainWindow).WaterEnabled.IsChecked == true)
+            switch(((MainWindow)Application.Current.MainWindow).GetViewType())
             {
-                // Generate Water Shaders
-                Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
-                Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
-            }
-            else
-            {
-                // Generate Texture Mode
-                if (((MainWindow)Application.Current.MainWindow).UsingTexture.IsChecked == true)
-                {
-                    if (((MainWindow)Application.Current.MainWindow).checkBoxUseToonShader.IsChecked == true)
-                    {
-                        Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
-                        Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
-                    }
-                    else
-                    {
-                        Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag");
-                        Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert");
-                    }
-                        
-                }
-                // Generate Color Mode
-                else
-                {
-                    if(((MainWindow)Application.Current.MainWindow).checkBoxUseToonShader.IsChecked == true)
-                    {
-                        Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag");
-                        Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert");
-                    }
-                    else
-                    {
-                        Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
-                        Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
-                    }
-                }
-                //myScene.RenderImmediateMode(gl);
+                case MainWindow.ViewType.COLOR:
+                    Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
+                    Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+                    break;
+                case MainWindow.ViewType.TOON:
+                    Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag");
+                    Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert");
+                    break;
+                case MainWindow.ViewType.TEXTURE:
+                    Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag");
+                    Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert");
+                    break;
+                case MainWindow.ViewType.TOONTEXTURE:
+                    Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.frag");
+                    Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\ToonTexture.vert");
+                    break;
+                case MainWindow.ViewType.RIPPLE:
+                    Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\Ripple.frag");
+                    Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\Ripple.vert");
+                    break;
+                default:
+                    Frag = "";
+                    Vert = "";
+                    break;
+                    
             }
 
-            // Generate PSSL
-
-            SetShaderName("test");
             FillStructs(Frag, Vert);
             GeneratePSSLConstantsFile();
             GeneratePSSLOutputFile();
             GeneratePSSLVertexFile(Vert);
             GeneratePSSLFragFile(Frag);
+
+            //// GET ALREADY EXISTING SHADER FILES
+            //if (((MainWindow)Application.Current.MainWindow).WaterEnabled.IsChecked == true)
+            //{
+            //    // Generate Water Shaders
+            //    Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+            //    Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+            //}
+            //else
+            //{
+            //    // Generate Texture Mode
+            //    if (((MainWindow)Application.Current.MainWindow).UsingTexture.IsChecked == true)
+            //    {
+            //        if (((MainWindow)Application.Current.MainWindow).checkBoxUseToonShader.IsChecked == true)
+            //        {
+            //            Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
+            //            Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+            //        }
+            //        else
+            //        {
+            //            Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag");
+            //            Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert");
+            //        }
+
+            //    }
+            //    // Generate Color Mode
+            //    else
+            //    {
+            //        if(((MainWindow)Application.Current.MainWindow).checkBoxUseToonShader.IsChecked == true)
+            //        {
+            //            Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag");
+            //            Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert");
+            //        }
+            //        else
+            //        {
+            //            Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
+            //            Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
+            //        }
+            //    }
+            //    //myScene.RenderImmediateMode(gl);
+            //}
+
+            // Generate PSSL
+
+
+
         }
 
         public void GeneratePSSLConstantsFile()
         {
             string file, ClassName;
             // Comment at the start
-            file = "// " + FileNames.ShaderName + " Shader Constants" + Environment.NewLine;
+            file = "// " + ShaderName + " Shader Constants" + Environment.NewLine;
+
+            FileNames.ShaderConstantsFileName = ShaderName + "ShaderConstants.h";
+            FileNames.ShaderConstantsStructName = ShaderName + "ShaderConstants";
 
             // find what the name of the file is in preprocessor standar if #ifndefs
-            ClassName = FileNames.ShaderName;
+            ClassName = ShaderName;
             ClassName = ClassName.ToUpper();
             ClassName = ClassName.Replace(' ', '_');
             string preprocessor = "__" + ClassName + "_SHADER_CONSTANTS__";
@@ -433,21 +468,20 @@ namespace PSSL_Environment
 
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(file)));
             //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
-            string path = FilePath + "\\" + FileNames.ShaderName + "ShaderConstants.h";
+            string path = FilePath + "\\" + FileNames.ShaderConstantsFileName;
             System.IO.File.WriteAllText(path, output);
 
-            FileNames.ShaderConstantsFileName = FileNames.ShaderName + "ShaderConstants.h";
-            FileNames.ShaderConstantsStructName = FileNames.ShaderName + "ShaderConstants";
+
 
         }
         public void GeneratePSSLOutputFile()
         {
             string OutputFile, ClassName;
             // Comment at the start
-            OutputFile = "// " + FileNames.ShaderName + " Shader Output" + Environment.NewLine;
+            OutputFile = "// " + ShaderName + " Shader Output" + Environment.NewLine;
 
             // find what the name of the file is in preprocessorS #ifndefs
-            ClassName = FileNames.ShaderName;
+            ClassName = ShaderName;
             ClassName = ClassName.ToUpper();
             ClassName = ClassName.Replace(' ', '_');
             string preprocessor = "__" + ClassName + "_VS_OUTPUT__";
@@ -458,7 +492,7 @@ namespace PSSL_Environment
             OutputFile = OutputFile + Environment.NewLine;
 
             // Find out what the output struct name is
-            FileNames.ShaderOutputStructName = FileNames.ShaderName + "VSOutput";
+            FileNames.ShaderOutputStructName = ShaderName + "VSOutput";
 
             // Write out stuct
             OutputFile = OutputFile + "struct " + FileNames.ShaderOutputStructName + Environment.NewLine;
@@ -504,16 +538,16 @@ namespace PSSL_Environment
 
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(OutputFile)));
             //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
-            string path = FilePath + "\\" + FileNames.ShaderName + "VSOutput.hs";
+            string path = FilePath + "\\" + ShaderName + "VSOutput.hs";
             System.IO.File.WriteAllText(path, output);
 
-            FileNames.ShaderOutputFileName = FileNames.ShaderName + "VSOutput.hs";
+            FileNames.ShaderOutputFileName = ShaderName + "VSOutput.hs";
         }
 
 
         public void GeneratePSSLVertexFile(string vert)
         {
-            string PSSLVert = "// " + FileNames.ShaderName + " Vertex Shader" + Environment.NewLine;
+            string PSSLVert = "// " + ShaderName + " Vertex Shader" + Environment.NewLine;
             // Add all includes to top of the file
             PSSLVert = PSSLVert + "#include \"" + FileNames.ShaderConstantsFileName 
                 + "\"" + Environment.NewLine;
@@ -590,7 +624,7 @@ namespace PSSL_Environment
                             {
                                 body = body + FileNames.ShaderOutputStructName + " main(ptVSInput _input)" + Environment.NewLine;
                                 body = body + "{" + Environment.NewLine;
-                                body = body + "\ttestVSOutput l_output;" + Environment.NewLine;
+                                body = body + "\t" + ShaderName + "VSOutput l_output;" + Environment.NewLine;
                                 insideMain = true;
                                 mainCurlyCounter = 1;
                             }
@@ -624,7 +658,7 @@ namespace PSSL_Environment
             }
             // Split main function into seperate lines
             string[] mainSplit = body.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            mainSplit = mainSplit;
+
             // Go through all output struct variables and check if they are found within the main function
             foreach (var i in OutputStruct)
             {
@@ -663,15 +697,15 @@ namespace PSSL_Environment
 
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(PSSLVert)));
             //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
-            string path = FilePath + "\\" + FileNames.ShaderName + "_vv.pssl";
+            string path = FilePath + "\\" + ShaderName + "_vv.pssl";
             System.IO.File.WriteAllText(path, output);
 
-            FileNames.ShaderVertexFilename = FileNames.ShaderName + "_vv.pssl";
+            FileNames.ShaderVertexFilename = ShaderName + "_vv.pssl";
         }
 
         public void GeneratePSSLFragFile(string frag)
         {
-            string PSSLFrag = "// " + FileNames.ShaderName + " Pixel Shader" + Environment.NewLine;
+            string PSSLFrag = "// " + ShaderName + " Pixel Shader" + Environment.NewLine;
             // Add all includes to top of the file
             PSSLFrag = PSSLFrag + "#include \"" + FileNames.ShaderConstantsFileName
                 + "\"" + Environment.NewLine;
@@ -725,7 +759,8 @@ namespace PSSL_Environment
                         {
                             if (line.Contains("void main()"))
                             {
-                                body = body + "float4 main(testVSOutput _input) : S_TARGET_OUTPUT" + Environment.NewLine;
+                                body = body + "float4 main(" + ShaderName + 
+                                    "VSOutput _input) : S_TARGET_OUTPUT" + Environment.NewLine;
                                 body = body + Environment.NewLine;
                             }
                             else
@@ -834,10 +869,10 @@ namespace PSSL_Environment
 
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(PSSLFrag)));
             //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
-            string path = FilePath + "\\" + FileNames.ShaderName + "_p.pssl";
+            string path = FilePath + "\\" + ShaderName + "_p.pssl";
             System.IO.File.WriteAllText(path, output);
 
-            FileNames.ShaderVertexFilename = FileNames.ShaderName + "_p.pssl";
+            FileNames.ShaderVertexFilename = ShaderName + "_p.pssl";
         }
     }
 }

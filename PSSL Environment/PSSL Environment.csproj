@@ -105,6 +105,7 @@
     </Compile>
     <Compile Include="Extensions\Texture2D.cs" />
     <Compile Include="Extent.cs" />
+    <Compile Include="GLSLOutput.cs" />
     <Compile Include="Interpreter.cs" />
     <Compile Include="ManifestResourceLoader.cs" />
     <Compile Include="Obj.cs" />
@@ -182,6 +183,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="DataStore\DataStore\DataStore.xsd" />
+    <None Include="Design\projectGuides.guides" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -217,8 +219,8 @@
     <None Include="Shaders\ToonTexture.frag" />
     <None Include="Shaders\Toon.frag" />
     <None Include="Shaders\Toon.vert" />
-    <None Include="Shaders\Water\Water.frag" />
-    <None Include="Shaders\Water\Water.vert" />
+    <None Include="Shaders\Ripple.frag" />
+    <None Include="Shaders\Ripple.vert" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -271,9 +273,46 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Shaders\Generated\" />
+    <Folder Include="Shaders\Water\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\AdvancedSettings.png" />
+    <Resource Include="Resources\BasicSettings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="BasicSettings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Advanced Settings 2.png" />
+    <Resource Include="Resources\Basic Settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Basic Settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Minimise.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Maximise.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="viewPort.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Close.png" />
+    <Resource Include="Resources\Icons\Logo.png" />
+    <Resource Include="Resources\Icons\Maximise.png" />
+    <Resource Include="Resources\Icons\Minimise.png" />
+    <Resource Include="Resources\Icons\viewPort.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

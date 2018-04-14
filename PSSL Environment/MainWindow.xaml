@@ -11,7 +11,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" x:Name="__" x:Class="PSSL_Environment.MainWindow"
         mc:Ignorable="d"
         Height="720" Width="1280"
-        WindowStartupLocation="CenterScreen" Icon="cubeIcon.png" 
+        WindowStartupLocation="CenterScreen" Icon="Resources/Icons/Logo.png" 
         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" 
         Background="#FF004F53" BorderThickness="10" AllowsTransparency="True" WindowStyle="None">
 
@@ -51,6 +51,27 @@
             <GradientStop Color="#FF122223" Offset="0"/>
             <GradientStop Color="#FF363636" Offset="0.087"/>
         </LinearGradientBrush>
+        <ImageBrush x:Key="ExitLogo" ImageSource="Resources/Icons/Close.png" Stretch="Uniform"/>
+        <ImageBrush x:Key="MaximizeIcon" ImageSource="Resources/Icons/Maximise.png" Stretch="Uniform">
+            <ImageBrush.RelativeTransform>
+                <TransformGroup>
+                    <ScaleTransform CenterY="0.5" CenterX="0.5" ScaleX="1.15"/>
+                    <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                    <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </ImageBrush.RelativeTransform>
+        </ImageBrush>
+        <ImageBrush x:Key="MinimizeLogo" ImageSource="Resources/Icons/Minimise.png" Stretch="Uniform">
+            <ImageBrush.RelativeTransform>
+                <TransformGroup>
+                    <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                    <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                    <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                    <TranslateTransform Y="0.25"/>
+                </TransformGroup>
+            </ImageBrush.RelativeTransform>
+        </ImageBrush>
 
     </Window.Resources>
     <Window.BorderBrush>
@@ -99,11 +120,6 @@
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="OpenDock">
                     <Storyboard>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="BasicSettingsButton">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="{StaticResource ButtonWidthShut}"/>
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="{StaticResource ButtonWidthOpen}"/>
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="140"/>
-                        </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="AdvancedSettingsButton">
                             <EasingDoubleKeyFrame KeyTime="0" Value="{StaticResource ButtonWidthShut}"/>
                             <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="{StaticResource ButtonWidthOpen}"/>
@@ -156,15 +172,14 @@
                             <DiscreteObjectKeyFrame KeyTime="0" Value=" "/>
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Viewport&#xA;Settings"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="BasicSettingsButton">
+                            <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+                            <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="{StaticResource ButtonWidthOpen}"/>
+                        </DoubleAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="CloseDock">
                     <Storyboard>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="BasicSettingsButton">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="{StaticResource ButtonWidthOpen}"/>
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="{StaticResource ButtonWidthOpen}"/>
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="{StaticResource ButtonWidthShut}"/>
-                        </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="AdvancedSettingsButton">
                             <EasingDoubleKeyFrame KeyTime="0" Value="{StaticResource ButtonWidthOpen}"/>
                             <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="{StaticResource ButtonWidthOpen}"/>
@@ -214,6 +229,10 @@
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value=" "/>
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.6" Value="Viewport&#xA;Settings"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="BasicSettingsButton">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="{StaticResource ButtonWidthOpen}"/>
+                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+                        </DoubleAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
@@ -225,15 +244,18 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" MinWidth="72"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="84*"/>
+                <ColumnDefinition Width="505*"/>
+                <ColumnDefinition Width="315*"/>
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="35"/>
             </Grid.ColumnDefinitions>
-            <ToggleButton x:Name="ToggleDockButton" Content="=" IsHitTestVisible="False" Visibility="Collapsed" Margin="15,0,1125,30" Grid.Column="1" />
-            <wpfTool:IconButton x:Name="CompileShaders" Content="COMPILE SHADERS" ClickMode="Press"
-                    Click="CompileShaders_Click" Margin="0" Grid.Column="3" HorizontalAlignment="Left" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+            <ToggleButton x:Name="ToggleDockButton" Content="=" IsHitTestVisible="False" Visibility="Collapsed" Margin="15,0,44.64,30" Grid.Column="1" />
+            <wpfTool:IconButton x:Name="CompilePSSL" Content="COMPILE PSSL" ClickMode="Press"
+                    Click="CompileShaders_Click" Margin="0" Grid.Column="2" HorizontalAlignment="Left" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
                 <Button.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="Black" Offset="1"/>
@@ -242,7 +264,7 @@
                 </Button.Foreground>
             </wpfTool:IconButton>
             <wpfTool:IconButton x:Name="LoadOBJ" Content="LOAD OBJ" ClickMode="Press"
-                    Click="fileOpenItem_Click" Margin="0" Grid.Column="1" HorizontalAlignment="Left" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+                    Click="fileOpenItem_Click" Margin="0" Grid.Column="1" HorizontalAlignment="Left" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}" Width="59.64">
                 <Button.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="Black" Offset="1"/>
@@ -250,8 +272,8 @@
                     </LinearGradientBrush>
                 </Button.Foreground>
             </wpfTool:IconButton>
-            <wpfTool:IconButton x:Name="closeButton" Content="X" Grid.Column="6" d:LayoutOverrides="Width" Click="closeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MouseOverForeground}" Foreground="{DynamicResource TaskbarTextColor}" MouseOverForeground="{DynamicResource MouseOverForeground}"/>
-            <wpfTool:IconButton x:Name="maximizeButton" Content="| |" Grid.Column="5" d:LayoutOverrides="Width" Margin="0,-0.04,0,0.04" Click="maximizeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+            <wpfTool:IconButton x:Name="closeButton" Content="" Grid.Column="9" Click="closeButton_Click" BorderBrush="{x:Null}" MouseOverBorderBrush="{x:Null}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MouseOverForeground}" Foreground="{DynamicResource TaskbarTextColor}" MouseOverForeground="{x:Null}" MouseOverBackground="{DynamicResource ExitLogo}" Background="{DynamicResource ExitLogo}"/>
+            <wpfTool:IconButton x:Name="maximizeButton" Content="" Grid.Column="8" Margin="0,-0.04,0,0.04" Click="maximizeButton_Click" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MaximizeIcon}" MouseOverBorderBrush="{x:Null}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}" MouseOverForeground="{x:Null}" Background="{DynamicResource MaximizeIcon}">
                 <wpfTool:IconButton.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="Black" Offset="1"/>
@@ -259,7 +281,7 @@
                     </LinearGradientBrush>
                 </wpfTool:IconButton.Foreground>
             </wpfTool:IconButton>
-            <wpfTool:IconButton x:Name="minimizeButton" Content="_" Grid.Column="4" Margin="0,-0.04,0,0.04" d:LayoutOverrides="Width" Click="minimizeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+            <wpfTool:IconButton x:Name="minimizeButton" Content="" Grid.Column="7" Margin="0,-0.04,0,0.04" Click="minimizeButton_Click" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MinimizeLogo}" MouseOverBorderBrush="{x:Null}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}" MouseOverForeground="{x:Null}" Background="{DynamicResource MinimizeLogo}">
                 <wpfTool:IconButton.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="Black" Offset="1"/>
@@ -296,6 +318,41 @@
                         <ei:GoToStateAction x:Name="ClosedDockState" StateName="CloseDock"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
+            </wpfTool:IconButton>
+            <TextBox x:Name="ShaderNameTextBox" Grid.Column="5" Margin="0" Text="SHADER_NAME"
+                     MaxLines="1" IsUndoEnabled="True" MaxLength="45" 
+                     CharacterCasing="Upper" BorderBrush="{x:Null}" 
+                     SelectionBrush="#7F87FFDE"
+                     TextChanged="ShaderNameTextBox_TextChanged" CaretBrush="#FFD8FDFF">
+                <TextBox.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF79D2D6" Offset="0.566"/>
+                        <GradientStop Color="Black" Offset="1"/>
+                    </LinearGradientBrush>
+                </TextBox.Foreground>
+                <TextBox.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <LinearGradientBrush.RelativeTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                                <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </LinearGradientBrush.RelativeTransform>
+                        <GradientStop Color="#FF002527" Offset="1"/>
+                        <GradientStop Color="#FF004F53" Offset="0.682"/>
+                    </LinearGradientBrush>
+                </TextBox.Background>
+            </TextBox>
+            <wpfTool:IconButton x:Name="OutputGLSL" Content="OUTPUT GLSL" ClickMode="Press"
+                Click="OutputGLSL_Click" Margin="0" Grid.Column="3" HorizontalAlignment="Left" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}">
+                <wpfTool:IconButton.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="1"/>
+                        <GradientStop Color="#FF79D2D6" Offset="0.746"/>
+                    </LinearGradientBrush>
+                </wpfTool:IconButton.Foreground>
             </wpfTool:IconButton>
         </Grid>
         <Grid x:Name="WindowBounds" Background="#FF002527" Margin="0" DockPanel.Dock="Bottom">
@@ -349,14 +406,8 @@
                     <RowDefinition Height="100"/>
                     <RowDefinition Height="4*"/>
                 </Grid.RowDefinitions>
-                <wpfTool:IconButton x:Name="BasicSettingsButton" Content="Basic&#xA;Settings" 
-                    Canvas.Top="-47.5" 
-                    FontFamily="Microsoft YaHei UI Light" ClickMode="Press" 
-                    Cursor="Hand" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
-                    AutomationProperties.Name="BasicSettings" 
-                    FontSize="24" BorderBrush="{x:Null}" Background="{x:Null}" 
-                    Foreground="{DynamicResource TaskbarTextColor}"
-                    Click="BasicSettingsButton_Click" Canvas.Left="-4.514" Margin="0" BorderThickness="0" Height="{DynamicResource ButtonHeightOpen}" Width="0" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}"/>
+                <wpfTool:IconButton x:Name="BasicSettingsButton" Content="Basic&#xA;Settings" Canvas.Top="-47.5" FontFamily="Microsoft YaHei UI Light" ClickMode="Press" Cursor="Hand" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" AutomationProperties.Name="BasicSettings" FontSize="24" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="{DynamicResource TaskbarTextColor}" Click="BasicSettingsButton_Click" Canvas.Left="-4.514" Margin="0,2" BorderThickness="0" Height="{DynamicResource ButtonHeightOpen}" Width="0" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}"/>
+
                 <wpfTool:IconButton x:Name="AdvancedSettingsButton" Content="Advanced&#xA;Settings" Canvas.Top="-47.5" FontFamily="Microsoft YaHei UI Light" ClickMode="Press" Cursor="Hand" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" AutomationProperties.Name="BasicSettings" FontSize="24" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="{DynamicResource TaskbarTextColor}" Click="AdvancedSettingsButton_Click" Canvas.Left="-4.514" Margin="0,2" Grid.Row="1" BorderThickness="0" Height="{DynamicResource ButtonHeightOpen}" Width="0" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}"/>
                 <wpfTool:IconButton x:Name="ViewportSettingsButton" Content="Viewport&#xA;Settings" Canvas.Top="-47.5" FontFamily="Microsoft YaHei UI Light" ClickMode="Press" Cursor="Hand" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" AutomationProperties.Name="BasicSettings" FontSize="24" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="{DynamicResource TaskbarTextColor}" Click="ViewportSettingsButton_Click" Canvas.Left="-4.514" Margin="0,2" Grid.Row="2" BorderThickness="0" Height="{DynamicResource ButtonHeightOpen}" Width="0" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}"/>
                 <Rectangle x:Name="ButtonSelector" Margin="0" Grid.Column="1">

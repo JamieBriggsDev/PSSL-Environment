@@ -206,8 +206,8 @@ namespace PSSL_Environment
             //  Create the water shader.
             shaderWater = new SharpGL.Shaders.ShaderProgram();
             shaderWater.Create(gl,
-                ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.vert"),
-                ManifestResourceLoader.LoadTextFile(@"Shaders\Water\Water.frag"), attributeLocations);
+                ManifestResourceLoader.LoadTextFile(@"Shaders\Ripple.vert"),
+                ManifestResourceLoader.LoadTextFile(@"Shaders\Ripple.frag"), attributeLocations);
 
             
 
@@ -380,29 +380,27 @@ namespace PSSL_Environment
                 //  Use the shader program.
                 shader.Bind(gl);
 
-                //  Set the light position.
+                //  Set The light Position.
                 shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
 
-                //  Set the matrices.
+                //  Set The Matrices.
                 shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
                 shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
                 shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
-                // Set shader alpha
+                // Set Shader Alpha
                 shader.SetUniform1(gl, "Alpha", alphaColor);
 
-
-
-                //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
-                //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
-                //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
+                // Set Material Colors
                 shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
                     ambientMaterialColor.z);
                 shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
                     diffuseMaterialColor.z);
                 shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
                     specularMaterialColor.z);
-                shader.SetUniform1(gl, "Shininess", (float)((MainWindow)System.Windows.Application.Current.MainWindow).shininessValue.Value);
+
+                // Set Shader Shininess
+                shader.SetUniform1(gl, "Shininess", (float)((MainWindow)Application.Current.MainWindow).shininessValue.Value);
 
                 var vertexBufferArray = meshVertexBufferArray;
                 //vertexBufferArray.Bind(gl);

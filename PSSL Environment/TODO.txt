@@ -1,8 +1,4 @@
 ﻿TODO List.
 
-
-else if {}{}}{}{}{}
-not passed in shc_normal dingle (MAt4)
-Multi Function Shader files
-shader constant unalighned variables. bytes of 4 DONE
-Make basic shaders compile. DONE
+Name of class in title bar
+Add tick boxes to the basic settings colour to let user decide if perminant colours or passed in colours
