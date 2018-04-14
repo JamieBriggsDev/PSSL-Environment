@@ -435,8 +435,8 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80"/>
-                        <RowDefinition Height="3*"/>
-                        <RowDefinition Height="67*"/>
+                        <RowDefinition Height="21"/>
+                        <RowDefinition/>
                         <RowDefinition Height="100"/>
                     </Grid.RowDefinitions>
                     <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="36" Margin="44,17,4,17" Grid.ColumnSpan="2" Height="46" Width="316"><Run Foreground="White" Text="Advanced Setting"/><Run Foreground="White" Text="s"/></TextBlock>
