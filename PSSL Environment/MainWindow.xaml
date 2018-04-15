@@ -478,11 +478,12 @@
                     <!--This is the split button to chose a constant you wish to add-->
                 </Grid>
             </DockPanel>
-            <Canvas x:Name="ViewportSettingsCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" Background="{DynamicResource PanelBackground}" Visibility="Hidden">
-                <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="660" Width="400">
+            <Canvas x:Name="ViewportSettingsCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" Background="{DynamicResource PanelBackground}">
+                <Grid x:Name="ViewportGrid" VerticalAlignment="Center" HorizontalAlignment="Center" Height="660" Width="400">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid x:Name="ViewportSettingsGrid" Margin="0,20,0,0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>

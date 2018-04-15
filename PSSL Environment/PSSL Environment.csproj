@@ -100,6 +100,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Camera.cs" />
+    <Compile Include="CustomMath.cs" />
     <Compile Include="DataStore\DataStore\DataStore.xaml.cs">
       <DependentUpon>DataStore.xaml</DependentUpon>
     </Compile>
@@ -117,6 +119,9 @@
     <Compile Include="PropertyGridView.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneDenormaliser.cs" />
+    <Compile Include="UserControls\CameraController.xaml.cs">
+      <DependentUpon>CameraController.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ConstantsInterface.cs" />
     <Compile Include="UserControls\ColorConstant.xaml.cs">
       <DependentUpon>ColorConstant.xaml</DependentUpon>
@@ -146,6 +151,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\CameraController.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\ColorConstant.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -211,6 +220,8 @@
     <None Include="Resources\Models\Tank.obj" />
     <None Include="Shaders\Custom\CustomFrag.frag" />
     <None Include="Shaders\Custom\CustomVertex.vert" />
+    <None Include="Shaders\PerPixelN.frag" />
+    <None Include="Shaders\PerPixelN.vert" />
     <None Include="Shaders\PerPixelTexture.vert" />
     <None Include="Shaders\PerPixelTexture.frag" />
     <None Include="Shaders\PerPixel.frag" />

@@ -1,62 +1,85 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using GlmNet;
-
+using System.Threading.Tasks;
 
 namespace PSSL_Environment
 {
     public class Camera
     {
-        public mat4 ProjectionMx;
-        public mat4 WorldViewMx;
-        public float Angle;
-        public float AspectRatio;
-        public float ZNear;
-        public float ZFar;
+        public mat4 m_projectionMx;
+        public mat4 m_worldViewMx;
 
-        const float PI_OVER_2 = (float)Math.PI / 2; //PI / 2
+        private float m_angle;
+        private float m_aspectRatio;
+        private float m_zNear;
+        private float m_zFar;
+
+        
+
         public Camera()
         {
-            var temp = ((MainWindow)Application.Current.MainWindow).openGlCtrl;
-            WorldViewMx = mat4.identity();
-            UpdatePerspective(1.0f, (float)(temp.ActualWidth / temp.ActualHeight),1f, 100.0f);
+            // Set up world view matrix to be an identity matrix
+            m_worldViewMx = mat4.identity();
+            m_worldViewMx = glm.lookAt(new vec3(0.0f, 0.0f, 0.0f), new vec3(0.0f, 0.0f, -10.0f), new vec3(0.0f, 1.0f, 0.0f));
         }
 
-        public void UpdatePerspective(float angle, float aspectRatio, float zNear, float zFar)
+        public mat4 SetPerspective(float angle, float aspectRatio, float zNear, float zFar)
         {
-            Angle = angle;
-            AspectRatio = aspectRatio;
-            ZNear = zNear;
-            ZFar = zFar;
+            m_angle = angle;
+            m_aspectRatio = aspectRatio;
+            m_zNear = zNear;
+            m_zFar = zFar;
 
-            ProjectionMx = GeneratePerspectiveMatrix(angle, aspectRatio, zNear, zFar);
+            // Apply generated perspective matrix
+            m_projectionMx = glm.perspective(angle, aspectRatio, zNear, zFar);
+
+            return m_projectionMx;
         }
 
-        public void UpdatePerspective(mat4 proj)
+        public mat4 SetPerspective(mat4 input)
         {
-            ProjectionMx = proj;
+
+            // Apply generated perspective matrix
+            m_projectionMx = input;
+
+            return m_projectionMx;
         }
 
-        private mat4 GeneratePerspectiveMatrix(float angle, float aspectRatio, float zNear, float zFar)
+        public void TrackLeftRight(float _amount)
         {
-            //// Makes a mat4 perspective matrix
+            m_worldViewMx = glm.translate(m_worldViewMx, new vec3(-_amount, 0.0f, 0.0f));
+        }
 
-            float f, rangeInv;
-            f = glm.tan(PI_OVER_2 - (0.5f * angle));
-            rangeInv = (1.0f / (zNear / zFar));
+        public void trackUpDown(float _amount)
+        {
+            m_worldViewMx = glm.translate(m_worldViewMx, new vec3(0.0f, -_amount, 0.0f));         
+        }
 
-            return new mat4(
-                new vec4((f / aspectRatio), 0.0f, 0.0f, 0.0f),
-                new vec4(0.0f, f, 0.0f, 0.0f),
-                new vec4(0.0f, 0.0f, ((zNear + zFar) * rangeInv), -1.0f),
-                new vec4(0.0f, 0.0f, (((zNear + zFar) * rangeInv) * 2.0f), 0.0f));
-        } 
+        public void trackInOut(float _amount)
+        {
+            m_worldViewMx = glm.translate(m_worldViewMx, new vec3(0.0f, 0.0f, -_amount));
+        }
 
+        public void pitch(float _amount)
+        {
+            m_worldViewMx = glm.rotate(m_worldViewMx, _amount, new vec3(1.0f, 0.0f, 0.0f));
+            //m_worldViewMx = Matrix4::rotationX(_amount) * m_worldViewMx;
+        }
+
+        public void roll(float _amount)
+        {
+            m_worldViewMx = glm.rotate(m_worldViewMx, _amount, new vec3(0.0f, 0.0f, 1.0f));
+            //m_worldViewMx = Matrix4::rotationZ(_amount) * m_worldViewMx;
+        }
+
+        public void yaw(float _amount)
+        {
+            m_worldViewMx = glm.rotate(m_worldViewMx, _amount, new vec3(0.0f, 1.0f, 0.0f));
+            //m_worldViewMx = Matrix4::rotationY(_amount) * m_worldViewMx;
+        }
 
     }
 }

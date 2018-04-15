@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
+using GlmNet;
 
 namespace PSSL_Environment
 {
@@ -26,6 +27,8 @@ namespace PSSL_Environment
         public List<uint> NormalIndices;
         public List<uint> UVIndices;
 
+        public mat4 m_modelWorldMx = new mat4();
+
         public int IndicesPerFace = 3;
         private bool validObject = false;
         public bool GetValidObject()
@@ -35,7 +38,7 @@ namespace PSSL_Environment
 
         public Obj()
         {
-
+            m_modelWorldMx = glm.translate(mat4.identity(), new vec3(0.0f, 0.0f, -10.0f));
         }
 
 

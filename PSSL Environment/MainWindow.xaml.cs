@@ -51,6 +51,12 @@ namespace PSSL_Environment
             InitializeComponent();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
 
+
+            // Camera
+            CameraController cameraController = new CameraController();
+            ViewportGrid.Children.Add(cameraController);
+            System.Windows.Controls.Grid.SetRow(cameraController, 2);
+
             //ModelVisual3D device3D = new ModelVisual3D();
             //device3D.Content = Display3d("C:\\Users\\jamie\\OneDrive\\Individual Project\\Project\\PSSL Environment\\PSSL Environment\\Resources\\Models\\cube.obj");
         }

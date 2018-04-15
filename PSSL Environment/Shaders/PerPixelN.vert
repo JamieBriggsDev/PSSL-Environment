@@ -13,7 +13,7 @@ out vec3 Diffuse;
 
 void main()
 {
-    EyespaceNormal = vec3(NormalMatrix * vec4(Normal, 1.0f));
     gl_Position = Projection * Modelview * Position;
     Diffuse = DiffuseMaterial;
+    EyespaceNormal = vec3(NormalMatrix * vec4(Normal, 1.0f));
 }

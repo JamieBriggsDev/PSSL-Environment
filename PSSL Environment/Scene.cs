@@ -43,9 +43,11 @@ namespace PSSL_Environment
 
         public string fragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
 
-        private Obj myOBJ;
+        private Obj myOBJ = new Obj();
 
         public Obj getOBJ => myOBJ;
+
+        public Camera myCamera = new Camera();
 
         //private Mesh myMesh;
         
@@ -216,9 +218,10 @@ namespace PSSL_Environment
 
 
             // Set up any variables
-            modelLocation = new vec3(-1, -1, -10);
+            modelLocation = new vec3(-0, -0, -10);
             modelRotation = new vec3(0, 1, 0);
             lightLocation = new vec3(0.25f, 0.25f, 10f);
+
 
             ((MainWindow)Application.Current.MainWindow).VertexShaderText.Text = vertexShader;
             ((MainWindow)Application.Current.MainWindow).FragmentShaderText.Text = fragShader;
@@ -243,10 +246,20 @@ namespace PSSL_Environment
 
             //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
             //  is, so set it now.
+
+            float cAngle = 0.46f;
+            float zNear = 1.0f;
+            float zFar = 100.0f;
+
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             gl.LoadIdentity();
-            gl.MultMatrix(projectionMatrix.to_array());
+            gl.MultMatrix(myCamera.SetPerspective(projectionMatrix).to_array());
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
+
+
+
+
+
         }
 
         /// <summary>
@@ -344,93 +357,94 @@ namespace PSSL_Environment
             //}
         }
 
-        // Renders the scene with colour input for each of ADS
+        //Renders the scene with colour input for each of ADS
         public void RenderColorMode(OpenGL gl, bool useToonShader)
         {
-            if(myOBJ != null)
+            if (myOBJ != null)
             {
-                if(myOBJ.GetValidObject() == true)
-            {
-                vec3 defaultValues;
-                defaultValues.x = 0.0f;
-                defaultValues.y = 0.0f;
-                defaultValues.z = 0.0f;
-
-                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-                if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+                if (myOBJ.GetValidObject() == true)
                 {
-                    ambientMaterialColor = defaultValues;
-                }
-                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-                if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
-                {
-                    diffuseMaterialColor = defaultValues;
-                }
-                // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
-                if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
-                {
-                    specularMaterialColor = defaultValues;
-                }
+                    vec3 defaultValues;
+                    defaultValues.x = 0.0f;
+                    defaultValues.y = 0.0f;
+                    defaultValues.z = 0.0f;
+
+                    // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                    if (((MainWindow)System.Windows.Application.Current.MainWindow).ambientColorPicker.SelectedColor == null)
+                    {
+                        ambientMaterialColor = defaultValues;
+                    }
+                    // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                    if (((MainWindow)System.Windows.Application.Current.MainWindow).diffuseColorPicker.SelectedColor == null)
+                    {
+                        diffuseMaterialColor = defaultValues;
+                    }
+                    // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
+                    if (((MainWindow)System.Windows.Application.Current.MainWindow).specularColorPicker.SelectedColor == null)
+                    {
+                        specularMaterialColor = defaultValues;
+                    }
+
+                    
+
+                    //  Get a reference to the appropriate shader.
+                    var shader = useToonShader ? shaderToon : shaderPerPixel;
+
+                    //  Use the shader program.
+                    shader.Bind(gl);
+
+                    //  Set The light Position.
+                    shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
+
+                    //  Set The Matrices.
+                    shader.SetUniformMatrix4(gl, "Projection", myCamera.m_projectionMx.to_array());
+                    shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+                    shader.SetUniformMatrix4(gl, "NormalMatrix", CustomMath.TransposeMatrix(glm.inverse(myCamera.m_worldViewMx)).to_array());
+                    //shader.SetUniformMatrix4(gl, "NormalMatrix", normalMatrix.to_array());
+
+                    // Set Shader Alpha
+                    shader.SetUniform1(gl, "Alpha", alphaColor);
+
+                    // Set Material Colors
+                    shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
+                        ambientMaterialColor.z);
+                    shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
+                        diffuseMaterialColor.z);
+                    shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
+                        specularMaterialColor.z);
+
+                    // Set Shader Shininess
+                    shader.SetUniform1(gl, "Shininess", (float)((MainWindow)Application.Current.MainWindow).shininessValue.Value);
+
+                    var vertexBufferArray = meshVertexBufferArray;
+                    //vertexBufferArray.Bind(gl);
+                    gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
 
 
 
-                //  Get a reference to the appropriate shader.
-                var shader = useToonShader ? shaderToon : shaderPerPixel;
+                    uint mode = OpenGL.GL_TRIANGLES;
+                    if (myOBJ.IndicesPerFace == 4)
+                        mode = OpenGL.GL_QUADS;
+                    else if (myOBJ.IndicesPerFace > 4)
+                        mode = OpenGL.GL_POLYGON;
 
-                //  Use the shader program.
-                shader.Bind(gl);
-
-                //  Set The light Position.
-                shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
-
-                //  Set The Matrices.
-                shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
-                shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
-                shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
-
-                // Set Shader Alpha
-                shader.SetUniform1(gl, "Alpha", alphaColor);
-
-                // Set Material Colors
-                shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
-                    ambientMaterialColor.z);
-                shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
-                    diffuseMaterialColor.z);
-                shader.SetUniform3(gl, "SpecularMaterial", specularMaterialColor.x, specularMaterialColor.y,
-                    specularMaterialColor.z);
-
-                // Set Shader Shininess
-                shader.SetUniform1(gl, "Shininess", (float)((MainWindow)Application.Current.MainWindow).shininessValue.Value);
-
-                var vertexBufferArray = meshVertexBufferArray;
-                //vertexBufferArray.Bind(gl);
-                gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
-
-                
-
-                uint mode = OpenGL.GL_TRIANGLES;
-                if (myOBJ.IndicesPerFace == 4)
-                    mode = OpenGL.GL_QUADS;
-                else if (myOBJ.IndicesPerFace > 4)
-                    mode = OpenGL.GL_POLYGON;
-
-                gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
+                    gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
                     //gl.DrawElements(mode, myOBJ.VertexIndices.Count, type, myOBJ.VertexIndices);
-                //gl.DrawArrays(mode, 0, myOBJ.NormalList.Count);
+                    //gl.DrawArrays(mode, 0, myOBJ.NormalList.Count);
 
-                //IntPtr[] vertices = new IntPtr[myOBJ.VertexList.Count];
-
-
-
-                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count, myOBJ.VertexList., OpenGL.GL_STATIC_DRAW);
+                    //IntPtr[] vertices = new IntPtr[myOBJ.VertexList.Count];
 
 
-                shader.Unbind(gl);
+
+                    //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count, myOBJ.VertexList., OpenGL.GL_STATIC_DRAW);
+
+
+                    shader.Unbind(gl);
+                }
             }
-            }
-            
+
         }
-        
+
         // Renders the scene with a texture along with colours for ADS
         public void RenderTextureMode(OpenGL gl, bool useToonShader)
         {
@@ -475,8 +489,8 @@ namespace PSSL_Environment
                 shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
 
                 //  Set the matrices.
-                shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
-                shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+                shader.SetUniformMatrix4(gl, "Projection", myCamera.m_projectionMx.to_array());
+                shader.SetUniformMatrix4(gl, "Modelview", (myCamera.m_worldViewMx * myOBJ.m_modelWorldMx).to_array());
                 shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
                 // Set shader alpha
