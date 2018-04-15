@@ -805,6 +805,8 @@ namespace PSSL_Environment
                 shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
                 shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
 
+                
+
                 shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
                 // Set shader alpha
@@ -814,7 +816,7 @@ namespace PSSL_Environment
                 shader.SetUniform1(gl, "Time", time);
 
                 //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
-                //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
+                //sh. 'ader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
                 //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
                 shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
                     ambientMaterialColor.z);
