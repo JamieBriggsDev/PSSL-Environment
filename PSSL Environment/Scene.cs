@@ -798,8 +798,13 @@ namespace PSSL_Environment
                 shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
 
                 //  Set the matrices.
+                // DOES NOT WORK
+                shader.SetUniformMatrix4(gl, "ModelProjectionMatrix", (projectionMatrix * modelviewMatrix).to_array());
+
+                // DOES WORK
                 shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
                 shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+
                 shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
 
                 // Set shader alpha
