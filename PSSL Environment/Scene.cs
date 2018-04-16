@@ -102,7 +102,7 @@ namespace PSSL_Environment
             {
                 customShaderProgram.Delete(gl);
 
-            } catch (Exception e)
+            } catch (Exception)
             {
                 // Do nothing as this means there is no context yet
             }
@@ -218,7 +218,7 @@ namespace PSSL_Environment
 
 
             // Set up any variables
-            modelLocation = new vec3(-0, -0, -10);
+            modelLocation = new vec3(-0.5f, -1f, -4f);
             modelRotation = new vec3(0, 1, 0);
             lightLocation = new vec3(0.25f, 0.25f, 10f);
 
@@ -240,6 +240,7 @@ namespace PSSL_Environment
         public void CreateProjectionMatrix(OpenGL gl, float screenWidth, float screenHeight)
         {
             //  Create the projection matrix for our screen size.
+            //const float S = 0.46f;
             const float S = 0.46f;
             float H = S * screenHeight / screenWidth;
             projectionMatrix = glm.frustum(-S, S, -H, H, 1, 100);
@@ -247,18 +248,14 @@ namespace PSSL_Environment
             //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
             //  is, so set it now.
 
-            float cAngle = 0.46f;
-            float zNear = 1.0f;
-            float zFar = 100.0f;
+            //float cAngle = 0.46f;
+            //float zNear = 1.0f;
+            //float zFar = 100.0f;
 
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             gl.LoadIdentity();
             gl.MultMatrix(myCamera.SetPerspective(projectionMatrix).to_array());
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
-
-
-
-
 
         }
 
@@ -275,6 +272,7 @@ namespace PSSL_Environment
             mat4 translation = glm.translate(mat4.identity(), modelLocation);
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotation * translation;
+            myOBJ.m_modelWorldMx = modelviewMatrix;
             normalMatrix = modelviewMatrix.to_mat3();
         }
 
@@ -396,11 +394,12 @@ namespace PSSL_Environment
                     //  Set The light Position.
                     shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
 
-                    //  Set The Matrices.
-                    shader.SetUniformMatrix4(gl, "Projection", myCamera.m_projectionMx.to_array());
-                    shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
+                    // Set up projection and model view matrices
+                    shader.SetUniformMatrix4fv(gl, "Projection", (myCamera.m_projectionMx * myCamera.m_worldViewMx).to_array());
+                    shader.SetUniformMatrix4(gl, "Modelview", myOBJ.m_modelWorldMx.to_array());
+
+                    // Set up normal matrix
                     shader.SetUniformMatrix4(gl, "NormalMatrix", CustomMath.TransposeMatrix(glm.inverse(myCamera.m_worldViewMx)).to_array());
-                    //shader.SetUniformMatrix4(gl, "NormalMatrix", normalMatrix.to_array());
 
                     // Set Shader Alpha
                     shader.SetUniform1(gl, "Alpha", alphaColor);
@@ -416,29 +415,21 @@ namespace PSSL_Environment
                     // Set Shader Shininess
                     shader.SetUniform1(gl, "Shininess", (float)((MainWindow)Application.Current.MainWindow).shininessValue.Value);
 
+                    // Set up vertex buffer array
                     var vertexBufferArray = meshVertexBufferArray;
-                    //vertexBufferArray.Bind(gl);
                     gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
 
-
-
+                    // Find drawing mode by total indices to a face
                     uint mode = OpenGL.GL_TRIANGLES;
                     if (myOBJ.IndicesPerFace == 4)
                         mode = OpenGL.GL_QUADS;
                     else if (myOBJ.IndicesPerFace > 4)
                         mode = OpenGL.GL_POLYGON;
 
+                    // Draw the arrays of data for the model
                     gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
-                    //gl.DrawElements(mode, myOBJ.VertexIndices.Count, type, myOBJ.VertexIndices);
-                    //gl.DrawArrays(mode, 0, myOBJ.NormalList.Count);
 
-                    //IntPtr[] vertices = new IntPtr[myOBJ.VertexList.Count];
-
-
-
-                    //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count, myOBJ.VertexList., OpenGL.GL_STATIC_DRAW);
-
-
+                    // Unbind the shader from OpenGL
                     shader.Unbind(gl);
                 }
             }

@@ -4,8 +4,11 @@ in vec3 Diffuse;
 out vec4 FragColor;
 
 uniform vec3 LightPosition;
+
 uniform vec3 AmbientMaterial;
 uniform vec3 SpecularMaterial;
+uniform vec3 DiffuseMaterial;
+
 uniform float Alpha;
 uniform float Shininess;
 
@@ -20,7 +23,7 @@ void main()
     float sf = max(0.0, dot(N, H));
     sf = pow(sf, Shininess);
 
-    vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
+    vec3 color = AmbientMaterial + df * DiffuseMaterial + sf * SpecularMaterial;
 
     FragColor = vec4(color, Alpha);
 }

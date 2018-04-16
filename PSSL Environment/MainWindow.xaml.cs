@@ -231,7 +231,7 @@ namespace PSSL_Environment
 
 
 
-            //gl.Enable(OpenGL.GL_MULTISAMPLE);
+            gl.Enable(OpenGL.GL_MULTISAMPLE);
 
             //gl.ShadeModel(OpenGL.GL_SMOOTH);
 

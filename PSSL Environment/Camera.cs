@@ -23,7 +23,7 @@ namespace PSSL_Environment
         {
             // Set up world view matrix to be an identity matrix
             m_worldViewMx = mat4.identity();
-            m_worldViewMx = glm.lookAt(new vec3(0.0f, 0.0f, 0.0f), new vec3(0.0f, 0.0f, -10.0f), new vec3(0.0f, 1.0f, 0.0f));
+            //m_worldViewMx = glm.lookAt(new vec3(0.0f, 0.0f, 0.0f), new vec3(0.0f, 0.0f, -10.0f), new vec3(0.0f, 1.0f, 0.0f));
         }
 
         public mat4 SetPerspective(float angle, float aspectRatio, float zNear, float zFar)

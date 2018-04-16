@@ -342,6 +342,11 @@ namespace PSSL_Environment
                     
             }
 
+            // Swap gl_position function version to PSSL version
+            Vert = Vert.Replace("uniform mat4 Projection;\nuniform mat4 Modelview", "uniform mat4 ModelProjection\n");
+            Vert = Vert.Replace("gl_Position = Projection * Modelview", "Position = ModelProjection");
+
+
             FillStructs(Frag, Vert);
             GeneratePSSLConstantsFile();
             GeneratePSSLOutputFile();
@@ -556,6 +561,7 @@ namespace PSSL_Environment
             PSSLVert = PSSLVert + Environment.NewLine;
 
             // Add ptVSInput struct to top
+            PSSLVert = PSSLVert + "// Due to how the PS4 works, insert your own inputs struct which\n follows your own programs vertex inputs" + Environment.NewLine;
             PSSLVert = PSSLVert + "struct ptVSInput" + Environment.NewLine;
             PSSLVert = PSSLVert + "{" + Environment.NewLine;
             // Generate input struct at the top of the shader
@@ -666,8 +672,34 @@ namespace PSSL_Environment
                 {
                     if(mainSplit[j].Contains(i.Value))
                     {
-                        mainSplit[j] = mainSplit[j].Replace("gl_Position", "Position").Replace(i.Value + " =", "l_output." + i.Value + " =");
+                        mainSplit[j] = mainSplit[j].Replace(i.Value + " =", "l_output." + i.Value + " =");
                     }
+                }
+            }
+            foreach (var i in Constants)
+            {
+                if (i.Key == GLSLType.SAMPLER2D)
+                    continue;
+
+                for (int j = 0; j < mainSplit.Length; j++)
+                {
+                    string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
+                    string replace = "shc_" + i.Value;
+                    mainSplit[j] = Regex.Replace(mainSplit[j], pattern, replace);
+                    //line = line.Replace(i.Value, "t_" + i.Value); 
+                }
+
+            }
+            foreach (var i in InputStruct)
+            {
+                if (i.Value == "Position")
+                    continue;
+                for (int j = 0; j < mainSplit.Length; j++)
+                {
+                    string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
+                    string replace = "_input." + i.Value;
+                    mainSplit[j] = Regex.Replace(mainSplit[j], pattern, replace);
+                    //line = line.Replace(i.Value, "t_" + i.Value); 
                 }
             }
 

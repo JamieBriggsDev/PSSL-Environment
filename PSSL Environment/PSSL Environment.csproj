@@ -265,12 +265,6 @@
     <Resource Include="Resources\Textures\Water.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="blue.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="cubeIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Shaders\Generated\" />
     <Folder Include="Shaders\Water\" />
   </ItemGroup>
@@ -282,29 +276,8 @@
     <Resource Include="Resources\BasicSettings.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="BasicSettings.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Advanced Settings 2.png" />
     <Resource Include="Resources\Basic Settings.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Basic Settings.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Minimise.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Maximise.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="viewPort.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Close.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\Close.png" />
@@ -312,6 +285,20 @@
     <Resource Include="Resources\Icons\Maximise.png" />
     <Resource Include="Resources\Icons\Minimise.png" />
     <Resource Include="Resources\Icons\viewPort.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sharpgl\source\SharpGL\Core\SharpGL.SceneGraph\SharpGL.SceneGraph.csproj">
+      <Project>{47bcaa39-edad-4404-b6bd-4742b0abb523}</Project>
+      <Name>SharpGL.SceneGraph</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sharpgl\source\SharpGL\Core\SharpGL.WPF\SharpGL.WPF.csproj">
+      <Project>{53e67055-13d2-4467-bb57-79589afac2cd}</Project>
+      <Name>SharpGL.WPF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sharpgl\source\SharpGL\Core\SharpGL\SharpGL.csproj">
+      <Project>{5ef45533-e2c7-46f2-b4a3-b8f36cd406e0}</Project>
+      <Name>SharpGL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
