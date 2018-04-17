@@ -61,10 +61,11 @@ namespace PSSL_Environment
                 LoadObj(path);
                 indexWorking = FixIndexing();
                 //System.Threading.Thread.Sleep(5000);
+                if (indexWorking == true)
+                    validObject = true;
             });
 
-            if (indexWorking == true)
-                validObject = true;
+
 
             return 0;
         }
@@ -166,9 +167,8 @@ namespace PSSL_Environment
                     tempVertexList.Add(vertexOut);
                 } catch (Exception e)
                 {
-                    System.Windows.MessageBox.Show("Failed to fix OBJ indices", "Error loading OBJ.",
+                    System.Windows.MessageBox.Show("Failed to fix OBJ vertex indices", "Error loading OBJ.",
                         MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
                 }
             }
 
@@ -179,29 +179,30 @@ namespace PSSL_Environment
                 {
                     Normal normalOut = NormalList.ElementAt((int)normalIndex - 1);
                     tempNormalList.Add(normalOut);
-                } catch (Exception e)
+                } catch (Exception)
                 {
-                    System.Windows.MessageBox.Show("Failed to fix OBJ indices", "Error loading OBJ.",
+                    System.Windows.MessageBox.Show("Failed to fix OBJ normal indices", "Error loading OBJ.",
                         MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
                 }
 
             }
 
-            for (int i = 0; i < UVIndices.Count; i++)
+            try
             {
-                uint uvIndex = UVIndices.ElementAt(i);
-                try
+                for (int i = 0; i < UVIndices.Count; i++)
                 {
+                    uint uvIndex = UVIndices.ElementAt(i);
+
                     TextureVertex uvOut = TextureList.ElementAt((int)uvIndex - 1);
                     tempTextureList.Add(uvOut);
-                } catch (Exception e)
-                {
-                    System.Windows.MessageBox.Show("Failed to fix OBJ indices", "Error loading OBJ.",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
                 }
             }
+            catch (Exception)
+            {
+                System.Windows.MessageBox.Show("OBJ loaded doesn't contain tex coords therefor textures will not load!", "OBJ Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
 
             if (tempVertexList == VertexList)
                 Debug.Write("Vertex List is in order!");

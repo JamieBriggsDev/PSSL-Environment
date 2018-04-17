@@ -43,7 +43,7 @@ namespace PSSL_Environment
 
         public string fragShader = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
 
-        private Obj myOBJ = new Obj();
+        public Obj myOBJ = new Obj();
 
         public Obj getOBJ => myOBJ;
 
@@ -179,6 +179,8 @@ namespace PSSL_Environment
                 {texCoordAttribute, "TexCoord" },
             };
 
+            
+
             // Create non texture shaders first
             //  Create the per pixel shader.tr
             shaderPerPixel = new SharpGL.Shaders.ShaderProgram();
@@ -211,14 +213,14 @@ namespace PSSL_Environment
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Ripple.vert"),
                 ManifestResourceLoader.LoadTextFile(@"Shaders\Ripple.frag"), attributeLocations);
 
-            
+
 
             //  Needed to render textures in viewport
             //gl.Enable(OpenGL.GL_TEXTURE_2D);
 
 
             // Set up any variables
-            modelLocation = new vec3(-0.5f, -1f, -4f);
+            modelLocation = new vec3(-0.5f, -1f, -10f);
             modelRotation = new vec3(0, 1, 0);
             lightLocation = new vec3(0.25f, 0.25f, 10f);
 
@@ -228,6 +230,11 @@ namespace PSSL_Environment
 
             ((MainWindow)Application.Current.MainWindow).CompileErrorOutput.Text = CompileCustomShader(gl,
                 vertexShader, fragShader);
+
+
+            // Load default sphere obj into viewport ADD SPHERE BUTTON SHOULD BE MADE!!!!!
+            Load(((MainWindow)Application.Current.MainWindow).openGlCtrl, @"Resources\Models\Sphere.obj");
+
 
         }
 
@@ -433,7 +440,6 @@ namespace PSSL_Environment
                     shader.Unbind(gl);
                 }
             }
-
         }
 
         // Renders the scene with a texture along with colours for ADS

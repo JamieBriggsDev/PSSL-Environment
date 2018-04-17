@@ -107,9 +107,6 @@
     <Compile Include="PropertyGridView.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneDenormaliser.cs" />
-    <Compile Include="UserControls\CameraController.xaml.cs">
-      <DependentUpon>CameraController.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\ConstantsInterface.cs" />
     <Compile Include="UserControls\ColorConstant.xaml.cs">
       <DependentUpon>ColorConstant.xaml</DependentUpon>
@@ -139,10 +136,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UserControls\CameraController.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UserControls\ColorConstant.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -187,25 +180,10 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Resources\Models\BB 8 rig 1.max" />
-    <None Include="Resources\Models\BB 8 rig 2.max" />
-    <None Include="Resources\Models\bb8.FBX" />
-    <None Include="Resources\Models\bb8.mtl" />
     <None Include="Resources\Models\bb8.obj" />
-    <None Include="Resources\Models\chair.mtl" />
     <None Include="Resources\Models\chair.obj" />
-    <None Include="Resources\Models\Crow\Crow.rar" />
-    <None Include="Resources\Models\Crow\Crow\CROW.3DS" />
-    <None Include="Resources\Models\Crow\Crow\CROW.DXF" />
-    <None Include="Resources\Models\Crow\Crow\CROW.LWO" />
-    <None Include="Resources\Models\Crow\Crow\CROW.MTL" />
-    <None Include="Resources\Models\Crow\Crow\CROW.OBJ" />
-    <None Include="Resources\Models\Cube.mtl" />
-    <None Include="Resources\Models\Cube.obj" />
-    <None Include="Resources\Models\Cube\Cube.mtl" />
-    <None Include="Resources\Models\Cube\Cube.obj" />
-    <None Include="Resources\Models\MenuArwing.obj" />
-    <None Include="Resources\Models\Tank.obj" />
+    <None Include="Resources\Models\Sphere.obj" />
+    <None Include="Resources\Models\teapot.obj" />
     <None Include="Shaders\Custom\CustomFrag.frag" />
     <None Include="Shaders\Custom\CustomVertex.vert" />
     <None Include="Shaders\PerPixelN.frag" />
@@ -234,38 +212,12 @@
     <Resource Include="Resources\cubeIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Models\27583487_10214057910900544_192094150_n.png" />
-    <Resource Include="Resources\Models\BODY bump line.jpg" />
-    <Resource Include="Resources\Models\BODY bump MAP.jpg" />
-    <Resource Include="Resources\Models\Body diff MAP.jpg" />
-    <Resource Include="Resources\Models\BODY Displace MAP.jpg" />
-    <Resource Include="Resources\Models\BODY self ill MAP.jpg" />
-    <Resource Include="Resources\Models\chair_d.jpg" />
-    <Resource Include="Resources\Models\Crow\Crow\CROW.JPG" />
-    <Resource Include="Resources\Models\Crow\Crow\CROW.png" />
-    <Resource Include="Resources\Models\Crow\Crow\CROW.TIF" />
-    <Resource Include="Resources\Models\HEAD bump line.jpg" />
-    <Resource Include="Resources\Models\HEAD bump MAP.jpg" />
-    <Resource Include="Resources\Models\HEAD diff MAP.jpg" />
-    <Resource Include="Resources\Models\Head ring bump line.jpg" />
-    <Resource Include="Resources\Models\Head ring diff MAP.jpg" />
-    <Resource Include="Resources\Models\head top bump line.jpg" />
-    <Resource Include="Resources\Models\head top diff MAP.jpg" />
-    <Resource Include="Resources\Models\menuArwing.png" />
-    <Resource Include="Resources\Models\white dirt map.jpg" />
-    <Resource Include="Resources\Models\wildtextures-metal-sheet-scratched-brushed.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Models\Cube\pCubeShape1_color.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Textures\Water.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Shaders\Generated\" />
     <Folder Include="Shaders\Water\" />
   </ItemGroup>
   <ItemGroup>
@@ -300,9 +252,15 @@
       <Name>SharpGL</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Models\27583487_10214057910900544_192094150_n.png" />
+    <Resource Include="Resources\Models\chair_d.jpg" />
+    <Resource Include="Resources\Models\wildtextures-metal-sheet-scratched-brushed.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /E /I /F /Y</PostBuildEvent>
+    <PostBuildEvent>XCOPY "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /E /I /F /Y
+XCOPY "$(ProjectDir)Resources" "$(TargetDir)Resources" /E /I /F /Y</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

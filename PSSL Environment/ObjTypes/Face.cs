@@ -13,14 +13,19 @@ namespace PSSL_Environment.ObjTypes
         public const string Prefix = "f";
 
         public int IndicesPerFace = 0;
-
         public string UseMtl { get; set; }
         public int[] VertexIndexList { get; set; }
         public int[] NormalIndexList { get; set; }
         public int[] TextureVertexIndexList { get; set; }
 
-        public void LoadFromStringArray(string[] data)
+        public void LoadFromStringArray(string[] input)
         {
+            string[] data = input.ToArray();
+            for(int i = 0; i < data.Length; i++)
+            {
+                data[i] = data[i].Replace(@"//", @"/0/");
+            }
+
             if (data.Length < MinimumDataLength)
                 throw new ArgumentException("Input array must be of minimum length " + MinimumDataLength, "data");
 
@@ -33,6 +38,13 @@ namespace PSSL_Environment.ObjTypes
             NormalIndexList = new int[vcount];
 
             bool success;
+
+            //Find empty face indexing and make them equal 0
+            //string[] temp = new String[data.Length];
+            //for (int i = 0; i < temp.Length; i++)
+            //{
+            //    temp[i] = temp[i].Replace("//", "/0/");
+            //}
 
             for (int i = 0; i < vcount; i++)
             {

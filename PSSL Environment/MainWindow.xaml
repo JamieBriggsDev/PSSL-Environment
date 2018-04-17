@@ -369,9 +369,12 @@
 
             <Grid x:Name="GLGrid" Grid.Row="1"  Grid.Column="4" Background="#FFD9D9D9">
                 <sharpGL:OpenGLControl x:Name="openGlCtrl" OpenGLDraw="OpenGLControl_OpenGLDraw"
-                                
+                        
+                    OpenGLVersion="OpenGL2_1"
                     OpenGLInitialized="OpenGLControl_OpenGLInitialized"
                     RenderContextType="FBO"
+                    
+                    
                     DrawFPS="True"
                     HorizontalAlignment="Stretch"
                     Resized="OpenGLControl_Resized" 
@@ -454,7 +457,7 @@
                             </ScrollViewer>
                         </TabItem>
                     </TabControl>
-                    <TextBlock x:Name="CompileErrorOutput" Grid.Row="3" TextWrapping="WrapWithOverflow" Foreground="White" Grid.ColumnSpan="3"/>
+                    <TextBlock x:Name="CompileErrorOutput" Grid.Row="3" TextWrapping="WrapWithOverflow" Foreground="White"/>
                     <ScrollViewer x:Name="ConstantsScroll" RenderTransformOrigin="0.43,0.52" Grid.Column="1" Margin="0" Grid.Row="2" HorizontalContentAlignment="Center" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="{DynamicResource ConstantsWidth}">
                         <DockPanel x:Name="ConstantsDock" LastChildFill="False" ScrollViewer.CanContentScroll="True"/>
                     </ScrollViewer>
@@ -475,10 +478,19 @@
                             </wpfTool:DropDownButton.DropDownContent>
                         </wpfTool:DropDownButton>
                     </Grid>
+                    <wpfTool:IconButton x:Name="ResetAdvanced" Content="RESET" ClickMode="Press"
+                        Click="ResetAdvanced_Click" Margin="0" Background="{x:Null}" BorderBrush="{x:Null}" MouseOverBackground="{DynamicResource MouseOverBackground}" MouseOverBorderBrush="{DynamicResource MouseOverBorderBrush}" MousePressedBackground="{DynamicResource MousePressedBackground}" MousePressedBorderBrush="{DynamicResource MousePressedBorderBrush}" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2">
+                        <wpfTool:IconButton.Foreground>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="Black" Offset="1"/>
+                                <GradientStop Color="#FF79D2D6" Offset="0.746"/>
+                            </LinearGradientBrush>
+                        </wpfTool:IconButton.Foreground>
+                    </wpfTool:IconButton>
                     <!--This is the split button to chose a constant you wish to add-->
                 </Grid>
             </DockPanel>
-            <Canvas x:Name="ViewportSettingsCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" Background="{DynamicResource PanelBackground}">
+            <Canvas x:Name="ViewportSettingsCanvas" Canvas.Left="182" Canvas.Top="46" Grid.Column="3" Margin="0" Grid.Row="1" Background="{DynamicResource PanelBackground}" Visibility="Hidden">
                 <Grid x:Name="ViewportGrid" VerticalAlignment="Center" HorizontalAlignment="Center" Height="660" Width="400">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80"/>
@@ -500,7 +512,6 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="25" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Column="0" Foreground="White"><Run Text="Model Position ="/></TextBlock>
@@ -570,14 +581,7 @@
                         <Slider Maximum="10" Minimum="-10" TickPlacement="Both" TickFrequency="0.25" 
                             x:Name="lightPositionZ" ValueChanged="lightPositionZ_ValueChanged" 
                             Value="10" Orientation="Vertical" Height="60"
-                            Grid.Column="3" Grid.Row="5" HorizontalAlignment="Right" Foreground="#FF161616"/>
-
-
-                        <TextBlock
-                            Grid.Row="6" Foreground="White"><Run Text="Smoothing"/><Run Text=":"/></TextBlock>
-                        <CheckBox x:Name="SmoothingEnabled" IsChecked="False" 
-                            Click="SmoothingEnabled_Click"
-                            Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                            Grid.Column="3" Grid.Row="5" HorizontalAlignment="Right" Foreground="#FF727272"/>
                     </Grid>
                     <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Microsoft JhengHei UI Light" TextDecorations="{x:Null}" FontSize="36" Margin="0"><Run Foreground="White" Text="Viewport"/><Run Foreground="White" Text=" Settings"/></TextBlock>
                 </Grid>

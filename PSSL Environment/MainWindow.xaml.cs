@@ -51,12 +51,10 @@ namespace PSSL_Environment
             InitializeComponent();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
 
+            // Set view type
+            viewType = ViewType.COLOR;
 
-            // Camera
-            CameraController cameraController = new CameraController();
-            ViewportGrid.Children.Add(cameraController);
-            System.Windows.Controls.Grid.SetRow(cameraController, 2);
-
+            
             //ModelVisual3D device3D = new ModelVisual3D();
             //device3D.Content = Display3d("C:\\Users\\jamie\\OneDrive\\Individual Project\\Project\\PSSL Environment\\PSSL Environment\\Resources\\Models\\cube.obj");
         }
@@ -182,9 +180,6 @@ namespace PSSL_Environment
                 myScene.RenderCustomMode(gl);
                 return;
             }
-
-
-
         }
 
 
@@ -209,7 +204,11 @@ namespace PSSL_Environment
             gl.BlendEquation(OpenGL.GL_ADD);
             gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
 
-            openGlCtrl.FrameRate = 120;
+            openGlCtrl.FrameRate = 60;
+
+            //openGlCtrl.
+
+            //openGlCtrl.
 
             openGlCtrl.DrawFPS = true;
             //gl.Enable(OpenGL.GL_FPS)
@@ -231,24 +230,23 @@ namespace PSSL_Environment
 
 
 
-            gl.Enable(OpenGL.GL_MULTISAMPLE);
+            //gl.Enable(OpenGL.GL_MULTISAMPLE);
 
             //gl.ShadeModel(OpenGL.GL_SMOOTH);
 
-            gl.Enable(OpenGL.GL_CULL_FACE);
-            gl.CullFace(OpenGL.GL_BACK);
-            gl.Enable(OpenGL.GL_DEPTH_BUFFER);
+            //gl.Enable(OpenGL.GL_CULL_FACE);
+            //gl.CullFace(OpenGL.GL_BACK);
+            //gl.Enable(OpenGL.GL_DEPTH_BUFFER);
 
-            gl.FrontFace(OpenGL.GL_CCW);
+            //gl.FrontFace(OpenGL.GL_CCW);
 
-            gl.ShadeModel(OpenGL.GL_SMOOTH);
-            gl.ClearDepth(1.0f);
-            gl.DepthFunc(OpenGL.GL_LEQUAL);
-            gl.DepthMask(1);
-            gl.Hint(OpenGL.GL_PERSPECTIVE_CORRECTION_HINT, OpenGL.GL_NICEST);
+            //gl.ShadeModel(OpenGL.GL_SMOOTH);
+            //gl.ClearDepth(1.0f);
+            //gl.DepthFunc(OpenGL.GL_LEQUAL);
+            //gl.DepthMask(1);
+            //gl.Hint(OpenGL.GL_PERSPECTIVE_CORRECTION_HINT, OpenGL.GL_NICEST);
             gl.Enable(OpenGL.GL_DEPTH_TEST);
 
-            
         }
 
         private void OpenGLControl_Resized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -609,6 +607,12 @@ namespace PSSL_Environment
         private void OutputGLSL_Click(object sender, RoutedEventArgs e)
         {
             GLSLOutput.GetInstance().OutputGLSL();
+        }
+
+        private void ResetAdvanced_Click(object sender, RoutedEventArgs e)
+        {
+            VertexShaderText.Text = myScene.vertexShader;
+            FragmentShaderText.Text = myScene.fragShader;
         }
 
 
