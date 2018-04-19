@@ -31,17 +31,28 @@ namespace PSSL_Environment
 
         public int IndicesPerFace = 3;
         private bool validObject = false;
+        /// <summary>
+        /// Sees if there is a valid object
+        /// </summary>
+        /// <returns></returns>
         public bool GetValidObject()
         {
             return validObject;
         }
 
+        /// <summary>
+        /// Constructor of the OBJ
+        /// </summary>
         public Obj()
         {
             m_modelWorldMx = glm.translate(mat4.identity(), new vec3(0.0f, 0.0f, -10.0f));
         }
 
-
+        /// <summary>
+        /// Initilise function for the obj class
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public async Task<int> Initialise(string path)
         {
             
@@ -70,6 +81,11 @@ namespace PSSL_Environment
             return 0;
         }
 
+        /// <summary>
+        /// Checks through all the elements within the obj file passed through
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public int TotalElementsFound(IEnumerable<string> data)
         {
             int output = 0;
@@ -100,6 +116,10 @@ namespace PSSL_Environment
             return output;
         }
 
+        /// <summary>
+        /// Fix the indexing of all the model data
+        /// </summary>
+        /// <returns></returns>
         public bool FixIndexing()
         {
 
@@ -140,14 +160,6 @@ namespace PSSL_Environment
                     }
                 }
             }
-
-            //for (int i = 0; i < FaceList.Count * 3; i++)
-            //{
-            //    tempVertexList.Add(VertexList.ElementAt((int)VertexIndices.ElementAt(i)));
-            //    tempNormalList.Add(NormalList.ElementAt((int)NormalIndices.ElementAt(i)));
-            //    tempTextureList.Add(TextureList.ElementAt((int)UVIndices.ElementAt(i)));
-            //}
-
 
             string vertexCount = VertexIndices.Count.ToString();
             string NormalCount = NormalIndices.Count.ToString();
@@ -199,7 +211,7 @@ namespace PSSL_Environment
             }
             catch (Exception)
             {
-                System.Windows.MessageBox.Show("OBJ loaded doesn't contain tex coords therefor textures will not load!", "OBJ Error",
+                System.Windows.MessageBox.Show("OBJ loaded doesn't contain UV data, textures will not load!", "OBJ Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
@@ -220,13 +232,15 @@ namespace PSSL_Environment
             return true;
         }
 
-        //public int indicesPerFace;
-
         public Extent Size { get; set; }
 
         public string UseMtl { get; set; }
         public string Mtl { get; set; }
 
+        /// <summary>
+        /// converts the vertex list to an array
+        /// </summary>
+        /// <returns></returns>
         public float[] ToFloatArrayVertex()
         {
             int counter = 0;
@@ -242,6 +256,10 @@ namespace PSSL_Environment
             return output;
         }
 
+        /// <summary>
+        /// Converts the normal list to an array
+        /// </summary>
+        /// <returns></returns>
         public float[] ToFloatArrayNormal()
         {
             int counter = 0;
@@ -257,6 +275,10 @@ namespace PSSL_Environment
             return output;
         }
 
+        /// <summary>
+        /// Converts the texture list to an array
+        /// </summary>
+        /// <returns></returns>
         public float[] ToFloatArrayTexture()
         {
             int counter = 0;
@@ -271,21 +293,19 @@ namespace PSSL_Environment
             return output;
         }
 
-
-
+        /// <summary>
+        /// Loads the obj within the path passed in the parameter
+        /// </summary>
+        /// <param name="path"></param>
         private void LoadObj(string path)
         {
             LoadObj(File.ReadAllLines(path));
         }
 
-        public void LoadObj(Stream data)
-        {
-            using (var reader = new StreamReader(data))
-            {
-                LoadObj(reader.ReadToEnd().Split(Environment.NewLine.ToCharArray()));
-            }
-        }
-
+        /// <summary>
+        /// Loads the obj using an IENumerable
+        /// </summary>
+        /// <param name="data">data of the obj file</param>
         public void LoadObj(IEnumerable<string> data)
         {
             foreach (var line in data)
@@ -301,6 +321,9 @@ namespace PSSL_Environment
             updateSize();
         }
 
+        /// <summary>
+        /// Updates the size of the obj
+        /// </summary>
         private void updateSize()
         {
             // If there are no vertices then size should be 0.
@@ -331,6 +354,10 @@ namespace PSSL_Environment
             };
         }
 
+        /// <summary>
+        /// Processes a line of data from the obj file
+        /// </summary>
+        /// <param name="line">Line from obj. file to be processed</param>
         private void processLine(string line)
         {
             string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -378,11 +405,6 @@ namespace PSSL_Environment
 
                 }
             }
-        }
-
-        private void generateNormals()
-        {
-
         }
     }
 }

@@ -670,7 +670,13 @@ namespace PSSL_Environment
             newPosition = new vec3(new vec2(newPosition), newPosition.z + (e.Delta / 100.0f));
         }
 
-  
+        private void openGlCtrl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            leftHeld.ClickHeld = false;
+            rightHeld.ClickHeld = false;
+        }
+
+
 
         //private void CompileShaders_Click(object sender, RoutedEventArgs e)
         //{

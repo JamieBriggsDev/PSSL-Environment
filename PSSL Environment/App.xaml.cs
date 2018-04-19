@@ -19,9 +19,12 @@ namespace PSSL_Environment
         {
             // Create the startup window
 
-            MainWindow wnd = new PSSL_Environment.MainWindow();
-            // Do stuff here, e.g. to the window
-            wnd.Title = "PSSL Environment";
+            MainWindow mainWindow = new PSSL_Environment.MainWindow
+            {
+                // Do stuff here, e.g. to the window
+                Title = "PSSL Shader Environment"
+            };
+            MainWindow wnd = mainWindow;
             // Show the window
             wnd.Show();
         }

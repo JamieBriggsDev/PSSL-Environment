@@ -25,6 +25,6 @@ void main()
     sf = pow(sf, Shininess);
 
     vec3 color = AmbientMaterial + df * Diffuse + sf * SpecularMaterial;
-	FragColor = texture(Texture, TexCoordV) * vec4(color, Alpha);
+	FragColor =  vec4(vec3(texture(Texture, TexCoordV)) * color, Alpha);
 
 }

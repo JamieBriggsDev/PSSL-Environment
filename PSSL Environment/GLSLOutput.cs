@@ -11,8 +11,13 @@ namespace PSSL_Environment
 {
     class GLSLOutput
     {
+        static private string ShaderName;
+        private string FilePath;
         private static GLSLOutput m_instance;
-        // Get instance to the output class
+        /// <summary>
+        /// Get instance to the output class
+        /// </summary>
+        /// <returns></returns>
         public static GLSLOutput GetInstance()
         {
             if(m_instance == null)
@@ -21,14 +26,19 @@ namespace PSSL_Environment
             }
             return m_instance;
         }
-        static private string ShaderName;
-        private string FilePath;
 
+        /// <summary>
+        /// Sets the shader name
+        /// </summary>
+        /// <param name="name"></param>
         public void SetShaderName(string name)
         {
             ShaderName = name;
         }
 
+        /// <summary>
+        /// Outputs the GLSL files required depening on either basic or advanced settings.
+        /// </summary>
         public void OutputGLSL()
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();

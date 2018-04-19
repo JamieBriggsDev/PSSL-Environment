@@ -12,6 +12,9 @@ using SharpGL;
 
 namespace PSSL_Environment
 {
+    /// <summary>
+    /// Struct for all the strings for file names
+    /// </summary>
     struct ShaderFileNames
     {
         
@@ -42,7 +45,10 @@ namespace PSSL_Environment
         private List<KeyValuePair<PSSLType, string>> InputStruct = new List<KeyValuePair<PSSLType, string>>();
         private List<KeyValuePair<PSSLType, string>> OutputStruct = new List<KeyValuePair<PSSLType, string>>();
 
-        // Get instance to the interpreter class
+        /// <summary>
+        /// Get instance to the interpreter class
+        /// </summary>
+        /// <returns></returns>
         public static Interpreter GetInstance()
         {
 
@@ -53,12 +59,20 @@ namespace PSSL_Environment
             return m_instance;
         }
 
+        /// <summary>
+        /// Sets the shader name
+        /// </summary>
+        /// <param name="name"></param>
         public void SetShaderName(string name)
         {
             ShaderName = name;
         }
 
-
+        /// <summary>
+        /// Fill required temp lists for generating PSSL files.
+        /// </summary>
+        /// <param name="Frag"></param>
+        /// <param name="Vert"></param>
         private void FillStructs(string Frag, string Vert)
         {
 
@@ -74,6 +88,11 @@ namespace PSSL_Environment
 
 
         }
+
+        /// <summary>
+        /// Fill the inputs struct required for generating PSSL files
+        /// </summary>
+        /// <param name="Vert"></param>
         private void FillInputsStruct(string Vert)
         {
             InputStruct = new List<KeyValuePair<PSSLType, string>>();
@@ -109,6 +128,11 @@ namespace PSSL_Environment
                 } while (line != null);
             }
         }
+
+        /// <summary>
+        /// Generate the PSSL output struct file
+        /// </summary>
+        /// <param name="Vert"></param>
         private void FillOutputsStruct(string Vert)
         {
             bool PositionOutputFound = false;
@@ -159,6 +183,12 @@ namespace PSSL_Environment
                 OutputStruct.Add(new KeyValuePair<PSSLType, string>(PSSLType.FLOAT4, "Position"));
             }
         }
+
+        /// <summary>
+        /// Fill the constants struct required for generating PSSL
+        /// </summary>
+        /// <param name="Frag"></param>
+        /// <param name="Vert"></param>
         private void FillConstantsStruct(string Frag, string Vert)
         {
             Constants = new List<KeyValuePair<GLSLType, string>>();
@@ -277,7 +307,11 @@ namespace PSSL_Environment
             }
         }
 
-
+        /// <summary>
+        /// Generate the advanced PSSL Shader settings
+        /// </summary>
+        /// <param name="Frag"></param>
+        /// <param name="Vert"></param>
         public void GeneratePSSLAdvanced(string Frag, string Vert)
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
@@ -299,6 +333,10 @@ namespace PSSL_Environment
             GeneratePSSLVertexFile(Vert);
             GeneratePSSLFragFile(Frag);
         }
+
+        /// <summary>
+        /// Generate Basic PSSL Files
+        /// </summary>
         public void GeneratePSSLBasic()
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
@@ -352,54 +390,11 @@ namespace PSSL_Environment
             GeneratePSSLOutputFile();
             GeneratePSSLVertexFile(Vert);
             GeneratePSSLFragFile(Frag);
-
-            //// GET ALREADY EXISTING SHADER FILES
-            //if (((MainWindow)Application.Current.MainWindow).WaterEnabled.IsChecked == true)
-            //{
-            //    // Generate Water Shaders
-            //    Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
-            //    Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
-            //}
-            //else
-            //{
-            //    // Generate Texture Mode
-            //    if (((MainWindow)Application.Current.MainWindow).UsingTexture.IsChecked == true)
-            //    {
-            //        if (((MainWindow)Application.Current.MainWindow).checkBoxUseToonShader.IsChecked == true)
-            //        {
-            //            Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
-            //            Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
-            //        }
-            //        else
-            //        {
-            //            Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.frag");
-            //            Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixelTexture.vert");
-            //        }
-
-            //    }
-            //    // Generate Color Mode
-            //    else
-            //    {
-            //        if(((MainWindow)Application.Current.MainWindow).checkBoxUseToonShader.IsChecked == true)
-            //        {
-            //            Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.frag");
-            //            Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\Toon.vert");
-            //        }
-            //        else
-            //        {
-            //            Frag = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag");
-            //            Vert = ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert");
-            //        }
-            //    }
-            //    //myScene.RenderImmediateMode(gl);
-            //}
-
-            // Generate PSSL
-
-
-
         }
 
+        /// <summary>
+        /// Generate the PSSL Constants Files
+        /// </summary>
         public void GeneratePSSLConstantsFile()
         {
             string file, ClassName;
@@ -435,16 +430,14 @@ namespace PSSL_Environment
                 }
                 else if (i.Key == GLSLType.VEC2)
                 {
-                    file = file + "\t// Adding padding due to Vector2 taking half the data required for gpu" + Environment.NewLine;
-                    file = file + "\tVector2Unaligned shc_" + i.Value + ";" + Environment.NewLine;
-                    file = file + "\tint pad" + padCounter + "[2];" + Environment.NewLine;
+                    file = file + "\t// z and w values is not used." + Environment.NewLine;
+                    file = file + "\tVector4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
                     padCounter++;
                 }
                 else if (i.Key == GLSLType.VEC3)
                 {
-                    file = file + "\t// Adding padding due to Vector3 taking 3/4 the data required for gpu" + Environment.NewLine;
-                    file = file + "\tVector3Unaligned shc_" + i.Value + ";" + Environment.NewLine;
-                    file = file + "\tint pad" + padCounter + "[1];" + Environment.NewLine;
+                    file = file + "\t// w value is not used." + Environment.NewLine;
+                    file = file + "\tVector4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
                     padCounter++;
                 }
                 else if (i.Key == GLSLType.VEC4)
@@ -453,9 +446,8 @@ namespace PSSL_Environment
                 }
                 else if (i.Key == GLSLType.FLOAT)
                 {
-                    file = file + "\t// Adding padding due to float taking 1/4 the data required for gpu" + Environment.NewLine;
-                    file = file + "\tfloat shc_" + i.Value + ";" + Environment.NewLine;
-                    file = file + "\tint pad" + padCounter + "[3];" + Environment.NewLine;
+                    file = file + "\t// y, z and w values is not used." + Environment.NewLine;
+                    file = file + "\tVector4Unaligned shc_" + i.Value + ";" + Environment.NewLine;
                     padCounter++;
                 }
 
@@ -488,6 +480,10 @@ namespace PSSL_Environment
 
 
         }
+
+        /// <summary>
+        /// Generate the PSSL Output file
+        /// </summary>
         public void GeneratePSSLOutputFile()
         {
             string OutputFile, ClassName;
@@ -537,10 +533,7 @@ namespace PSSL_Environment
                     } 
                 }
             }
-            //file = file + "\tfloat4 m_position\t\t: S_POSITION;" + Environment.NewLine;
-            ////file = file + "\tfloat3 m_positionWorld\t\t\t: POS_WORLD;" + Environment.NewLine;
-            //file = file + "\tfloat3 m_normal\t\t\t: TEX_COORD;" + Environment.NewLine;
-            //file = file + "\tfloat2 m_texcoord\t\t: NORMAL;" + Environment.NewLine;
+
             OutputFile = OutputFile + "};" + Environment.NewLine + Environment.NewLine;
 
             // End file
@@ -566,7 +559,47 @@ namespace PSSL_Environment
             FileNames.ShaderOutputFileName = ShaderName + "VSOutput.hs";
         }
 
+        /// <summary>
+        /// Unpacks the shader constant, gets called in gen PSSL Frag and Vertex
+        /// </summary>
+        /// <returns></returns>
+        public string UnpackShaderConstants()
+        {
+            string output = "\n";
+            foreach (var i in Constants)
+            {
+                if (i.Key == GLSLType.SAMPLER2D)
+                    continue;
 
+                switch (i.Key)
+                {
+                    case GLSLType.FLOAT:
+                        output += string.Format("\tfloat l_{0} = shc_{0}.x;\n", i.Value);
+                        break;
+                    case GLSLType.VEC2:
+                        output += string.Format("\float2 l_{0} = float2(shc_{0});\n", i.Value);
+                        break;
+                    case GLSLType.VEC3:
+                        output += string.Format("\tfloat3 l_{0} = float3(shc_{0});\n", i.Value);
+                        break;
+                    case GLSLType.VEC4:
+                        output += string.Format("\tfloat4 l_{0} = shc_{0};\n", i.Value);
+                        break;
+                    case GLSLType.MAT4:
+                        output += string.Format("\tmatrix l_{0} = shc_{0};\n", i.Value);
+                        break;
+                }
+
+            }
+            output += "\n";
+
+            return output;
+        }
+
+        /// <summary>
+        /// Generate the requiremd PSSL Vertex Files
+        /// </summary>
+        /// <param name="vert"></param>
         public void GeneratePSSLVertexFile(string vert)
         {
             string PSSLVert = "// " + ShaderName + " Vertex Shader" + Environment.NewLine;
@@ -648,6 +681,9 @@ namespace PSSL_Environment
                                 body = body + FileNames.ShaderOutputStructName + " main(ptVSInput _input)" + Environment.NewLine;
                                 body = body + "{" + Environment.NewLine;
                                 body = body + "\t" + ShaderName + "VSOutput l_output;" + Environment.NewLine;
+                                // Unpack all possible shader constants here
+                                body = body + UnpackShaderConstants();
+
                                 insideMain = true;
                                 mainCurlyCounter = 1;
                             }
@@ -701,9 +737,8 @@ namespace PSSL_Environment
                 for (int j = 0; j < mainSplit.Length; j++)
                 {
                     string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
-                    string replace = "shc_" + i.Value;
+                    string replace = "l_" + i.Value;
                     mainSplit[j] = Regex.Replace(mainSplit[j], pattern, replace);
-                    //line = line.Replace(i.Value, "t_" + i.Value); 
                 }
 
             }
@@ -728,14 +763,6 @@ namespace PSSL_Environment
             // Make some space
             PSSLVert = PSSLVert + Environment.NewLine;
 
-            //// Return output
-            //PSSLVert = PSSLVert + "\treturn l_output;" + Environment.NewLine;
-
-            //// Close main function
-            //PSSLVert = PSSLVert + "}" + Environment.NewLine;
-
-            // Replace any last minute function calls or class names
-            //  (vec2 becomes float2)
             PSSLVert = PSSLVert.Replace("vec2", "float2");
             PSSLVert = PSSLVert.Replace("vec3", "float3");
             PSSLVert = PSSLVert.Replace("vec4", "float4");
@@ -761,6 +788,10 @@ namespace PSSL_Environment
             FileNames.ShaderVertexFilename = ShaderName + "_vv.pssl";
         }
 
+        /// <summary>
+        /// Generate the required PSSL Frag file
+        /// </summary>
+        /// <param name="frag"></param>
         public void GeneratePSSLFragFile(string frag)
         {
             string PSSLFrag = "// " + ShaderName + " Pixel Shader" + Environment.NewLine;
@@ -798,6 +829,7 @@ namespace PSSL_Environment
 
             string body = "";
             string line = "";
+            bool foundMain = false;
             using (StringReader reader = new StringReader(frag))
             {
                 line = string.Empty;
@@ -820,10 +852,16 @@ namespace PSSL_Environment
                                 body = body + "float4 main(" + ShaderName + 
                                     "VSOutput _input) : S_TARGET_OUTPUT" + Environment.NewLine;
                                 body = body + Environment.NewLine;
+                                foundMain = true;
                             }
                             else
                             {
                                 body = body + line + Environment.NewLine;
+                                if(foundMain)
+                                {
+                                    body = body + UnpackShaderConstants();
+                                    foundMain = false;
+                                }
                             }
                         }
 
@@ -841,7 +879,7 @@ namespace PSSL_Environment
                 for (int j = 0; j < mainSplit.Length; j++)
                 {
                     string pattern = "(?<!\\w)" + i.Value + "(?!\\w)";
-                    string replace = "shc_" + i.Value;
+                    string replace = "l_" + i.Value;
                     mainSplit[j] = Regex.Replace(mainSplit[j], pattern, replace);
                     //line = line.Replace(i.Value, "t_" + i.Value); 
                 }
@@ -861,12 +899,9 @@ namespace PSSL_Environment
             {
                 for (int j = 0; j < mainSplit.Length; j++)
                 {
-                    //string pattern = "(?<!\\w)texture(" + i.Key + "(?!\\w)";
-                    //string replace = "_input." + i.Value;
-                    //mainSplit[j] = Regex.Replace(mainSplit[j], pattern, replace);
                     string replace = Regex.Replace(i.Key, "[^A-Za-z]+", "");
                     mainSplit[j] = mainSplit[j].Replace(string.Format("texture({0}", replace),
-                        string.Format("l_{0}.Sample(l_{1}", i.Key, i.Value));
+                        string.Format("l_{0}.Sample(l_{1}", i.Value, i.Key));
                 }
             }
 

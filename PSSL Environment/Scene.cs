@@ -275,7 +275,8 @@ namespace PSSL_Environment
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
             mat4 rotationx = glm.rotate(mat4.identity(), rotate.x / 100.0f, new vec3(0.0f, 1.0f, 0.0f));
-            mat4 rotationy = glm.rotate(mat4.identity(), rotate.y / -100.0f, new vec3(1.0f, 0.0f, 0.0f));
+            mat4 rotationy = glm.rotate(mat4.identity(), rotate.y / -100.0f, new vec3(glm.cos(rotate.x / 100.0f), 0.0f, glm.sin(rotate.x / 100.0f)));
+            
             mat4 translation = glm.translate(mat4.identity(), ((MainWindow)Application.Current.MainWindow).newPosition + modelLocation);
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
             modelviewMatrix = scale * rotationx * rotationy * translation;
@@ -741,7 +742,12 @@ namespace PSSL_Environment
 
         }
 
-
+        /// <summary>
+        /// Creates the vertex buffers required for the vertex buffer array
+        /// </summary>
+        /// <param name="gl"></param>
+        /// <param name="newObj"></param>
+        /// <returns></returns>
         private int CreateVertexBufferArray(OpenGL gl, Obj newObj)
         {
             //  Create and bind a vertex buffer array.

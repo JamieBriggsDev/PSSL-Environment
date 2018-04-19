@@ -8,7 +8,7 @@
     <Application.Resources>
         <DataStore:DataStore x:Key="DataStore" d:IsDataSource="True"/>
         <!--Title and main global app strings-->
-        <sys:String x:Key="strAppName">PSSL Environment</sys:String>
+        <sys:String x:Key="strAppName">PSSL Shader Environment</sys:String>
         <!--Chose what colour you wish the pixel shader to be-->
         <sys:String x:Key="strSingleColour">Single Colour</sys:String>
         <sys:String x:Key="strTexture">Texture</sys:String>
