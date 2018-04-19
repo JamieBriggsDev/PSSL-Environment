@@ -1,4 +1,4 @@
 ﻿TODO List.
 
-Name of class in title bar
-Add tick boxes to the basic settings colour to let user decide if perminant colours or passed in colours
+Color Texture logic fix
+custom shader colours not working

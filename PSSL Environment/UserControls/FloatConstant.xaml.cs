@@ -55,7 +55,7 @@ namespace PSSL_Environment.UserControls
             {
                 val = (float)Convert.ToDouble(Value.Text);
                 valid = float.TryParse(str, out val);
-            } catch (Exception ex)
+            } catch (Exception)
             {
                 return;
             }

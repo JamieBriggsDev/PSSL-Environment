@@ -165,7 +165,7 @@ namespace PSSL_Environment
                 {
                     Vertex vertexOut = VertexList.ElementAt((int)vertexIndex - 1);
                     tempVertexList.Add(vertexOut);
-                } catch (Exception e)
+                } catch (Exception)
                 {
                     System.Windows.MessageBox.Show("Failed to fix OBJ vertex indices", "Error loading OBJ.",
                         MessageBoxButton.OK, MessageBoxImage.Error);

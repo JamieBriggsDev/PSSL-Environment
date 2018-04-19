@@ -55,7 +55,7 @@ namespace PSSL_Environment.UserControls
             {
                 val = Convert.ToInt32(Value.Text);
                 valid = int.TryParse(str, out val);
-            } catch (Exception ex)
+            } catch (Exception)
             {
                 return;
             }

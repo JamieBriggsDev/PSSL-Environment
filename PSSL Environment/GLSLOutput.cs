@@ -40,51 +40,51 @@ namespace PSSL_Environment
                 FilePath = dialog.FileName;
             }
 
-            // Throws error if files already exist
+
             try
             {
-
                 switch (((MainWindow)Application.Current.MainWindow).GetViewType())
                 {
                     //                ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.vert"),
                     //ManifestResourceLoader.LoadTextFile(@"Shaders\PerPixel.frag"), attributeLocations);
                     case MainWindow.ViewType.COLOR:
-                            File.Copy(@"Shaders\PerPixel.vert", FilePath + "\\" + ShaderName + ".vert");
-                            File.Copy(@"Shaders\PerPixel.frag", FilePath + "\\" + ShaderName + ".frag");
+
+                        File.Copy(@"Shaders\PerPixel.vert", FilePath + "\\" + ShaderName + ".vert", true);
+                        File.Copy(@"Shaders\PerPixel.frag", FilePath + "\\" + ShaderName + ".frag", true);
                         break;
                     case MainWindow.ViewType.TEXTURE:
-                        File.Copy(@"Shaders\PerPixelTexture.vert", FilePath + "\\" + ShaderName + ".vert");
-                        File.Copy(@"Shaders\PerPixelTexture.frag", FilePath + "\\" + ShaderName + ".frag");
+                        File.Copy(@"Shaders\PerPixelTexture.vert", FilePath + "\\" + ShaderName + ".vert", true);
+                        File.Copy(@"Shaders\PerPixelTexture.frag", FilePath + "\\" + ShaderName + ".frag", true);
                         break;
                     case MainWindow.ViewType.TOON:
-                        File.Copy(@"Shaders\Toon.vert", FilePath + "\\" + ShaderName + ".vert");
-                        File.Copy(@"Shaders\Toon.frag", FilePath + "\\" + ShaderName + ".frag");
+                        File.Copy(@"Shaders\Toon.vert", FilePath + "\\" + ShaderName + ".vert", true);
+                        File.Copy(@"Shaders\Toon.frag", FilePath + "\\" + ShaderName + ".frag", true);
                         break;
                     case MainWindow.ViewType.TOONTEXTURE:
-                        File.Copy(@"Shaders\ToonTexture.vert", FilePath + "\\" + ShaderName + ".vert");
-                        File.Copy(@"Shaders\ToonTexture.frag", FilePath + "\\" + ShaderName + ".frag");
+                        File.Copy(@"Shaders\ToonTexture.vert", FilePath + "\\" + ShaderName + ".vert", true);
+                        File.Copy(@"Shaders\ToonTexture.frag", FilePath + "\\" + ShaderName + ".frag", true);
                         break;
                     case MainWindow.ViewType.RIPPLE:
-                        File.Copy(@"Shaders\Ripple.vert", FilePath + "\\" + ShaderName + ".vert");
-                        File.Copy(@"Shaders\Ripple.frag", FilePath + "\\" + ShaderName + ".frag");
+                        File.Copy(@"Shaders\Ripple.vert", FilePath + "\\" + ShaderName + ".vert", true);
+                        File.Copy(@"Shaders\Ripple.frag", FilePath + "\\" + ShaderName + ".frag", true);
                         break;
                     case MainWindow.ViewType.CUSTOM:
                         string path = FilePath + "\\" + ShaderName;
-                        File.WriteAllText(path + ".vert", 
+                        File.WriteAllText(path + ".vert",
                             ((MainWindow)Application.Current.MainWindow).VertexShaderText.Text);
                         File.WriteAllText(path + ".frag",
-                            ((MainWindow)Application.Current.MainWindow).VertexShaderText.Text);
+                            ((MainWindow)Application.Current.MainWindow).FragmentShaderText.Text);
                         break;
                 }
-
             }
             catch (Exception)
             {
-                System.Windows.MessageBox.Show(ShaderName + " files already exist at " + FilePath, "Error loading OBJ.",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
-}
+
+            
+  
+        }
 
     }
 }

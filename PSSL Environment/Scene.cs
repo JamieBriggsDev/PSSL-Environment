@@ -67,14 +67,39 @@ namespace PSSL_Environment
         //private VertexShader customVertShader;
         //private FragmentShader customFragShader;
 
+        //  The modelview, projection and normal matrices.
+        private mat4 modelviewMatrix = mat4.identity();
+        private mat4 projectionMatrix = mat4.identity();
+        private mat3 normalMatrix = mat3.identity();
+
+        private float scaleFactor = 1.0f;
+
+        private float time = 0.0f;
+
+        public bool usingTexture;
+        public vec3 modelLocation;
+        public vec3 modelRotation;
+        public vec3 lightLocation;
+        // Get colors from color picker
+        public vec3 ambientMaterialColor;
+        public vec3 diffuseMaterialColor;
+        public vec3 specularMaterialColor;
+        public float alphaColor;
+        public Texture2D meshTexture;
+
+        public Texture2D[] waterTextures = new Texture2D[2];
+
+        public float frequency = 1;
+        public float speed = 1;
+        public float amplitude = 1;
+
+        /// <summary>
+        /// Takes out any char in the string which shouldnt be passed into generation
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public string StripControlChars(string s)
         {
-            //string temp = s;
-            //char newLine = '\n';
-            //string sNewLine = "" + newLine;
-            //Regex.Replace(temp, Environment.NewLine, sNewLine);
-            //return temp;
-
             Encoding utf8 = Encoding.UTF8;
             Encoding ascii = Encoding.ASCII;
 
@@ -82,6 +107,13 @@ namespace PSSL_Environment
             return ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(s)));
         }
 
+        /// <summary>
+        /// This compiles the custom shader which comes from the advanced settings
+        /// </summary>
+        /// <param name="gl"></param>
+        /// <param name="vertexShader"></param>
+        /// <param name="fragShader"></param>
+        /// <returns></returns>
         public string CompileCustomShader(OpenGL gl, string vertexShader, string fragShader)
         {
             ShaderProgramValid = false;
@@ -134,32 +166,6 @@ namespace PSSL_Environment
             return "Shaders Compiled Succesfully!";
         }
 
-        //  The modelview, projection and normal matrices.
-        private mat4 modelviewMatrix = mat4.identity();
-        private mat4 projectionMatrix = mat4.identity();
-        private mat3 normalMatrix = mat3.identity();
-
-        private float scaleFactor = 1.0f;
-
-        private float time = 0.0f;
-
-        public bool usingTexture;
-        public vec3 modelLocation;
-        public vec3 modelRotation;
-        public vec3 lightLocation;
-        // Get colors from color picker
-        public vec3 ambientMaterialColor;
-        public vec3 diffuseMaterialColor;
-        public vec3 specularMaterialColor;
-        public float alphaColor;
-        public Texture2D meshTexture;
-
-        public Texture2D[] waterTextures = new Texture2D[2];
-
-        public float frequency = 1;
-        public float speed = 1;
-        public float amplitude = 1;
-        //public SharpGL.GL
 
         /// <summary>
         /// Initialises the Scene.
@@ -252,13 +258,6 @@ namespace PSSL_Environment
             float H = S * screenHeight / screenWidth;
             projectionMatrix = glm.frustum(-S, S, -H, H, 1, 100);
 
-            //  When we do immediate mode drawing, OpenGL needs to know what our projection matrix
-            //  is, so set it now.
-
-            //float cAngle = 0.46f;
-            //float zNear = 1.0f;
-            //float zFar = 100.0f;
-
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             gl.LoadIdentity();
             gl.MultMatrix(myCamera.SetPerspective(projectionMatrix).to_array());
@@ -270,81 +269,49 @@ namespace PSSL_Environment
         /// Creates the modelview and normal matrix. Also rotates the sceen by a specified amount.
         /// </summary>
         /// <param name="rotationAngle">The rotation angle, in radians.</param>
-        public void CreateModelviewAndNormalMatrix(float rotationAngle)
+        public void CreateModelviewAndNormalMatrix(vec2 rotate)
         {
             //  Create the modelview and normal matrix. We'll also rotate the scene
             //  by the provided rotation angle, which means things that draw it 
             //  can make the scene rotate easily.
-            mat4 rotation = glm.rotate(mat4.identity(), rotationAngle, modelRotation);
-            mat4 translation = glm.translate(mat4.identity(), modelLocation);
+            mat4 rotationx = glm.rotate(mat4.identity(), rotate.x / 100.0f, new vec3(0.0f, 1.0f, 0.0f));
+            mat4 rotationy = glm.rotate(mat4.identity(), rotate.y / -100.0f, new vec3(1.0f, 0.0f, 0.0f));
+            mat4 translation = glm.translate(mat4.identity(), ((MainWindow)Application.Current.MainWindow).newPosition + modelLocation);
             mat4 scale = glm.scale(mat4.identity(), new vec3(scaleFactor, scaleFactor, scaleFactor));
-            modelviewMatrix = scale * rotation * translation;
+            modelviewMatrix = scale * rotationx * rotationy * translation;
             myOBJ.m_modelWorldMx = modelviewMatrix;
             normalMatrix = modelviewMatrix.to_mat3();
         }
 
-        // Adjust the viewport to scale properly to avoid distorition
+        /// <summary>
+        //  Adjust the viewport to scale properly to avoid distorition
+        /// </summary>
+        /// <param name="gl"></param>
+        /// <param name="screenWidth"></param>
+        /// <param name="screenHeight"></param>
         public void ResizeViewport(OpenGL gl, int screenWidth, int screenHeight)
         {
             gl.Viewport(0, 0, (int)screenWidth, (int)screenHeight);
-            //gl.Frustum()
         }
 
         /// <summary>
-        /// Renders the scene in immediate mode.
+        /// Loads a single shader into the viewport
         /// </summary>
-        /// <param name="gl">The OpenGL instance.</param>
-        //public void RenderImmediateMode(OpenGL gl)
-        //{
-        //    //  Setup the modelview matrix.
-        //    gl.MatrixMode(OpenGL.GL_MODELVIEW);
-        //    gl.LoadIdentity();
-        //    gl.MultMatrix(modelviewMatrix.to_array());
-
-
-        //    //var texture = meshTextures.ContainsKey(meshes) ? meshTextures[meshes] : null;
-        //    var texture = meshTextures.Value;
-        //    if (texture != null)
-        //        texture.Bind(gl);
-
-        //    uint mode = OpenGL.GL_TRIANGLES;
-        //    if (myMesh.indicesPerFace == 4)
-        //        mode = OpenGL.GL_QUADS;
-        //    else if (myMesh.indicesPerFace > 4)
-        //        mode = OpenGL.GL_POLYGON;
-
-        //    //  Render the group faces.
-        //    gl.Begin(mode);
-        //    for (int i = 0; i < myMesh.vertices.Length; i++)
-        //    {
-        //        gl.Vertex(myMesh.vertices[i].x, myMesh.vertices[i].y, myMesh.vertices[i].z);
-        //        if (myMesh.normals != null)
-        //            gl.Normal(myMesh.normals[i].x, myMesh.normals[i].y, myMesh.normals[i].z);
-        //        if (myMesh.uvs != null)
-        //            gl.TexCoord(myMesh.uvs[i].x, myMesh.uvs[i].y);
-        //    }
-        //    gl.End();
-
-        //    if (texture != null)
-        //        texture.Unbind(gl);
-            
-            
-            
-        //}
-
+        /// <param name="gl"></param>
+        /// <param name="newTexture"></param>
         public void LoadTexture(OpenGL gl, Bitmap newTexture)
         {
             //meshTexture = new Texture2D();
             meshTexture = new Texture2D();
             meshTexture.SetImage(gl, newTexture);
             AddTexture(gl, newTexture);
-            //  Go through each mesh and give texture.
-            //foreach (var mesh in meshes)
-            //{
-            //    mesh.
-            //}
         }
 
+        /// <summary>
+        /// Loads two textures into the viewport for use with the water shader
+        /// </summary>
+        /// <param name="gl"></param>
+        /// <param name="newTexture"></param>
         public void LoadWaterTextures(OpenGL gl, Bitmap newTexture)
         {
             //meshTexture = new Texture2D();
@@ -355,14 +322,13 @@ namespace PSSL_Environment
             waterTextures[1] = new Texture2D();
             waterTextures[1].SetImage(gl, newTexture);
             AddTexture(gl, newTexture);
-            //  Go through each mesh and give texture.
-            //foreach (var mesh in meshes)
-            //{
-            //    mesh.
-            //}
         }
 
-        //Renders the scene with colour input for each of ADS
+        /// <summary>
+        /// Renders the scene with colour input for each of ADS
+        /// </summary>
+        /// <param name="gl"></param>
+        /// <param name="useToonShader"></param>
         public void RenderColorMode(OpenGL gl, bool useToonShader)
         {
             if (myOBJ != null)
@@ -442,7 +408,11 @@ namespace PSSL_Environment
             }
         }
 
-        // Renders the scene with a texture along with colours for ADS
+        /// <summary>
+        /// Renders the scene with a texture along with colours for ADS
+        /// </summary>
+        /// <param name="gl"></param>
+        /// <param name="useToonShader"></param>
         public void RenderTextureMode(OpenGL gl, bool useToonShader)
         {
             if(myOBJ == null)
@@ -488,7 +458,9 @@ namespace PSSL_Environment
                 //  Set the matrices.
                 shader.SetUniformMatrix4(gl, "Projection", myCamera.m_projectionMx.to_array());
                 shader.SetUniformMatrix4(gl, "Modelview", (myCamera.m_worldViewMx * myOBJ.m_modelWorldMx).to_array());
-                shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+
+                // Set up normal matrix
+                shader.SetUniformMatrix4(gl, "NormalMatrix", CustomMath.TransposeMatrix(glm.inverse(myCamera.m_worldViewMx)).to_array());
 
                 // Set shader alpha
                 shader.SetUniform1(gl, "Alpha", alphaColor);
@@ -506,24 +478,6 @@ namespace PSSL_Environment
 
                 var vertexBufferArray = meshVertexBufferArray;
                 gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
-                //vertexBufferArray.Bind(gl);
-
-
-                //uint mode = OpenGL.GL_TRIANGLES;
-                //if (mesh.indicesPerFace == 4)
-                //    mode = OpenGL.GL_QUADS;
-                //else if (mesh.indicesPerFace > 4)
-                //    mode = OpenGL.GL_POLYGON;
-
-                //gl.BufferData(OpenGL.GL_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
-                //gl.DrawArrays(mode, 0, mesh.vertices.Length);
-                //gl.draw
-
-                // Set shader texture
-                //if (meshTexture != null)
-                //{
-
-                //}
 
                 // Bind texture
                 //var texture = meshTextures(meshes) ? meshTextures[meshes] : null;
@@ -537,23 +491,9 @@ namespace PSSL_Environment
                     gl.ActiveTexture(OpenGL.GL_TEXTURE0);
                     gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
 
-                    //texture.Bind(gl);
-                    //gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
-                    //shader.SetUniform1(gl, "Texture", 0);
-
                     ((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
-                    //gl.
 
                 }
-
-                //uint mode = OpenGL.GL_TRIANGLES;
-                //if (myMesh.indicesPerFace == 4)
-                //    mode = OpenGL.GL_QUADS;
-                //else if (myMesh.indicesPerFace > 4)
-                //    mode = OpenGL.GL_POLYGON;
-
-                //gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count * 3);
-
 
                 uint mode = OpenGL.GL_TRIANGLES;
                 if (myOBJ.IndicesPerFace == 4)
@@ -563,24 +503,6 @@ namespace PSSL_Environment
 
                 gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
 
-
-                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count * 
-                //    System.Runtime.InteropServices.Marshal.SizeOf(vec3), &)
-
-                //  Render the group faces.
-                //gl.Begin(OpenGL.GL_QUADS);
-                //for (int i = 0; i < myOBJ.VertexList.Count; i++)
-                //{
-                //    gl.Vertex(myOBJ.VertexList.ElementAt(i).X, myOBJ.VertexList.ElementAt(i).Y, myOBJ.VertexList.ElementAt(i).Z);
-                //    if (myOBJ.NormalList.Count > 0)
-                //        gl.Normal(myOBJ.NormalList.ElementAt(i).NX, myOBJ.NormalList.ElementAt(i).NY, myOBJ.NormalList.ElementAt(i).NZ);
-                //    if (myOBJ.TextureList.Count > 0)
-                //        gl.TexCoord(myOBJ.TextureList.ElementAt(i).X, myOBJ.TextureList.ElementAt(i).Y);
-                //}
-                //gl.End();
-                //gl.Flush();
-
-
                 if (texture != null)
                     texture.Unbind(gl);
 
@@ -589,7 +511,10 @@ namespace PSSL_Environment
             
         }
 
-        // Renders the scene with a texture along with colours for ADS
+        /// <summary>
+        /// Renders the scene with a texture along with colours for ADS
+        /// </summary>
+        /// <param name="gl"></param>
         public void RenderWaterMode(OpenGL gl)
         {
             if(myOBJ == null)
@@ -624,7 +549,6 @@ namespace PSSL_Environment
                 }
 
 
-
                 //  Get a reference to the appropriate shader.
                 var shader = shaderWater;
 
@@ -637,7 +561,10 @@ namespace PSSL_Environment
                 //  Set the matrices.
                 shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
                 shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
-                shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+
+                // Set up normal matrix
+                shader.SetUniformMatrix4(gl, "NormalMatrix", CustomMath.TransposeMatrix(glm.inverse(myCamera.m_worldViewMx)).to_array());
+
 
                 // Set shader alpha
                 shader.SetUniform1(gl, "Alpha", alphaColor);
@@ -650,9 +577,6 @@ namespace PSSL_Environment
                 shader.SetUniform1(gl, "Amplitude", amplitude);
                 shader.SetUniform1(gl, "Frequency", frequency);
 
-                //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
-                //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
-                //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
                 shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
                     ambientMaterialColor.z);
                 shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
@@ -663,24 +587,6 @@ namespace PSSL_Environment
 
                 var vertexBufferArray = meshVertexBufferArray;
                 gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
-                //vertexBufferArray.Bind(gl);
-
-
-                //uint mode = OpenGL.GL_TRIANGLES;
-                //if (mesh.indicesPerFace == 4)
-                //    mode = OpenGL.GL_QUADS;
-                //else if (mesh.indicesPerFace > 4)
-                //    mode = OpenGL.GL_POLYGON;
-
-                //gl.BufferData(OpenGL.GL_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
-                //gl.DrawArrays(mode, 0, mesh.vertices.Length);
-                //gl.draw
-
-                // Set shader texture
-                //if (meshTexture != null)
-                //{
-
-                //}
 
                 // Bind texture
                 //var texture = meshTextures(meshes) ? meshTextures[meshes] : null;
@@ -699,24 +605,7 @@ namespace PSSL_Environment
                     gl.ActiveTexture(OpenGL.GL_TEXTURE1);
                     gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
 
-
-                    //texture.Bind(gl);
-                    //gl.BindTexture(OpenGL.GL_TEXTURE_2D, texture.textureObject);
-                    //shader.SetUniform1(gl, "Texture", 0);
-
-                    //((MainWindow)System.Windows.Application.Current.MainWindow).UsingTexture.IsChecked = true;
-                    //gl.
-
                 }
-
-                //uint mode = OpenGL.GL_TRIANGLES;
-                //if (myMesh.indicesPerFace == 4)
-                //    mode = OpenGL.GL_QUADS;
-                //else if (myMesh.indicesPerFace > 4)
-                //    mode = OpenGL.GL_POLYGON;
-
-                //gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count * 3);
-
 
                 uint mode = OpenGL.GL_TRIANGLES;
                 if (myOBJ.IndicesPerFace == 4)
@@ -727,23 +616,6 @@ namespace PSSL_Environment
                 gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
 
 
-                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count * 
-                //    System.Runtime.InteropServices.Marshal.SizeOf(vec3), &)
-
-                //  Render the group faces.
-                //gl.Begin(OpenGL.GL_QUADS);
-                //for (int i = 0; i < myOBJ.VertexList.Count; i++)
-                //{
-                //    gl.Vertex(myOBJ.VertexList.ElementAt(i).X, myOBJ.VertexList.ElementAt(i).Y, myOBJ.VertexList.ElementAt(i).Z);
-                //    if (myOBJ.NormalList.Count > 0)
-                //        gl.Normal(myOBJ.NormalList.ElementAt(i).NX, myOBJ.NormalList.ElementAt(i).NY, myOBJ.NormalList.ElementAt(i).NZ);
-                //    if (myOBJ.TextureList.Count > 0)
-                //        gl.TexCoord(myOBJ.TextureList.ElementAt(i).X, myOBJ.TextureList.ElementAt(i).Y);
-                //}
-                //gl.End();
-                //gl.Flush();
-
-
                 if (texture != null)
                     texture.Unbind(gl);
 
@@ -752,6 +624,10 @@ namespace PSSL_Environment
 
         }
 
+        /// <summary>
+        /// Renders the scene using the custom settings within the application
+        /// </summary>
+        /// <param name="gl"></param>
         public void RenderCustomMode(OpenGL gl)
         {
             if (myOBJ == null)
@@ -764,7 +640,7 @@ namespace PSSL_Environment
                 defaultValues.y = 0.0f;
                 defaultValues.z = 0.0f;
 
-                time += 1.0f / 60.0f;
+                time += 5.0f / (float)((MainWindow)Application.Current.MainWindow).openGlCtrl.FrameRate; /* 30.0f*/;
 
 
                 // Checks if colour pickers has a colour yet or not and sets a value if it doesnt
@@ -797,7 +673,9 @@ namespace PSSL_Environment
                 //  Set the matrices.
                 shader.SetUniformMatrix4(gl, "Projection", projectionMatrix.to_array());
                 shader.SetUniformMatrix4(gl, "Modelview", modelviewMatrix.to_array());
-                shader.SetUniformMatrix3(gl, "NormalMatrix", normalMatrix.to_array());
+
+                // Set up normal matrix
+                shader.SetUniformMatrix4(gl, "NormalMatrix", CustomMath.TransposeMatrix(glm.inverse(myCamera.m_worldViewMx)).to_array());
 
                 // Set shader alpha
                 shader.SetUniform1(gl, "Alpha", alphaColor);
@@ -805,9 +683,6 @@ namespace PSSL_Environment
                 // Set shader time
                 shader.SetUniform1(gl, "Time", time);
 
-                //shader.SetUniform3(gl, "DiffuseMaterial", mesh.material.Diffuse.r, mesh.material.Diffuse.g, mesh.material.Diffuse.b);
-                //shader.SetUniform3(gl, "AmbientMaterial", mesh.material.Ambient.r, mesh.material.Ambient.g, mesh.material.Ambient.b);
-                //shader.SetUniform3(gl, "SpecularMaterial", mesh.material.Specular.r, mesh.material.Specular.g, mesh.material.Specular.b);
                 shader.SetUniform3(gl, "AmbientMaterial", ambientMaterialColor.x, ambientMaterialColor.y,
                     ambientMaterialColor.z);
                 shader.SetUniform3(gl, "DiffuseMaterial", diffuseMaterialColor.x, diffuseMaterialColor.y,
@@ -820,22 +695,6 @@ namespace PSSL_Environment
                 gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, vertexBufferArray.Value.VertexBufferArrayObject);
                 //vertexBufferArray.Bind(gl);
 
-
-                //uint mode = OpenGL.GL_TRIANGLES;
-                //if (mesh.indicesPerFace == 4)
-                //    mode = OpenGL.GL_QUADS;
-                //else if (mesh.indicesPerFace > 4)
-                //    mode = OpenGL.GL_POLYGON;
-
-                //gl.BufferData(OpenGL.GL_BUFFER, mesh.vertices.Length, mesh.vertices, OpenGL.GL_STATIC_DRAW);
-                //gl.DrawArrays(mode, 0, mesh.vertices.Length);
-                //gl.draw
-
-                // Set shader texture
-                //if (meshTexture != null)
-                //{
-
-                //}
 
                 // Bind texture
                 //var texture = meshTextures(meshes) ? meshTextures[meshes] : null;
@@ -866,15 +725,6 @@ namespace PSSL_Environment
                     e.AddToShaderProgram(gl, shader);
                 }
 
-                //uint mode = OpenGL.GL_TRIANGLES;
-                //if (myMesh.indicesPerFace == 4)
-                //    mode = OpenGL.GL_QUADS;
-                //else if (myMesh.indicesPerFace > 4)
-                //    mode = OpenGL.GL_POLYGON;
-
-                //gl.DrawArrays(OpenGL.GL_QUADS, 0, myOBJ.VertexList.Count * 3);
-
-
                 uint mode = OpenGL.GL_TRIANGLES;
                 if (myOBJ.IndicesPerFace == 4)
                     mode = OpenGL.GL_QUADS;
@@ -882,24 +732,6 @@ namespace PSSL_Environment
                     mode = OpenGL.GL_POLYGON;
 
                 gl.DrawArrays(mode, 0, myOBJ.VertexList.Count);
-
-
-                //gl.BufferData(OpenGL.GL_ARRAY_BUFFER, myOBJ.VertexList.Count * 
-                //    System.Runtime.InteropServices.Marshal.SizeOf(vec3), &)
-
-                //  Render the group faces.
-                //gl.Begin(OpenGL.GL_QUADS);
-                //for (int i = 0; i < myOBJ.VertexList.Count; i++)
-                //{
-                //    gl.Vertex(myOBJ.VertexList.ElementAt(i).X, myOBJ.VertexList.ElementAt(i).Y, myOBJ.VertexList.ElementAt(i).Z);
-                //    if (myOBJ.NormalList.Count > 0)
-                //        gl.Normal(myOBJ.NormalList.ElementAt(i).NX, myOBJ.NormalList.ElementAt(i).NY, myOBJ.NormalList.ElementAt(i).NZ);
-                //    if (myOBJ.TextureList.Count > 0)
-                //        gl.TexCoord(myOBJ.TextureList.ElementAt(i).X, myOBJ.TextureList.ElementAt(i).Y);
-                //}
-                //gl.End();
-                //gl.Flush();
-
 
                 if (texture != null)
                     texture.Unbind(gl);
@@ -918,7 +750,7 @@ namespace PSSL_Environment
             {
                 vertexBufferArray.Create(gl);
                 vertexBufferArray.Bind(gl);
-            } catch(Exception e)
+            } catch(Exception)
             {
                 System.Windows.MessageBox.Show("Failed to create and bind vertexBufferArray", "Error loading OBJ.",
                     MessageBoxButton.OK, MessageBoxImage.Error);
@@ -935,17 +767,6 @@ namespace PSSL_Environment
                                  newObj.ToFloatArrayVertex(),
                                  false, 3);
             
-            //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDebug.Text = "Position = " + (int)newObj.VertexList.Count;
-            // Fills the Model Properties window
-            //int pIndex = 0;
-            //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Clear();
-            //foreach (var i in newObj.VertexList)
-            //{
-            //    string Pos = "Position[" + pIndex + "] = ( " + i.X + ", " + i.Y + ", " + i.Z + ")";
-            //    ((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.Items.Add(Pos);
-            //    pIndex++;
-            //}
-            //((MainWindow)System.Windows.Application.Current.MainWindow).PositionDataList.ad(_items);
 
             if (newObj.NormalList.Count > 0)
             {
@@ -956,18 +777,9 @@ namespace PSSL_Environment
                                             newObj.ToFloatArrayNormal(),
                                             false, 3);
 
-                //((MainWindow)System.Windows.Application.Current.MainWindow).NormalDebug.Text = "Normal = " + (int)newObj.NormalList.Count;
-                // Fills the Model Properties window
-                //int nIndex = 0;
-                //((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Clear();
-                //foreach (var i in newObj.NormalList)
-                //{
-                //    string Nor = "Normal[" + nIndex + "] = ( " + i.NX + ", " + i.NY + ", " + i.NZ + ")";
-                //    ((MainWindow)System.Windows.Application.Current.MainWindow).NormalDataList.Items.Add(Nor);
-                //    nIndex++;
-                //}
             }
 
+            
             if (newObj.TextureList.Count > 0)
             {
                 var texCoordsVertexBuffer = new VertexBuffer();
@@ -976,16 +788,7 @@ namespace PSSL_Environment
                 texCoordsVertexBuffer.SetData(gl, VertexAttributes.TexCoord,
                                               newObj.ToFloatArrayTexture(),
                                               false, 2);
-                //((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDebug.Text = "Texcood = " + (int)newObj.TextureList.Count;
-                // Fills the Model Properties window
-                //int tIndex = 0;
-                //((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Clear();
-                //foreach (var i in newObj.TextureList)
-                //{
-                //    string Tex = "Normal[" + tIndex + "] = ( " + i.X + ", " + i.Y + ")";
-                //    ((MainWindow)System.Windows.Application.Current.MainWindow).TexCoordDataList.Items.Add(Tex);
-                //    tIndex++;
-                //}
+
             }
 
             verticesVertexBuffer.Unbind(gl);
@@ -996,6 +799,11 @@ namespace PSSL_Environment
             return 0;
         }
 
+        /// <summary>
+        /// Loads an .obj files into the scene
+        /// </summary>
+        /// <param name="openGLContext"></param>
+        /// <param name="objectFilePath"></param>
         public async void Load(OpenGLControl openGLContext, string objectFilePath)
         {
             OpenGL gl = openGLContext.OpenGL;
@@ -1010,21 +818,11 @@ namespace PSSL_Environment
             openGLContext.Cursor = Cursors.Arrow;
         }
 
-        //private void CreateTextures(OpenGL gl, Obj mesh)
-        //
-        //    //  Create a new texture and bind it.
-        //    var texture = new Texture2D();
-        //    texture.Create(gl);
-        //    texture.Bind(gl);
-        //    texture.SetParameter(gl, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);
-        //    texture.SetParameter(gl, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
-        //    texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_CLAMP_TO_EDGE);
-        //    texture.SetParameter(gl, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_CLAMP_TO_EDGE);
-        //    texture.SetImage(gl, (Bitmap)mesh.material.TextureMapDiffuse.Image);
-        //    texture.Unbind(gl);
-        //    meshTextures = new KeyValuePair<Obj, Texture2D>(meshTextures.Key, texture);
-        //}
-
+        /// <summary>
+        /// Adds a texture to the gl context and the program
+        /// </summary>
+        /// <param name="gl"></param>
+        /// <param name="image"></param>
         private void AddTexture(OpenGL gl, Bitmap image)
         {
 
@@ -1083,7 +881,7 @@ namespace PSSL_Environment
                 var maxY = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.Y));
                 var maxZ = myOBJ.VertexList.AsParallel().Max(v => Math.Abs(v.Z));
                 max = (new[] { maxX, maxY, maxZ }).Max();
-            } catch (Exception i)
+            } catch (Exception)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("No vertices were found.", "Error loading OBJ.", MessageBoxButton.OK, MessageBoxImage.Error);
                 scaleFactor = 1.0f;

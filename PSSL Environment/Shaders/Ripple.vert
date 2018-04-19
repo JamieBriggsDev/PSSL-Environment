@@ -5,7 +5,7 @@ in vec2 TexCoord;
 
 uniform mat4 Modelview;
 uniform mat4 Projection;
-uniform mat3 NormalMatrix;
+uniform mat4 NormalMatrix;
 uniform vec3 DiffuseMaterial;
 
 uniform float Time;
@@ -21,8 +21,8 @@ out vec2 TexCoordV;
 
 void main()
 {
-    EyespaceNormal = NormalMatrix * Normal;
-    //gl_Position = Projection * Modelview * Position;
+    EyespaceNormal = vec3(NormalMatrix * vec4(Normal, 1.0f));
+
     Diffuse = DiffuseMaterial;
 
 	vec3 offset = normalize(

@@ -474,7 +474,16 @@ namespace PSSL_Environment
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(file)));
             //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
             string path = FilePath + "\\" + FileNames.ShaderConstantsFileName;
-            System.IO.File.WriteAllText(path, output);
+
+
+            try
+            {
+                System.IO.File.WriteAllText(path, output);
+            }
+            catch (Exception)
+            {
+
+            }
 
 
 
@@ -544,7 +553,15 @@ namespace PSSL_Environment
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(OutputFile)));
             //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
             string path = FilePath + "\\" + ShaderName + "VSOutput.hs";
-            System.IO.File.WriteAllText(path, output);
+
+            try
+            {
+                System.IO.File.WriteAllText(path, output);
+            }
+            catch (Exception)
+            {
+
+            }
 
             FileNames.ShaderOutputFileName = ShaderName + "VSOutput.hs";
         }
@@ -730,7 +747,16 @@ namespace PSSL_Environment
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(PSSLVert)));
             //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
             string path = FilePath + "\\" + ShaderName + "_vv.pssl";
-            System.IO.File.WriteAllText(path, output);
+
+
+            try
+            {
+                System.IO.File.WriteAllText(path, output);
+            }
+            catch (Exception)
+            {
+
+            }
 
             FileNames.ShaderVertexFilename = ShaderName + "_vv.pssl";
         }
@@ -902,7 +928,16 @@ namespace PSSL_Environment
             string output = ascii.GetString(Encoding.Convert(utf8, ascii, utf8.GetBytes(PSSLFrag)));
             //System.IO.File.WriteAllText(@"Shaders\Generated\" + ClassName + "ShaderConstents.h", output);
             string path = FilePath + "\\" + ShaderName + "_p.pssl";
-            System.IO.File.WriteAllText(path, output);
+
+
+            try
+            {
+                System.IO.File.WriteAllText(path, output);
+            }
+            catch (Exception)
+            {
+
+            }
 
             FileNames.ShaderVertexFilename = ShaderName + "_p.pssl";
         }

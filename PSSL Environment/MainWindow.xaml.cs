@@ -41,6 +41,18 @@ namespace PSSL_Environment
         public enum ViewType { COLOR, TEXTURE, TOON, TOONTEXTURE, RIPPLE, CUSTOM};
         private ViewType viewType;
 
+        public struct clickHeld
+        {
+            public bool ClickHeld;
+            public Point ClickInitialPosition;
+            public Point ClickCurrentPosition;
+            public vec2 ClickDistance;
+        }
+
+        public vec3 newPosition;
+        public clickHeld rightHeld;
+        public clickHeld leftHeld;
+
         public ViewType GetViewType()
         {
             return viewType;
@@ -48,6 +60,7 @@ namespace PSSL_Environment
 
         public MainWindow()
         {
+            newPosition = new vec3(0.0f, 0.0f, 0.0f);
             InitializeComponent();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
 
@@ -81,12 +94,6 @@ namespace PSSL_Environment
             this.WindowState = WindowState.Minimized;
         }
 
-        private void ToolBar_MouseLeftButtonDown(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = WindowState.Normal;
-            this.DragMove();
-        }
-
         private void btnLoadImage_Click(object sender, RoutedEventArgs e)
         {
             // File dialog for opening an image file
@@ -116,10 +123,15 @@ namespace PSSL_Environment
             //  Get the OpenGL instance.
             var gl = args.OpenGL;
 
-            //  Add a bit to theta (how much we're rotating the scene) and create the modelview
-            //  and normal matrices.
-            theta += 0.01f;
-            myScene.CreateModelviewAndNormalMatrix(theta);
+
+            // See if mouse buttons are held down which rotates and moves model
+            if (rightHeld.ClickHeld)
+                openGLCtrl_MoveCamera();
+
+            if (leftHeld.ClickHeld)
+                openGLCtrl_MoveModel();
+
+            myScene.CreateModelviewAndNormalMatrix(rightHeld.ClickDistance);
 
             //  Clear the color and depth buffer.
 
@@ -155,16 +167,16 @@ namespace PSSL_Environment
                 {
                     if (UsingTexture.IsChecked == true)
                     {
-                        myScene.RenderTextureMode(gl, checkBoxUseToonShader.IsChecked.Value);
-                        if(checkBoxUseToonShader.IsChecked.Value == true)                       
+                        myScene.RenderTextureMode(gl, ToonEnabled.IsChecked.Value);
+                        if(ToonEnabled.IsChecked.Value == true)                       
                             viewType = ViewType.TOONTEXTURE;
                         else
                             viewType = ViewType.TEXTURE;
                     }
                     else
                     {
-                        myScene.RenderColorMode(gl, checkBoxUseToonShader.IsChecked.Value);
-                        if (checkBoxUseToonShader.IsChecked.Value == true)
+                        myScene.RenderColorMode(gl, ToonEnabled.IsChecked.Value);
+                        if (ToonEnabled.IsChecked.Value == true)
                             viewType = ViewType.TOON;
                         else
                             viewType = ViewType.COLOR;
@@ -453,8 +465,13 @@ namespace PSSL_Environment
 
         private void WaterEnabled_Click(object sender, RoutedEventArgs e)
         {
+
+            if (ToonEnabled.IsChecked == true)
+                ToonEnabled.IsChecked = false;
+
             System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap(@"Resources\Textures\Water.png");
             myScene.LoadWaterTextures(openGlCtrl.OpenGL, myTexture);
+
         }
 
         private void AmplitudeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -615,8 +632,73 @@ namespace PSSL_Environment
             FragmentShaderText.Text = myScene.fragShader;
         }
 
+        private void ToonEnabled_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (WaterEnabled.IsChecked == true)
+                WaterEnabled.IsChecked = false;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            Application.Current.Shutdown();
+        }
+
+        private void openGlCtrl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Tiny bit of safety code here
+            if(!rightHeld.ClickHeld)
+            {
+                rightHeld.ClickInitialPosition = Mouse.GetPosition(this);
+                rightHeld.ClickHeld = true;
+            }
+        }
+
+        private void openGLCtrl_MoveCamera()
+        {
+            rightHeld.ClickCurrentPosition = Mouse.GetPosition(this);
 
 
+            vec2 initial = new vec2((float)rightHeld.ClickInitialPosition.X, (float)rightHeld.ClickInitialPosition.Y);
+            vec2 current = new vec2((float)rightHeld.ClickCurrentPosition.X, (float)rightHeld.ClickCurrentPosition.Y);
+            rightHeld.ClickDistance = current - initial;
+
+            //myScene.modelRotation = myScene.modelRotation + new vec3(rightHeld.ClickDistance / 10.0f, 0.0f);
+        }
+
+        private void openGlCtrl_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            rightHeld.ClickHeld = false;
+        }
+
+        private void openGlCtrl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Tiny bit of safety code here
+            if (!rightHeld.ClickHeld)
+            {
+                leftHeld.ClickInitialPosition = Mouse.GetPosition(this);
+                leftHeld.ClickHeld = true;
+            }
+        }
+
+        private void openGLCtrl_MoveModel()
+        {
+            leftHeld.ClickCurrentPosition = Mouse.GetPosition(this);
+
+
+            vec2 initial = new vec2((float)leftHeld.ClickInitialPosition.X, (float)leftHeld.ClickInitialPosition.Y);
+            vec2 current = new vec2((float)leftHeld.ClickCurrentPosition.X, (float)leftHeld.ClickCurrentPosition.Y);
+            leftHeld.ClickDistance = current - initial;
+            newPosition = new vec3(leftHeld.ClickDistance.x / 130.0f,  leftHeld.ClickDistance.y / -130.0f, 0.0f);
+            //myScene.modelRotation = myScene.modelRotation + new vec3(rightHeld.ClickDistance / 10.0f, 0.0f);
+        }
+
+        private void openGlCtrl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            leftHeld.ClickHeld = false;
+        }
 
 
         //private void CompileShaders_Click(object sender, RoutedEventArgs e)
