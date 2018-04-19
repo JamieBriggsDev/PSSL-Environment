@@ -317,7 +317,6 @@ namespace PSSL_Environment
         /// </summary>
         private readonly Axies axies = new Axies();
 
-        private float theta = 0;
 
         /// <summary>
         /// The scene we're drawing.
@@ -385,41 +384,6 @@ namespace PSSL_Environment
             // Give the scene that alpha value
             myScene.alphaColor = alpha;
         }
-
-        private void positionX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            float value = (float)positionX.Value;
-            myScene.modelLocation.x = value;
-        }
-        private void positionY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            float value = (float)positionY.Value;
-            myScene.modelLocation.y = value;
-        }
-        private void positionZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            float value = (float)positionZ.Value;
-            myScene.modelLocation.z = value;
-        }
-
-        private void rotationX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            float value = (float)rotationX.Value;
-            myScene.modelRotation.x = value;
-        }
-
-        private void rotationY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            float value = (float)rotationY.Value;
-            myScene.modelRotation.y = value;
-        }
-
-        private void rotationZ_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            float value = (float)rotationZ.Value;
-            myScene.modelRotation.z = value;
-        }
-
 
 
         private void lightPositionX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -691,7 +655,7 @@ namespace PSSL_Environment
             vec2 initial = new vec2((float)leftHeld.ClickInitialPosition.X, (float)leftHeld.ClickInitialPosition.Y);
             vec2 current = new vec2((float)leftHeld.ClickCurrentPosition.X, (float)leftHeld.ClickCurrentPosition.Y);
             leftHeld.ClickDistance = current - initial;
-            newPosition = new vec3(leftHeld.ClickDistance.x / 130.0f,  leftHeld.ClickDistance.y / -130.0f, 0.0f);
+            newPosition = new vec3(leftHeld.ClickDistance.x / 130.0f,  leftHeld.ClickDistance.y / -130.0f, newPosition.z);
             //myScene.modelRotation = myScene.modelRotation + new vec3(rightHeld.ClickDistance / 10.0f, 0.0f);
         }
 
@@ -700,6 +664,13 @@ namespace PSSL_Environment
             leftHeld.ClickHeld = false;
         }
 
+        private void openGlCtrl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // Mouse wheel move up
+            newPosition = new vec3(new vec2(newPosition), newPosition.z + (e.Delta / 100.0f));
+        }
+
+  
 
         //private void CompileShaders_Click(object sender, RoutedEventArgs e)
         //{
