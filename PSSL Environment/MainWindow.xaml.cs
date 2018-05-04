@@ -23,6 +23,7 @@ using SharpGL.SceneGraph.Primitives;
 using System.Windows.Media.Animation;
 using PSSL_Environment.UserControls;
 using System.Text.RegularExpressions;
+using System.IO;
 
 //The main PSSL_Enironment namespace
 namespace PSSL_Environment
@@ -109,7 +110,8 @@ namespace PSSL_Environment
             {
                 UsingTexture.IsChecked = true;
                 imgPhoto.Source = new BitmapImage(new Uri(op.FileName));
-                System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap(op.FileName);
+                textureLoaded = new System.Drawing.Bitmap(op.FileName);
+                System.Drawing.Bitmap myTexture = textureLoaded;
                 myScene.LoadTexture(openGlCtrl.OpenGL, myTexture);
             }
 
@@ -117,6 +119,8 @@ namespace PSSL_Environment
             //ambientColorPicker.SelectedColorChanged();
 
         }
+
+        System.Drawing.Bitmap textureLoaded;
 
         private void OpenGLControl_OpenGLDraw(object sender, OpenGLEventArgs args)
         {
@@ -433,8 +437,16 @@ namespace PSSL_Environment
             if (ToonEnabled.IsChecked == true)
                 ToonEnabled.IsChecked = false;
 
-            System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap(@"Resources\Textures\Water.png");
-            myScene.LoadWaterTextures(openGlCtrl.OpenGL, myTexture);
+
+            //System.Windows.MessageBox.Show("Load Texture to show a texture on the model.", "No Texture Loaded",
+            //    MessageBoxButton.OK, MessageBoxImage.Information);
+            if (UsingTexture.IsChecked == false)
+            {
+                System.Drawing.Bitmap myTexture = new System.Drawing.Bitmap(@"Resources\Textures\Water.png");
+                myScene.LoadWaterTextures(openGlCtrl.OpenGL, myTexture);
+            }
+
+            
 
         }
 
@@ -492,15 +504,33 @@ namespace PSSL_Environment
 
         private void UsingTexture_Click(object sender, RoutedEventArgs e)
         {
-            var temp = sender as CheckBox;
-            if(temp.IsChecked == true)
+
+                //imgPhoto.Source.;
+                System.Drawing.Bitmap myTexture;
+                var temp = sender as CheckBox;
+            if (temp.IsChecked == true)
             {
-                LoadPictureCanvas.Visibility = Visibility.Visible;
+                try
+                {
+                    myTexture = textureLoaded;
+                    myScene.LoadTexture(openGlCtrl.OpenGL, myTexture);
+
+                    LoadPictureCanvas.Visibility = Visibility.Visible;
+                }
+                catch (Exception)
+                {
+                    System.Windows.MessageBox.Show("No texture is loaded!", "No Texture",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    UsingTexture.IsChecked = false;
+                }
             }
             else
             {
+                myTexture = new System.Drawing.Bitmap(@"Resources\Textures\Water.png");
+                myScene.LoadWaterTextures(openGlCtrl.OpenGL, myTexture);
                 LoadPictureCanvas.Visibility = Visibility.Hidden;
             }
+
         }
 
         private void DockButton_Click(object sender, RoutedEventArgs e)
@@ -528,7 +558,7 @@ namespace PSSL_Environment
 
             ConstantsControl.Add(newConstant);
         }
-
+        
         private void AddIntConstant_Click(object sender, RoutedEventArgs e)
         {
             IntConstant newConstant = new IntConstant();
@@ -567,6 +597,7 @@ namespace PSSL_Environment
             {
                 Interpreter.GetInstance().GeneratePSSLBasic();
             }
+
 
         }
 

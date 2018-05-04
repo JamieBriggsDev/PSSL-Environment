@@ -48,9 +48,9 @@ namespace PSSL_Environment.UserControls
         public vec3 ColorToVec(Color _color)
         {
             vec3 output;
-            output.x = _color.R / 255;
-            output.y = _color.G / 255;
-            output.z = _color.B / 255;
+            output.x = _color.R / 255.0f;
+            output.y = _color.G / 255.0f;
+            output.z = _color.B / 255.0f;
 
             return output;
         }

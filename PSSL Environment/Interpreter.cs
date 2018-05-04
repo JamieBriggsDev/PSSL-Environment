@@ -326,12 +326,17 @@ namespace PSSL_Environment
             //string fragmentShader = Frag;
             //string vertexShader = Vert;
             //Constants = new List<KeyValuePair<Type, string>>();
+            Vert = Vert.Replace("uniform mat4 Modelview;", "");
+            Vert = Vert.Replace("uniform mat4 Projection;\nuniform mat4 Modelview", "uniform mat4 ModelProjection\n");
+            Vert = Vert.Replace("gl_Position = Projection * Modelview", "Position = Projection");
 
             FillStructs(Frag, Vert);
             GeneratePSSLConstantsFile();
             GeneratePSSLOutputFile();
             GeneratePSSLVertexFile(Vert);
             GeneratePSSLFragFile(Frag);
+
+
         }
 
         /// <summary>
@@ -381,8 +386,9 @@ namespace PSSL_Environment
             }
 
             // Swap gl_position function version to PSSL version
+            Vert = Vert.Replace("uniform mat4 Modelview;", "");
             Vert = Vert.Replace("uniform mat4 Projection;\nuniform mat4 Modelview", "uniform mat4 ModelProjection\n");
-            Vert = Vert.Replace("gl_Position = Projection * Modelview", "Position = ModelProjection");
+            Vert = Vert.Replace("gl_Position = Projection * Modelview", "Position = Projection");
 
 
             FillStructs(Frag, Vert);
@@ -975,6 +981,23 @@ namespace PSSL_Environment
             }
 
             FileNames.ShaderVertexFilename = ShaderName + "_p.pssl";
+
+
+
+            // Since this is the last file, display pop up at the end
+            System.Windows.MessageBox.Show("Please ensure the following:\n\n" +
+                "1: When placed into your PS4 project, remember to attach the shader " +
+                "fully to the program by plugging in the values into the shader constants " +
+                "file and pass the constants into the constant buffer.\n\n" +
+                "2: Due to the PS4 limitations, it is likely that the input struct in " +
+                "the vertex shader is wrong, make sure this is changed to fit within " +
+                "the program and change any variables within the shader to follow the new " +
+                "struct.\n\n" +
+                "3: This program has its limitations, and one of which is that it can't " +
+                "fully do matrix and vertex multiplications. Please ensure that wherever " +
+                "there is this form of multiplication, the mul(matrix, vertex) command is " +
+                "used in its place.", "PSSL Complete",
+                MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
     }
 }

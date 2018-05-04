@@ -122,8 +122,6 @@ namespace PSSL_Environment
         /// <returns></returns>
         public bool FixIndexing()
         {
-
-
             List<Vertex> tempVertexList = new List<Vertex>();
             List<Normal> tempNormalList = new List<Normal>();
             //List<Face> tempFaceList = new List<Face>();
