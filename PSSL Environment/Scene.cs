@@ -369,7 +369,7 @@ namespace PSSL_Environment
                     shader.SetUniform3(gl, "LightPosition", lightLocation.x, lightLocation.y, lightLocation.z);
 
                     // Set up projection and model view matrices
-                    shader.SetUniformMatrix4fv(gl, "Projection", (myCamera.m_projectionMx * myCamera.m_worldViewMx).to_array());
+                    shader.SetUniformMatrix4(gl, "Projection", (myCamera.m_projectionMx * myCamera.m_worldViewMx).to_array());
                     shader.SetUniformMatrix4(gl, "Modelview", myOBJ.m_modelWorldMx.to_array());
 
                     // Set up normal matrix
